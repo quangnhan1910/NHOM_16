@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--
+  Fragment: sidebar (activeNav)
+  Giá trị activeNav: dashboard | co-cau | nguoi-dung | mon-hoc | phan-cong | ngan-hang | de-thi | ca-thi | nhat-ky | cai-dat
+-->
+<aside th:fragment="sidebar (activeNav)" class="admin-sidebar" aria-label="Menu quản trị">
+        <div class="admin-sidebar-brand">
+            <button type="button" class="admin-sidebar-toggle" id="adminSidebarToggle" title="Thu gọn / mở rộng menu" aria-expanded="true" aria-controls="admin-sidebar-nav">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M11.25 4.5L6.75 9l4.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <div class="admin-sidebar-brand-main">
+            <div class="admin-sidebar-logo" aria-hidden="true">
+                <img class="admin-sidebar-logo-img" th:src="@{/images/brand/uniexam-logo.png}" src="/images/brand/uniexam-logo.png" width="38" height="34" alt=""/>
+            </div>
+            <div class="admin-sidebar-titles">
+                <div class="admin-sidebar-title">UniExam</div>
+                <div class="admin-sidebar-subtitle">Hệ Thống Quản Trị</div>
+            </div>
+            </div>
+        </div>
+
+        <nav id="admin-sidebar-nav" class="admin-sidebar-nav" aria-label="Điều hướng chính">
+            <div class="admin-nav-group">
+                <p class="admin-nav-heading">Menu Chính</p>
+                <a th:href="@{/admin}"
+                   class="admin-nav-link"
+                   th:classappend="${activeNav == 'dashboard'} ? ' is-active'">
+                    <span class="admin-nav-icon" aria-hidden="true">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1.5" y="1.5" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.33"/><rect x="9.5" y="1.5" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.33"/><rect x="1.5" y="9.5" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.33"/><rect x="9.5" y="9.5" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.33"/></svg>
+                    </span>
+                    <span>Bảng Điều Khiển</span>
+                </a>
+                <a th:href="@{/admin/co-cau-to-chuc}"
+                   class="admin-nav-link"
+                   th:classappend="${activeNav == 'co-cau'} ? ' is-active'">
+                    <span class="admin-nav-icon admin-nav-icon--co-cau" aria-hidden="true">
+                        <svg viewBox="0 0 20 15" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <rect x="6" y="0.75" width="8" height="4" rx="1" stroke="currentColor" stroke-width="1.33"/>
+                            <path d="M10 4.75V6M5 6h10M5 6v2.75M15 6v2.75" stroke="currentColor" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round"/>
+                            <rect x="2" y="8.75" width="6" height="5.5" rx="1" stroke="currentColor" stroke-width="1.33"/>
+                            <rect x="12" y="8.75" width="6" height="5.5" rx="1" stroke="currentColor" stroke-width="1.33"/>
+                        </svg>
+                    </span>
+                    <span>Cơ Cấu Tổ Chức</span>
+                </a>
+            </div>
+
+            <div class="admin-nav-group">
+                <p class="admin-nav-heading">Quản Lý Người Dùng/Môn Học</p>
+                <a th:href="@{/admin/quan-ly-nguoi-dung}"
+                   class="admin-nav-link"
+                   th:classappend="${activeNav == 'nguoi-dung'} ? ' is-active'">
+                    <span class="admin-nav-icon admin-nav-icon--nguoi-dung" aria-hidden="true">
+                        <svg viewBox="0 0 22 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <circle cx="11" cy="5.5" r="3.25" stroke="currentColor" stroke-width="1.33"/>
+                            <path d="M3.5 15.25c0-3.35 3-6.1 7.5-6.1s7.5 2.75 7.5 6.1" stroke="currentColor" stroke-width="1.33" stroke-linecap="round"/>
+                        </svg>
+                    </span>
+                    <span>Người Dùng</span>
+                </a>
+                <a th:href="@{/admin/quan-ly-mon-hoc}"
+                   class="admin-nav-link"
+                   th:classappend="${activeNav == 'mon-hoc'} ? ' is-active'">
+                    <span class="admin-nav-icon" aria-hidden="true">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 2h10a1 1 0 011 1v11a1 1 0 01-1 1H3a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.33"/><path d="M5 5h6M5 8h6M5 11h4" stroke="currentColor" stroke-width="1.33" stroke-linecap="round"/></svg>
+                    </span>
+                    <span>Quản lý môn học</span>
+                </a>
+                <a th:href="@{/admin/phan-cong-giang-vien-lop}"
+                   class="admin-nav-link"
+                   th:classappend="${activeNav == 'phan-cong'} ? ' is-active'">
+                    <span class="admin-nav-icon" aria-hidden="true">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 12l4-4 3 3 5-6" stroke="currentColor" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round"/><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.33"/></svg>
+                    </span>
+                    <span>Phân công GV-Lớp</span>
+                </a>
+            </div>
+
+            <div class="admin-nav-group">
+                <p class="admin-nav-heading">Học Thuật</p>
+                <a th:href="@{/ngan-hang-cau-hoi}"
+                   class="admin-nav-link"
+                   th:classappend="${activeNav == 'ngan-hang'} ? ' is-active'">
+                    <span class="admin-nav-icon" aria-hidden="true">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3" y="1" width="10" height="14" rx="1.5" stroke="currentColor" stroke-width="1.33"/><path d="M6 5h4M6 8h4M6 11h2" stroke="currentColor" stroke-width="1.33" stroke-linecap="round"/><circle cx="10.5" cy="11.5" r="1.5" stroke="currentColor" stroke-width="1"/></svg>
+                    </span>
+                    <span>Ngân Hàng Câu Hỏi</span>
+                </a>
+            </div>
+
+            <div class="admin-nav-group">
+                <p class="admin-nav-heading">Kỳ Thi</p>
+                <a th:href="@{/de-thi}"
+                   class="admin-nav-link"
+                   th:classappend="${activeNav == 'de-thi'} ? ' is-active'">
+                    <span class="admin-nav-icon" aria-hidden="true">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2.5" y="2.5" width="11" height="12" rx="1.5" stroke="currentColor" stroke-width="1.33"/><path d="M5 2.5V1M11 2.5V1M2.5 5.5h11" stroke="currentColor" stroke-width="1.33" stroke-linecap="round"/></svg>
+                    </span>
+                    <span>Đề Thi</span>
+                </a>
+                <a th:href="@{/admin/ca-thi}"
+                   class="admin-nav-link"
+                   th:classappend="${activeNav == 'ca-thi'} ? ' is-active'">
+                    <span class="admin-nav-icon" aria-hidden="true">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.33"/><path d="M5 1.5V4M11 1.5V4M2 7h12" stroke="currentColor" stroke-width="1.33" stroke-linecap="round"/></svg>
+                    </span>
+                    <span>Ca Thi</span>
+                </a>
+            </div>
+
+            <div class="admin-nav-group">
+                <p class="admin-nav-heading">Hệ Thống</p>
+                <a th:href="@{/admin/nhat-ky-he-thong}"
+                   class="admin-nav-link"
+                   th:classappend="${activeNav == 'nhat-ky'} ? ' is-active'">
+                    <span class="admin-nav-icon" aria-hidden="true">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.33"/><path d="M4 5h4M4 8h8M4 11h6" stroke="currentColor" stroke-width="1.33" stroke-linecap="round"/></svg>
+                    </span>
+                    <span>Nhật Ký Hệ Thống</span>
+                </a>
+                <a th:href="@{/admin/cai-dat-admin}"
+                   class="admin-nav-link"
+                   th:classappend="${activeNav == 'cai-dat'} ? ' is-active'">
+                    <span class="admin-nav-icon admin-nav-icon--cai-dat" aria-hidden="true">
+                        <i class="bi bi-gear-fill" aria-hidden="true"></i>
+                    </span>
+                    <span>Cài Đặt</span>
+                </a>
+            </div>
+        </nav>
+
+        <div class="admin-sidebar-footer">
+            <div class="admin-sidebar-user">
+                <div class="admin-sidebar-user-text">
+                    <div class="admin-sidebar-user-name">Quản Trị Viên</div>
+                    <div class="admin-sidebar-user-role">Quản trị viên hệ thống</div>
+                </div>
+                <form th:action="@{/logout}" method="post" class="admin-sidebar-logout-form">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button type="submit" class="admin-sidebar-logout" title="Đăng xuất" aria-label="Đăng xuất">
+                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5.5 13H3.333A1.667 1.667 0 011.667 11.333V3.667A1.667 1.667 0 013.333 2H5.5" stroke="currentColor" stroke-width="1.33" stroke-linecap="round"/>
+                            <path d="M10 11.25L13.333 7.5 10 3.75M13.333 7.5H5.5" stroke="currentColor" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+        <script>
+        (function () {
+            var shell = document.querySelector('.admin-shell');
+            var btn = document.getElementById('adminSidebarToggle');
+            if (!shell || !btn) return;
+            var key = 'admin-sidebar-collapsed';
+            function apply(collapsed) {
+                shell.classList.toggle('sidebar-collapsed', collapsed);
+                btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+                var label = collapsed ? 'Mở rộng menu' : 'Thu gọn menu';
+                btn.setAttribute('aria-label', label);
+                btn.setAttribute('title', label);
+                try { localStorage.setItem(key, collapsed ? '1' : '0'); } catch (e) {}
+            }
+            try {
+                if (localStorage.getItem(key) === '1') apply(true);
+            } catch (e) {}
+            btn.addEventListener('click', function () {
+                apply(!shell.classList.contains('sidebar-collapsed'));
+            });
+        })();
+        </script>
+</aside>
+</html>

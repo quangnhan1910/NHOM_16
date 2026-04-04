@@ -1,0 +1,291 @@
+/* Admin Settings Page Styles */
+.settings-wrapper {
+    background: #F8FAFC;
+    min-height: 100vh;
+}
+
+.settings-content {
+    padding: 32px;
+}
+
+/* Page Title */
+.page-header {
+    margin-bottom: 32px;
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1D293D;
+    margin-bottom: 4px;
+}
+
+.page-desc {
+    font-size: 16px;
+    color: #62748E;
+}
+
+/* Cards */
+.settings-card {
+    background: white;
+    border: 0.8px solid #E2E8F0;
+    border-radius: 16px;
+    padding: 24.8px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+    margin-bottom: 24px;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.card-header svg {
+    width: 20px;
+    height: 20px;
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1D293D;
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
+.form-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #62748E;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.form-input {
+    width: 100%;
+    padding: 11px 16px;
+    background: #F8FAFC;
+    border: 0.8px solid #E2E8F0;
+    border-radius: 10px;
+    font-size: 16px;
+    color: #314158;
+    outline: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-sizing: border-box;
+    height: 44px;
+}
+
+.form-input:focus {
+    border-color: #155DFC;
+}
+
+.form-input.with-icon {
+    padding-left: 0;
+}
+
+.input-icon {
+    padding-left: 16px;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.input-text {
+    flex: 1;
+    font-size: 16px;
+    color: #314158;
+}
+
+.input-action {
+    padding-right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.input-action svg {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.input-action svg:hover {
+    opacity: 1;
+}
+
+/* Role Badge */
+.role-badge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 16px;
+    background: rgba(239, 246, 255, 0.5);
+    border: 0.8px solid #DBEAFE;
+    border-radius: 10px;
+    box-sizing: border-box;
+    height: 44px;
+}
+
+.role-badge svg {
+    width: 18px;
+    height: 18px;
+}
+
+.role-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: #193CB8;
+}
+
+.role-desc {
+    font-size: 12px;
+    color: #90A1B9;
+    margin-top: 4px;
+}
+
+/* Password Field */
+.password-field {
+    position: relative;
+}
+
+.password-input {
+    width: 100%;
+    padding: 11px 40px 11px 16px;
+    background: white;
+    border: 0.8px solid #CAD5E2;
+    border-radius: 10px;
+    font-size: 14px;
+    color: #314158;
+    outline: none;
+    box-sizing: border-box;
+    height: 44px;
+}
+
+.password-input::placeholder {
+    color: rgba(10, 10, 10, 0.4);
+}
+
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.password-toggle svg {
+    width: 18px;
+    height: 18px;
+    opacity: 0.5;
+}
+
+.password-toggle:hover svg {
+    opacity: 1;
+}
+
+.required-mark {
+    color: #FB2C36;
+}
+
+/* Form Row */
+.form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.form-row:last-of-type {
+    margin-bottom: 0;
+}
+
+.form-row label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #314158;
+}
+
+.divider {
+    border-top: 0.8px solid #F1F5F9;
+    margin: 20px 0;
+}
+
+/* Buttons */
+.form-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 24px;
+}
+
+.btn-cancel {
+    padding: 8px 16px;
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #45556C;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-cancel:hover {
+    background: #F1F5F9;
+}
+
+.btn-save {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    background: #155DFC;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+    transition: background 0.2s;
+}
+
+.btn-save:hover {
+    background: #124BD4;
+}
+
+.btn-save svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* Readonly Input */
+.readonly-input {
+    background: #F8FAFC;
+    border-color: #E2E8F0;
+    color: #314158;
+}
