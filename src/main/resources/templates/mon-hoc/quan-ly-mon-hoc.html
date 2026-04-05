@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Môn học - Hệ thống Thi trắc nghiệm</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <style>
+        /* Additional styles for Subject Management page */
+        .subjects-wrapper {
+            background: #F6F7F8;
+            min-height: 100vh;
+        }
+        
+        .subjects-header {
+            height: 64px;
+            background: #FFFFFF;
+            border-bottom: 1px solid #E2E8F0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+        }
+        
+        .header-search {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .header-search-icon {
+            width: 18px;
+            height: 18px;
+        }
+        
+        .header-search-input {
+            padding: 9px 12px;
+            width: 256px;
+            background: #F8FAFC;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #94A3B8;
+            outline: none;
+        }
+        
+        .header-search-input::placeholder {
+            color: #94A3B8;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .header-icon-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: transparent;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.2s;
+        }
+        
+        .header-icon-btn:hover {
+            background: #F1F5F9;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: 7px;
+            right: 7px;
+            width: 8px;
+            height: 8px;
+            background: #EF4444;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+        
+        /* Main Content */
+        .subjects-content {
+            padding: 32px;
+        }
+        
+        .subjects-container {
+            max-width: 100%;
+        }
+        
+        /* Page Title & Actions */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 32px;
+        }
+        
+        .page-title-section h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0F172A;
+            margin-bottom: 4px;
+        }
+        
+        .page-title-section p {
+            font-size: 16px;
+            color: #64748B;
+        }
+        
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: #1C74E9;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 1px 2px 0 rgba(28, 116, 233, 0.2);
+            transition: background 0.2s;
+        }
+        
+        .btn-primary:hover {
+            background: #1D4ED8;
+        }
+        
+        .btn-primary svg {
+            width: 14px;
+            height: 14px;
+        }
+        
+        /* Filters */
+        .filters-card {
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 17px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .filter-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #64748B;
+        }
+        
+        .filter-label svg {
+            width: 12px;
+            height: 8px;
+        }
+        
+        .filter-select {
+            min-width: 180px;
+            padding: 9px 12px;
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #0F172A;
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='21' height='21' viewBox='0 0 21 21' fill='none'%3E%3Cpath d='M5.5 8.5L10.5 13.5L15.5 8.5' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+        }
+        
+        .filter-select.small {
+            min-width: 140px;
+        }
+        
+        .filter-clear-btn {
+            font-size: 14px;
+            font-weight: 500;
+            color: #64748B;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+        
+        .filter-clear-btn:hover {
+            text-decoration: underline;
+        }
+        
+        .pagination-info {
+            margin-left: auto;
+            font-size: 14px;
+            color: #64748B;
+        }
+        
+        .pagination-info strong {
+            font-weight: 700;
+            color: #0F172A;
+        }
+        
+        /* Table Card */
+        .table-card {
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .data-table thead {
+            background: #F8FAFC;
+            border-bottom: 1px solid #E2E8F0;
+        }
+        
+        .data-table th {
+            padding: 16px 24px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 700;
+            color: #64748B;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+        
+        .data-table th:last-child {
+            text-align: right;
+        }
+        
+        .data-table td {
+            padding: 17px 24px;
+            border-top: 1px solid #E2E8F0;
+            vertical-align: middle;
+        }
+        
+        .data-table td:last-child {
+            text-align: right;
+        }
+        
+        .data-table tbody tr {
+            transition: background 0.2s;
+        }
+        
+        .data-table tbody tr:hover {
+            background: #F8FAFC;
+        }
+        
+        /* Subject Code */
+        .subject-code {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1C74E9;
+        }
+        
+        /* Subject Name */
+        .subject-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #0F172A;
+        }
+        
+        .subject-desc {
+            font-size: 12px;
+            color: #94A3B8;
+            margin-top: 2px;
+        }
+        
+        /* Department Badge */
+        .dept-badge {
+            display: inline-flex;
+            padding: 2px 10px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .dept-badge.blue {
+            background: #DBEAFE;
+            color: #1E40AF;
+        }
+        
+        .dept-badge.purple {
+            background: #F3E8FF;
+            color: #6B21A8;
+        }
+        
+        .dept-badge.green {
+            background: #DCFCE7;
+            color: #166534;
+        }
+        
+        /* Credit */
+        .credit {
+            font-size: 14px;
+            color: #475569;
+        }
+        
+        /* Lecturer */
+        .lecturer {
+            font-size: 14px;
+            color: #334155;
+        }
+        
+        /* Action Buttons */
+        .action-btns {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            align-items: center;
+        }
+        
+        .action-btn, .btn-icon {
+            padding: 6px 8px;
+            border-radius: 4px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 32px;
+            min-height: 32px;
+        }
+        
+        .action-btn:hover, .btn-icon:hover {
+            background: #F1F5F9;
+        }
+        
+        .action-btn svg, .btn-icon svg {
+            width: 16px;
+            height: 16px;
+            display: block;
+            flex-shrink: 0;
+        }
+        
+        .btn-edit {
+            color: #155DFC;
+        }
+        
+        .btn-delete {
+            color: #EF4444;
+        }
+        
+        .btn-edit:hover {
+            color: #0F4CD6;
+            background: #EFF6FF;
+        }
+        
+        .btn-delete:hover {
+            color: #DC2626;
+            background: #FEF2F2;
+        }
+        
+        /* Pagination */
+        .pagination {
+            background: #F8FAFC;
+            border-top: 1px solid #E2E8F0;
+            padding: 17px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .pagination-btn {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 12px;
+            background: transparent;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #64748B;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .pagination-btn:hover:not(:disabled) {
+            background: #F1F5F9;
+            color: #1C74E9;
+        }
+        
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .pagination-btn svg {
+            width: 9px;
+            height: 9px;
+        }
+        
+        .pagination-pages {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .page-num {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #64748B;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .page-num:hover {
+            background: #F1F5F9;
+        }
+        
+        .page-num.active {
+            background: #1C74E9;
+            color: white;
+        }
+        
+        .page-ellipsis {
+            color: #94A3B8;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-shell">
+        <aside th:replace="~{fragments/admin-sidebar :: sidebar (activeNav='mon-hoc')}"></aside>
+        <div class="admin-main">
+    <div class="subjects-wrapper">
+        <!-- Header -->
+        <header class="subjects-header">
+            <div class="header-search">
+                <svg class="header-search-icon" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="7" cy="7" r="5" stroke="#94A3B8" stroke-width="1.5"/>
+                    <path d="M11 11L16 16" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                <input type="text" id="searchKeyword" class="header-search-input" placeholder="Tìm kiếm môn học...">
+            </div>
+            
+            <div class="header-actions">
+                <button class="header-icon-btn">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 2.5C7.5 2.5 5.5 4.5 5.5 7.5C5.5 9.5 6.5 11.25 8 12.5V15.5L10 17.5L12 15.5V12.5C13.5 11.25 14.5 9.5 14.5 7.5C14.5 4.5 12.5 2.5 10 2.5Z" stroke="#64748B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M7.5 17.5H12.5" stroke="#64748B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="notification-badge"></span>
+                </button>
+                
+                <button class="header-icon-btn">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="10" cy="6" r="3" stroke="#64748B" stroke-width="1.5"/>
+                        <path d="M3 17C3 14.5 5.5 13 10 13C14.5 13 17 14.5 17 17" stroke="#64748B" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="subjects-content">
+            <div class="subjects-container">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <div class="page-title-section">
+                        <h1>Danh sách Môn học</h1>
+                        <p>Quản lý và cập nhật thông tin các môn học trong hệ thống đào tạo</p>
+                        <p style="margin-top:10px;font-size:14px;">
+                            <a th:href="@{/admin/phan-cong-giang-vien-lop}" style="color:#1A355B;font-weight:600;">Phân công giảng viên &amp; lớp →</a>
+                        </p>
+                    </div>
+                    <button class="btn-primary" id="btnThemMonHoc">
+                        <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 1V13M1 7H13" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Thêm Môn học Mới
+                    </button>
+                </div>
+                
+                <!-- Filters -->
+                <!--
+                    [GIAI ĐOẠN 2] Các filter sẽ được load động:
+                    - Lọc theo Khoa: call GET /api/khoa/tat-ca
+                    - Lọc theo số tín chỉ: static options (1-12)
+                -->
+                <div class="filters-card">
+                    <div class="filter-label">
+                        <svg viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M1 1L6 6L11 1" stroke="#64748B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Lọc theo:
+                    </div>
+
+                    <select class="filter-select" id="filterKhoa">
+                        <option value="">Tất cả các Khoa</option>
+                        <!-- [GIAI ĐOẠN 2] Options sẽ được load từ API /api/khoa/tat-ca -->
+                    </select>
+
+                    <select class="filter-select small" id="filterSoTinChi">
+                        <option value="">Số tín chỉ</option>
+                        <option value="1">1 tín chỉ</option>
+                        <option value="2">2 tín chỉ</option>
+                        <option value="3">3 tín chỉ</option>
+                        <option value="4">4 tín chỉ</option>
+                        <option value="5">5 tín chỉ</option>
+                        <option value="6">6 tín chỉ</option>
+                        <option value="7">7 tín chỉ</option>
+                        <option value="8">8 tín chỉ</option>
+                        <option value="9">9 tín chỉ</option>
+                        <option value="10">10 tín chỉ</option>
+                        <option value="11">11 tín chỉ</option>
+                        <option value="12">12 tín chỉ</option>
+                    </select>
+
+                    <button class="filter-clear-btn" id="btnXoaBoLoc">Xóa bộ lọc</button>
+
+                    <div class="pagination-info" id="paginationInfo">
+                        <!-- [GIAI ĐOẠN 2] Sẽ được update động từ API -->
+                    </div>
+                </div>
+                
+                <!-- Table -->
+                <div class="table-card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Mã môn</th>
+                                <th>Tên môn học</th>
+                                <th>Khoa</th>
+                                <th>Tín chỉ</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="monHocTbody">
+                            <!-- [GIAI ĐOẠN 2] Render động từ API /api/mon-hoc
+                                 Cấu trúc dòng: data-id, các td tương ứng cột DB
+                                 - td1: ma_dinh_danh (subject-code)
+                                 - td2: ten + mo_ta (subject-name + subject-desc)
+                                 - td3: ten_khoa (dept-badge)
+                                 - td4: so_tin_chi (credit)
+                                 - td5: action-btns (sửa / xóa)
+                            -->
+                            <tr>
+                                <td colspan="5" style="text-align:center; padding:40px 24px; color:#94A3B8; font-size:14px;">
+                                    Dữ liệu đang được tải từ máy chủ...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <!-- Pagination -->
+                    <div class="pagination">
+                        <button class="pagination-btn" id="btnPrevPage" disabled>
+                            <svg viewBox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 1L2 4.5L6 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Trước
+                        </button>
+
+                        <div class="pagination-pages" id="paginationPages">
+                            <!-- [GIAI ĐOẠN 2] Render động từ API -->
+                        </div>
+
+                        <button class="pagination-btn" id="btnNextPage">
+                            Tiếp
+                            <svg viewBox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 1L7 4.5L3 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        var API = '/api/mon-hoc';
+        var tbody = document.getElementById('monHocTbody');
+        var paginationInfo = document.getElementById('paginationInfo');
+        var paginationPages = document.getElementById('paginationPages');
+        var btnPrev = document.getElementById('btnPrevPage');
+        var btnNext = document.getElementById('btnNextPage');
+
+        var state = { page: 0, size: 10, tongTrang: 0, tongPhanTu: 0 };
+        var SO_TIN_CHI_TOI_DA = 12;
+
+        function getParams() {
+            var keywordInput = document.getElementById('searchKeyword');
+            var keyword = keywordInput ? keywordInput.value.trim() : '';
+            var khoaSelect = document.getElementById('filterKhoa');
+            var maKhoa = khoaSelect ? khoaSelect.value : '';
+            var soTinChiSelect = document.getElementById('filterSoTinChi');
+            var soTinChi = soTinChiSelect ? soTinChiSelect.value : '';
+            return {
+                keyword: keyword || null,
+                maKhoa: maKhoa ? parseInt(maKhoa, 10) : null,
+                soTinChi: soTinChi ? parseInt(soTinChi, 10) : null
+            };
+        }
+
+        function buildQuery(params, page, size) {
+            var q = '?page=' + (page || 0) + '&size=' + (size || 10);
+            if (params.keyword) q += '&keyword=' + encodeURIComponent(params.keyword);
+            if (params.maKhoa) q += '&maKhoa=' + params.maKhoa;
+            if (params.soTinChi) q += '&soTinChi=' + params.soTinChi;
+            return q;
+        }
+
+        function formatTime(instantStr) {
+            if (!instantStr) return '';
+            var d = new Date(instantStr);
+            return ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear();
+        }
+
+        function renderTable(danhSach) {
+            tbody.innerHTML = '';
+            if (!danhSach || danhSach.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px 24px;color:#94A3B8;font-size:14px;">Chưa có dữ liệu môn học.</td></tr>';
+                return;
+            }
+            for (var i = 0; i < danhSach.length; i++) {
+                var r = danhSach[i];
+                var tr = document.createElement('tr');
+                tr.setAttribute('data-id', r.ma);
+                tr.innerHTML =
+                    '<td><span class="subject-code">' + (r.maDinhDanh || '—') + '</span></td>' +
+                    '<td><span class="subject-name">' + (r.ten || '—') + '</span></td>' +
+                    '<td><span class="dept-badge">' + (r.tenKhoa || '—') + '</span></td>' +
+                    '<td><span class="credit-badge">' + (r.soTinChi || '—') + ' tín chỉ</span></td>' +
+                    '<td><div class="action-btns">' +
+                        '<button type="button" class="btn-icon btn-edit" title="Sửa" data-id="' + r.ma + '">' +
+                            '<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+                                '<path d="M11.5 2.5L13.5 4.5M2 14L3 10.5L12 1.5L14.5 4L5.5 13L2 14Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+                            '</svg>' +
+                        '</button>' +
+                        '<button type="button" class="btn-icon btn-delete" title="Xóa" data-id="' + r.ma + '">' +
+                            '<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+                                '<path d="M3 4H13M5.5 4V2.5H10.5V4M6 7V11.5M10 7V11.5M4.5 4L5.5 13H10.5L11.5 4H4.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+                            '</svg>' +
+                        '</button>' +
+                    '</div></td>';
+                tbody.appendChild(tr);
+            }
+            tbody.querySelectorAll('.btn-edit').forEach(function(btn) {
+                btn.addEventListener('click', function() { window.suaMonHoc(parseInt(this.getAttribute('data-id'), 10)); });
+            });
+            tbody.querySelectorAll('.btn-delete').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var ma = parseInt(this.getAttribute('data-id'), 10);
+                    if (confirm('Bạn có chắc muốn xóa môn học này?')) { window.xoaMonHoc(ma); }
+                });
+            });
+        }
+
+        function renderPagination() {
+            var from = state.tongPhanTu === 0 ? 0 : state.page * state.size + 1;
+            var to = Math.min((state.page + 1) * state.size, state.tongPhanTu);
+            if (paginationInfo) {
+                paginationInfo.textContent = 'Hiển thị ' + from + '-' + to + ' trong ' + state.tongPhanTu + ' môn học';
+            }
+            if (paginationPages) {
+                paginationPages.innerHTML = '';
+                var total = state.tongTrang;
+                if (total <= 1) { if (btnPrev) btnPrev.disabled = true; if (btnNext) btnNext.disabled = true; return; }
+                if (btnPrev) btnPrev.disabled = state.page === 0;
+                if (btnNext) btnNext.disabled = state.page >= total - 1;
+                for (var p = 0; p < total; p++) {
+                    var b = document.createElement('button');
+                    b.type = 'button';
+                    b.className = 'pagination-page-btn' + (p === state.page ? ' active' : '');
+                    b.textContent = p + 1;
+                    b.addEventListener('click', (function(pp){ return function(){ loadData(pp); }; })(p));
+                    paginationPages.appendChild(b);
+                }
+            }
+        }
+
+        function loadData(page) {
+            state.page = page !== undefined ? page : 0;
+            var params = getParams();
+            var url = API + buildQuery(params, state.page, state.size);
+            fetch(url).then(function(r){ return r.json(); }).then(function(result) {
+                if (!result.success || !result.data) return;
+                var d = result.data;
+                state.tongTrang = d.tongTrang || 0;
+                state.tongPhanTu = d.tongPhanTu || 0;
+                renderTable(d.danhSach || []);
+                renderPagination();
+            }).catch(function() {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px 24px;color:#EF4444;font-size:14px;">Không tải được dữ liệu.</td></tr>';
+            });
+        }
+
+        // Search on Enter
+        var searchInput = document.getElementById('searchKeyword');
+        if (searchInput) {
+            searchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') loadData(0);
+            });
+        }
+
+        // Load khoa options
+        var khoaSelect = document.getElementById('filterKhoa');
+        if (khoaSelect) {
+            fetch('/api/khoa/tat-ca').then(function(r){ return r.json(); }).then(function(res) {
+                if (res.data) res.data.forEach(function(k) {
+                    var o = document.createElement('option');
+                    o.value = k.ma;
+                    o.textContent = k.ten;
+                    khoaSelect.appendChild(o);
+                });
+            }).catch(function() {});
+            // Filter khoa onChange
+            khoaSelect.addEventListener('change', function() {
+                state.page = 0;
+                loadData(0);
+            });
+        }
+
+        // Filter soTinChi onChange
+        var soTinChiSelect = document.getElementById('filterSoTinChi');
+        if (soTinChiSelect) {
+            soTinChiSelect.addEventListener('change', function() {
+                state.page = 0;
+                loadData(0);
+            });
+        }
+
+        // Nút "Xóa bộ lọc"
+        var btnXoaBoLoc = document.getElementById('btnXoaBoLoc');
+        if (btnXoaBoLoc) {
+            btnXoaBoLoc.addEventListener('click', function() {
+                // Reset filter khoa
+                var khoaSelect = document.getElementById('filterKhoa');
+                if (khoaSelect) khoaSelect.value = '';
+                // Reset filter soTinChi
+                if (soTinChiSelect) soTinChiSelect.value = '';
+                // Reset search
+                var searchInput = document.getElementById('searchKeyword');
+                if (searchInput) searchInput.value = '';
+                // Reload data
+                state.page = 0;
+                loadData(0);
+            });
+        }
+
+        if (btnPrev) btnPrev.addEventListener('click', function() { if (state.page > 0) loadData(state.page - 1); });
+        if (btnNext) btnNext.addEventListener('click', function() { if (state.page < state.tongTrang - 1) loadData(state.page + 1); });
+
+        window.suaMonHoc = function(ma) { window.openModalSua(ma); };
+        window.xoaMonHoc = function(ma) {
+            if (!confirm('Bạn có chắc muốn xóa môn học này?\n\nHành động không thể hoàn tác.')) return;
+            fetch(API + '/' + ma, { method: 'DELETE', headers: { 'Content-Type': 'application/json' } })
+                .then(function(r){ return r.json(); })
+                .then(function(result) {
+                    if (result.success) { alert('Xóa môn học thành công.'); loadData(state.page); }
+                    else { alert('Lỗi: ' + (result.message || 'Không xác định.')); }
+                }).catch(function() { alert('Lỗi khi xóa.'); });
+        };
+
+        loadData(0);
+
+        // ====== MODAL TẠO MÔN HỌC ======
+        function initModalTao() {
+            var modal = document.getElementById('modalTaoMonHoc');
+            var btnOpen = document.getElementById('btnThemMonHoc');
+            var btnClose = document.getElementById('btnDongModalTao');
+            var btnHuy = document.getElementById('btnHuyTao');
+            var form = document.getElementById('formTaoMonHoc');
+            var msgEl = document.getElementById('formTaoMessage');
+            if (!modal || !btnOpen || !form || !msgEl) { return; }
+
+            var elTaoTc = document.getElementById('tao_soTinChi');
+            if (elTaoTc) {
+                elTaoTc.setAttribute('min', '1');
+                elTaoTc.setAttribute('max', String(SO_TIN_CHI_TOI_DA));
+            }
+
+            function showModal() { modal.removeAttribute('hidden'); }
+            function hideModal() { modal.setAttribute('hidden', ''); form.reset(); showMsg(''); }
+            function showMsg(text, isError) {
+                msgEl.textContent = text;
+                msgEl.className = 'form-message ' + (isError ? 'error' : 'success');
+                msgEl.style.display = text ? 'block' : 'none';
+            }
+            function loadKhoaForTao() {
+                var sel = document.getElementById('tao_maKhoa');
+                if (!sel) return;
+                sel.innerHTML = '<option value="">-- Chọn khoa --</option>';
+                fetch('/api/khoa/tat-ca').then(function(r){ return r.json(); }).then(function(res) {
+                    if (res.data) res.data.forEach(function(k) {
+                        var o = document.createElement('option');
+                        o.value = k.ma; o.textContent = k.ten; sel.appendChild(o);
+                    });
+                }).catch(function() {});
+            }
+
+            btnOpen.addEventListener('click', function() { showMsg(''); form.reset(); loadKhoaForTao(); showModal(); });
+            if (btnClose) btnClose.addEventListener('click', hideModal);
+            if (btnHuy) btnHuy.addEventListener('click', hideModal);
+            modal.addEventListener('click', function(e) { if (e.target === modal) hideModal(); });
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                showMsg('');
+                var maDDEl = document.getElementById('tao_maDinhDanh');
+                var tenEl = document.getElementById('tao_ten');
+                var soTinChiEl = document.getElementById('tao_soTinChi');
+                var maKhoaEl = document.getElementById('tao_maKhoa');
+                if (!maDDEl || !tenEl || !soTinChiEl || !maKhoaEl) { showMsg('Lỗi: Không tìm thấy các trường form.', true); return; }
+                var body = {
+                    maDinhDanh: maDDEl.value.trim(),
+                    ten: tenEl.value.trim(),
+                    soTinChi: parseInt(soTinChiEl.value, 10) || null,
+                    maKhoa: parseInt(maKhoaEl.value, 10) || null
+                };
+                if (!body.maDinhDanh || !body.ten) { showMsg('Mã và tên môn học không được trống.', true); return; }
+                if (body.soTinChi == null || body.soTinChi < 1 || body.soTinChi > SO_TIN_CHI_TOI_DA) {
+                    showMsg('Số tín chỉ phải từ 1 đến ' + SO_TIN_CHI_TOI_DA + '.', true);
+                    return;
+                }
+                var btn = form.querySelector('button[type="submit"]');
+                if (!btn) { showMsg('Lỗi: Không tìm thấy nút submit.', true); return; }
+                btn.disabled = true; btn.textContent = 'Đang lưu...';
+
+                fetch(API, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                }).then(function(r){ return r.json().then(function(d){ return { ok: r.ok, data: d }; }); })
+                .then(function(result) {
+                    if (result.ok && result.data && result.data.success) {
+                        showMsg(result.data.message || 'Tạo môn học thành công.', false);
+                        if (window.reloadMonHocTable) window.reloadMonHocTable();
+                        setTimeout(function() { hideModal(); }, 1000);
+                    } else {
+                        var errorMsg = 'Có lỗi xảy ra.';
+                        if (result.data && result.data.message) { errorMsg = result.data.message; }
+                        showMsg(errorMsg, true);
+                    }
+                }).catch(function() { showMsg('Lỗi kết nối.', true); })
+                .finally(function() { btn.disabled = false; btn.textContent = 'Lưu môn học'; });
+            });
+        }
+
+        // ====== MODAL SỬA MÔN HỌC ======
+        function initModalSua() {
+            var modal = document.getElementById('modalSuaMonHoc');
+            var btnClose = document.getElementById('btnDongModalSua');
+            var btnHuy = document.getElementById('btnHuySua');
+            var form = document.getElementById('formSuaMonHoc');
+            var msgEl = document.getElementById('formSuaMessage');
+            if (!modal || !form || !msgEl) { return; }
+
+            var elSuaTc = document.getElementById('sua_soTinChi');
+            if (elSuaTc) {
+                elSuaTc.setAttribute('min', '1');
+                elSuaTc.setAttribute('max', String(SO_TIN_CHI_TOI_DA));
+            }
+
+            function showModal() { modal.removeAttribute('hidden'); }
+            function hideModal() { modal.setAttribute('hidden', ''); form.reset(); showMsg(''); }
+            function showMsg(text, isError) {
+                msgEl.textContent = text;
+                msgEl.className = 'form-message ' + (isError ? 'error' : 'success');
+                msgEl.style.display = text ? 'block' : 'none';
+            }
+            function loadKhoaForSua(selectedMa) {
+                var sel = document.getElementById('sua_maKhoa');
+                if (!sel) return;
+                sel.innerHTML = '<option value="">-- Chọn khoa --</option>';
+                fetch('/api/khoa/tat-ca').then(function(r){ return r.json(); }).then(function(res) {
+                    if (res.data) res.data.forEach(function(k) {
+                        var o = document.createElement('option');
+                        o.value = k.ma; o.textContent = k.ten;
+                        if (selectedMa && k.ma == selectedMa) o.selected = true;
+                        sel.appendChild(o);
+                    });
+                }).catch(function() {});
+            }
+
+            if (btnClose) btnClose.addEventListener('click', hideModal);
+            if (btnHuy) btnHuy.addEventListener('click', hideModal);
+            modal.addEventListener('click', function(e) { if (e.target === modal) hideModal(); });
+
+            window.openModalSua = function(ma) {
+                showMsg(''); form.reset();
+                fetch(API + '/' + ma).then(function(r){ return r.json(); }).then(function(result) {
+                    if (!result.success || !result.data) { showMsg('Không tìm thấy môn học.', true); return; }
+                    var d = result.data;
+                    var f; f = document.getElementById('sua_ma'); if (f) f.value = d.ma || '';
+                    f = document.getElementById('sua_maDinhDanh'); if (f) f.value = d.maDinhDanh || '';
+                    f = document.getElementById('sua_tenMonHoc'); if (f) f.value = d.ten || '';
+                    f = document.getElementById('sua_soTinChi'); if (f) f.value = d.soTinChi || '';
+                    loadKhoaForSua(d.maKhoa); showModal();
+                }).catch(function() { showMsg('Lỗi tải dữ liệu.', true); });
+            };
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                showMsg('');
+                var ma = document.getElementById('sua_ma').value;
+                var body = {
+                    ten: document.getElementById('sua_tenMonHoc').value.trim(),
+                    maDinhDanh: document.getElementById('sua_maDinhDanh').value.trim(),
+                    soTinChi: parseInt(document.getElementById('sua_soTinChi').value, 10) || null,
+                    maKhoa: parseInt(document.getElementById('sua_maKhoa').value, 10) || null
+                };
+                if (body.soTinChi != null && (body.soTinChi < 1 || body.soTinChi > SO_TIN_CHI_TOI_DA)) {
+                    showMsg('Số tín chỉ phải từ 1 đến ' + SO_TIN_CHI_TOI_DA + '.', true);
+                    return;
+                }
+                var btn = form.querySelector('button[type="submit"]');
+                btn.disabled = true; btn.textContent = 'Đang lưu...';
+                fetch(API + '/' + ma, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                }).then(function(r){ return r.json().then(function(d){ return { ok: r.ok, data: d }; }); })
+                .then(function(result) {
+                    if (result.ok && result.data && result.data.success) {
+                        showMsg(result.data.message || 'Cập nhật thành công.', false);
+                        if (window.reloadMonHocTable) window.reloadMonHocTable();
+                        setTimeout(function() { hideModal(); }, 1000);
+                    } else {
+                        showMsg(result.data && result.data.message ? result.data.message : 'Có lỗi xảy ra.', true);
+                    }
+                }).catch(function() { showMsg('Lỗi kết nối.', true); })
+                .finally(function() { btn.disabled = false; btn.textContent = 'Lưu thay đổi'; });
+            });
+        }
+
+        window.reloadMonHocTable = function() { loadData(0); };
+
+        // Gọi init khi DOM sẵn sàng
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() { initModalTao(); initModalSua(); });
+        } else {
+            initModalTao();
+            initModalSua();
+        }
+    })();
+    </script>
+
+    <!-- Modal Tạo Môn học -->
+    <div id="modalTaoMonHoc" class="modal-overlay" role="dialog" aria-modal="true" hidden>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">Thêm Môn học Mới</h2>
+                    <button type="button" class="modal-close" id="btnDongModalTao" aria-label="Đóng">&times;</button>
+                </div>
+                <form id="formTaoMonHoc" class="modal-form">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="tao_maDinhDanh">Mã môn học <span class="required">*</span></label>
+                            <input type="text" id="tao_maDinhDanh" required placeholder="vd: MATH101">
+                        </div>
+                        <div class="form-group">
+                            <label for="tao_ten">Tên môn học <span class="required">*</span></label>
+                            <input type="text" id="tao_ten" required placeholder="vd: Toán cao cấp">
+                        </div>
+                        <div class="form-group">
+                            <label for="tao_soTinChi">Số tín chỉ <span class="required">*</span></label>
+                            <input type="number" id="tao_soTinChi" required min="1" max="12" placeholder="vd: 3 (tối đa 12)">
+                        </div>
+                        <div class="form-group">
+                            <label for="tao_maKhoa">Khoa</label>
+                            <select id="tao_maKhoa">
+                                <option value="">-- Chọn khoa --</option>
+                            </select>
+                        </div>
+                        <div id="formTaoMessage" class="form-message" style="display: none;"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn-secondary" id="btnHuyTao">Hủy</button>
+                        <button type="submit" class="btn-primary">Lưu môn học</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Sửa Môn học -->
+    <div id="modalSuaMonHoc" class="modal-overlay" role="dialog" aria-modal="true" hidden>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">Sửa Môn học</h2>
+                    <button type="button" class="modal-close" id="btnDongModalSua" aria-label="Đóng">&times;</button>
+                </div>
+                <form id="formSuaMonHoc" class="modal-form">
+                    <div class="modal-body">
+                        <input type="hidden" id="sua_ma">
+                        <div class="form-group">
+                            <label for="sua_maDinhDanh">Mã môn học</label>
+                            <input type="text" id="sua_maDinhDanh" placeholder="vd: MATH101">
+                        </div>
+                        <div class="form-group">
+                            <label for="sua_tenMonHoc">Tên môn học <span class="required">*</span></label>
+                            <input type="text" id="sua_tenMonHoc" required placeholder="vd: Toán cao cấp">
+                        </div>
+                        <div class="form-group">
+                            <label for="sua_soTinChi">Số tín chỉ</label>
+                            <input type="number" id="sua_soTinChi" min="1" max="12" placeholder="vd: 3 (tối đa 12)">
+                        </div>
+                        <div class="form-group">
+                            <label for="sua_maKhoa">Khoa</label>
+                            <select id="sua_maKhoa">
+                                <option value="">-- Chọn khoa --</option>
+                            </select>
+                        </div>
+                        <div id="formSuaMessage" class="form-message" style="display: none;"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn-secondary" id="btnHuySua">Hủy</button>
+                        <button type="submit" class="btn-primary">Lưu thay đổi</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 16px;
+        }
+        .modal-overlay[hidden] { display: none !important; }
+        .modal-dialog { width: 100%; max-width: 480px; max-height: 90vh; overflow: auto; }
+        .modal-content { background: #fff; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid #E2E8F0; }
+        .modal-title { font-size: 20px; font-weight: 700; color: #0F172A; margin: 0; }
+        .modal-close { background: none; border: none; font-size: 28px; color: #64748B; cursor: pointer; line-height: 1; padding: 0 4px; }
+        .modal-close:hover { color: #0F172A; }
+        .modal-form .modal-body { padding: 24px; }
+        .modal-form .form-group { margin-bottom: 16px; }
+        .modal-form .form-group label { display: block; font-size: 14px; font-weight: 600; color: #334155; margin-bottom: 6px; }
+        .modal-form input, .modal-form select { width: 100%; padding: 10px 12px; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 15px; box-sizing: border-box; }
+        .modal-form .required { color: #DC2626; }
+        .modal-footer { display: flex; justify-content: flex-end; gap: 12px; padding: 16px 24px; border-top: 1px solid #E2E8F0; }
+        .btn-secondary { padding: 10px 20px; background: #F1F5F9; color: #475569; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        .btn-secondary:hover { background: #E2E8F0; }
+        .form-message { padding: 10px 12px; border-radius: 8px; margin-top: 12px; font-size: 14px; }
+        .form-message.error { background: #FEE2E2; color: #B91C1C; }
+        .form-message.success { background: #D1FAE5; color: #065F46; }
+    </style>
+</body>
+</html>

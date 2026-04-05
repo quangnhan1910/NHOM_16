@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="${caThi.tenCaThi != null ? caThi.tenCaThi + ' – Thao tác' : 'Thao tác Ca Thi'} + ' | UniExam'">Thao tác Ca Thi</title>
+  <link rel="stylesheet" th:href="@{/css/admin/thao-tac.css}"/>
+  <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+</head>
+<body>
+
+<div class="admin-shell">
+  <aside th:replace="~{fragments/admin-sidebar :: sidebar (activeNav='ca-thi')}"></aside>
+  <div class="admin-main">
+<div class="page-layout">
+
+  <!-- ═══ TOP NAVBAR ═══ -->
+  <header class="top-nav">
+    <div class="top-nav-left">
+      <!-- Brand -->
+      <a href="/admin/ca-thi" class="top-nav-brand">
+        <div class="top-nav-logo"></div>
+        <span class="top-nav-title">Hệ thống Khảo thí</span>
+      </a>
+      <!-- Tabs -->
+      <nav class="top-nav-tabs">
+        <a th:href="@{/admin/ca-thi/{ma}/thao-tac(ma=${caThi.ma})}"
+           class="top-nav-tab active">Thao tác</a>
+      </nav>
+    </div>
+    <!-- Search + Icon -->
+    <div class="top-nav-right">
+      <form th:action="@{/admin/ca-thi/{ma}/thao-tac(ma=${caThi.ma})}"
+            method="get" style="display:contents;">
+        <input type="hidden" name="daCheckIn"
+               th:if="${daCheckInFilter != null}" th:value="${daCheckInFilter}"/>
+        <div class="search-bar">
+          <span class="search-bar-icon">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+              <circle cx="6.5" cy="6.5" r="5" stroke="#64748B" stroke-width="1.5"/>
+              <line x1="10.5" y1="10.5" x2="14" y2="14" stroke="#64748B" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <input type="text" name="tuKhoa"
+                 th:value="${tuKhoa}"
+                 placeholder="Tìm kiếm sinh viên..."/>
+        </div>
+        <button type="submit" class="icon-btn" title="Tìm kiếm">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M2 4h12M4 8h8M6 12h4" stroke="#334155" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </form>
+    </div>
+  </header>
+
+  <!-- ═══ MAIN CONTENT ═══ -->
+  <main class="main-wrapper">
+    <div class="content-container">
+
+      <!-- Flash Messages -->
+      <div th:if="${successMessage}" class="alert alert-success" role="alert">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="8" stroke="#15803D" stroke-width="1.5"/><path d="M5.5 9l2.5 2.5 4.5-5" stroke="#15803D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span th:text="${successMessage}"></span>
+      </div>
+      <div th:if="${errorMessage}" class="alert alert-error" role="alert">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="8" stroke="#B91C1C" stroke-width="1.5"/><line x1="9" y1="5.5" x2="9" y2="9.5" stroke="#B91C1C" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="12" r="0.75" fill="#B91C1C"/></svg>
+        <span th:text="${errorMessage}"></span>
+      </div>
+
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb" aria-label="Đường dẫn">
+        <a href="/admin/ca-thi">Quản lý ca thi</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-current">Danh sách dự thi</span>
+      </nav>
+
+      <!-- ── Exam Info Card ── -->
+      <div class="exam-info-card">
+        <div class="exam-info-left">
+          <!-- Mã ca thi -->
+          <div class="exam-code-badge"
+               th:text="'Mã ca: CT-'
+                 + ${caThi.taoLuc != null
+                     ? #temporals.format(caThi.taoLuc.atZone(T(java.time.ZoneId).of('Asia/Ho_Chi_Minh')), 'yyyy')
+                     : '0000'}
+                 + '-' + ${#numbers.formatInteger(caThi.ma, 3)}">
+            Mã ca: CT-2024-001
+          </div>
+          <!-- Tên môn / đề thi -->
+          <div class="exam-name"
+               th:text="${caThi.deThi != null ? caThi.deThi.tenDeThi : 'Chưa có đề thi'}">
+            Lập trình hướng đối tượng
+          </div>
+          <!-- Meta: Khoa -->
+          <div class="exam-meta"
+               th:text="'Khoa ' + ${caThi.khoa != null ? caThi.khoa.ten : '—'}">
+            Khoa Công nghệ thông tin
+          </div>
+        </div>
+
+        <div class="exam-info-right">
+          <!-- Chip: Thời gian -->
+          <div class="info-chip">
+            <div class="info-chip-icon">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <rect x="1.5" y="3" width="15" height="13.5" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
+                <line x1="5.5" y1="1.5" x2="5.5" y2="4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <line x1="12.5" y1="1.5" x2="12.5" y2="4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <line x1="1.5" y1="7" x2="16.5" y2="7" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <div>
+              <div class="info-chip-label">Thời gian</div>
+              <div class="info-chip-value"
+                   th:text="${caThi.thoiGianBatDau != null
+                     ? #temporals.format(caThi.thoiGianBatDau.atZone(T(java.time.ZoneId).of('Asia/Ho_Chi_Minh')), 'HH:mm, dd/MM/yyyy')
+                     : '—'}">08:00, 20/10/2024
+              </div>
+            </div>
+          </div>
+
+          <!-- Chip: Phòng thi -->
+          <div class="info-chip">
+            <div class="info-chip-icon">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <rect x="1.5" y="1.5" width="15" height="15" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
+                <rect x="5" y="8" width="3.5" height="7.5" stroke="currentColor" stroke-width="1.5"/>
+                <rect x="9.5" y="5" width="3.5" height="4" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <div>
+              <div class="info-chip-label">Phòng thi</div>
+              <div class="info-chip-value"
+                   th:text="${caThi.diaDiem != null and !#strings.isEmpty(caThi.diaDiem)
+                     ? caThi.diaDiem : 'Chưa xác định'}">Phòng 402 – C1
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Toolbar: Filter tabs + Action buttons ── -->
+      <div class="toolbar">
+        <!-- Segment tabs -->
+        <div class="segment-tabs" role="tablist">
+          <a th:href="@{/admin/ca-thi/{ma}/thao-tac(ma=${caThi.ma},page=0,tuKhoa=${tuKhoa})}"
+             th:classappend="${daCheckInFilter == null} ? ' active' : ''"
+             class="segment-tab" role="tab">
+            Tất cả
+            <span th:text="'(' + ${thongKe.tongSo()} + ')'"></span>
+          </a>
+          <a th:href="@{/admin/ca-thi/{ma}/thao-tac(ma=${caThi.ma},page=0,daCheckIn=true,tuKhoa=${tuKhoa})}"
+             th:classappend="${daCheckInFilter != null and daCheckInFilter} ? ' active' : ''"
+             class="segment-tab" role="tab">
+            Đã Check-in
+            <span th:text="'(' + ${thongKe.soCheckIn()} + ')'"></span>
+          </a>
+          <a th:href="@{/admin/ca-thi/{ma}/thao-tac(ma=${caThi.ma},page=0,daCheckIn=false,tuKhoa=${tuKhoa})}"
+             th:classappend="${daCheckInFilter != null and !daCheckInFilter} ? ' active' : ''"
+             class="segment-tab" role="tab">
+            Chưa Check-in
+            <span th:text="'(' + ${thongKe.soChuaCheckIn()} + ')'"></span>
+          </a>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="toolbar-actions">
+          <!-- Nhập Excel (placeholder) -->
+          <button type="button" class="btn-outline" title="Tính năng đang phát triển" disabled
+                  style="opacity:.6; cursor:not-allowed;">
+            <svg width="14" height="16" viewBox="0 0 14 16" fill="none">
+              <rect x="1" y="1" width="12" height="14" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
+              <line x1="4" y1="6" x2="10" y2="6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+              <line x1="4" y1="9" x2="10" y2="9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+              <line x1="4" y1="12" x2="7" y2="12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+            Nhập Excel
+          </button>
+          <!-- Thêm sinh viên -->
+          <button type="button" class="btn-primary" onclick="openModal()">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <line x1="7" y1="1" x2="7" y2="13" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+              <line x1="1" y1="7" x2="13" y2="7" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            Thêm sinh viên
+          </button>
+        </div>
+      </div>
+
+      <!-- ── Student Table ── -->
+      <div class="table-card">
+        <table class="student-table" aria-label="Danh sách sinh viên dự thi">
+          <thead>
+            <tr>
+              <th scope="col" style="width:60px;">STT</th>
+              <th scope="col" style="width:130px;">MSSV</th>
+              <th scope="col">Họ và Tên</th>
+              <th scope="col" style="width:180px;">Lớp</th>
+              <th scope="col" class="col-status" style="width:160px;">Trạng thái</th>
+              <th scope="col" class="col-action" style="width:100px;">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <!-- Empty state -->
+            <tr th:if="${#lists.isEmpty(dangKyThis)}">
+              <td colspan="6">
+                <div class="empty-state">
+                  <div class="empty-state-icon">👤</div>
+                  <h3>Chưa có sinh viên nào</h3>
+                  <p>Nhấn "Thêm sinh viên" để thêm vào danh sách dự thi.</p>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Data rows -->
+            <tr th:each="dk, stat : ${dangKyThis}"
+                th:id="'row-dk-' + ${dk.ma}">
+
+              <!-- STT -->
+              <td class="col-stt"
+                  th:text="${(currentPage * 10) + stat.count}"></td>
+
+              <!-- MSSV -->
+              <td class="col-mssv"
+                  th:text="${dk.sinhVien != null ? dk.sinhVien.maSinhVien : '—'}"></td>
+
+              <!-- Họ tên -->
+              <td class="col-hoten"
+                  th:text="${dk.sinhVien != null and dk.sinhVien.nguoiDung != null
+                    ? dk.sinhVien.nguoiDung.hoTen : '—'}"></td>
+
+              <!-- Lớp / Chuyên ngành -->
+              <td class="col-lop"
+                  th:text="${dk.sinhVien != null and dk.sinhVien.chuyenNganh != null
+                    ? dk.sinhVien.chuyenNganh.maDinhDanh : '—'}"></td>
+
+              <!-- Trạng thái check-in -->
+              <td class="col-status">
+                <span th:if="${dk.daCheckIn}" class="badge badge-ready">
+                  <span class="badge-dot"></span>Sẵn sàng
+                </span>
+                <span th:unless="${dk.daCheckIn}" class="badge badge-pending">
+                  <span class="badge-dot"></span>Chưa Check-in
+                </span>
+              </td>
+
+              <!-- Thao tác -->
+              <td class="col-action">
+                <div class="action-menu" th:id="'action-menu-' + ${dk.ma}">
+                  <button class="action-toggle"
+                          th:onclick="'toggleAction(' + ${dk.ma} + ')'"
+                          th:aria-label="'Thao tác với sinh viên ' + ${dk.sinhVien != null ? dk.sinhVien.maSinhVien : ''}"
+                          type="button">
+                    <svg width="4" height="16" viewBox="0 0 4 16" fill="none">
+                      <circle cx="2" cy="2"  r="1.5" fill="#94A3B8"/>
+                      <circle cx="2" cy="8"  r="1.5" fill="#94A3B8"/>
+                      <circle cx="2" cy="14" r="1.5" fill="#94A3B8"/>
+                    </svg>
+                  </button>
+
+                  <div class="action-dropdown" th:id="'action-drop-' + ${dk.ma}" role="menu">
+
+                    <!-- Check-in hoặc Hủy check-in -->
+                    <form th:action="@{/admin/ca-thi/{ma}/thao-tac/dang-ky/{mdk}/check-in(ma=${caThi.ma},mdk=${dk.ma})}"
+                          method="post">
+                      <input type="hidden" name="daCheckIn"
+                             th:if="${daCheckInFilter != null}" th:value="${daCheckInFilter}"/>
+                      <input type="hidden" name="tuKhoa" th:value="${tuKhoa}"/>
+                      <input type="hidden" name="page"   th:value="${currentPage}"/>
+                      <button type="submit"
+                              th:class="${dk.daCheckIn} ? 'action-dropdown-item item-undo' : 'action-dropdown-item item-checkin'"
+                              role="menuitem">
+                        <!-- Icon check-in -->
+                        <svg th:if="${!dk.daCheckIn}" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                          <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4"/>
+                          <path d="M4.5 8l2.5 2.5 4.5-5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <!-- Icon hủy -->
+                        <svg th:if="${dk.daCheckIn}" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                          <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4"/>
+                          <line x1="5.5" y1="5.5" x2="10.5" y2="10.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                          <line x1="10.5" y1="5.5" x2="5.5" y2="10.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                        </svg>
+                        <span th:text="${dk.daCheckIn} ? 'Hủy check-in' : 'Check-in'"></span>
+                      </button>
+                    </form>
+
+                    <div class="action-dropdown-divider"></div>
+
+                    <!-- Xóa khỏi danh sách -->
+                    <form th:action="@{/admin/ca-thi/{ma}/thao-tac/dang-ky/{mdk}/xoa(ma=${caThi.ma},mdk=${dk.ma})}"
+                          method="post"
+                          th:onsubmit="'return confirm(\'Xóa sinh viên ' + ${dk.sinhVien != null ? dk.sinhVien.maSinhVien : ''} + ' khỏi danh sách dự thi?\')'">
+                      <input type="hidden" name="daCheckIn"
+                             th:if="${daCheckInFilter != null}" th:value="${daCheckInFilter}"/>
+                      <input type="hidden" name="tuKhoa" th:value="${tuKhoa}"/>
+                      <input type="hidden" name="page"   th:value="${currentPage}"/>
+                      <button type="submit" class="action-dropdown-item item-delete" role="menuitem">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                          <polyline points="2 4 14 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                          <path d="M5.333 4V2.667h5.334V4M6.667 7.333v4M9.333 7.333v4M3.333 4l.667 9.333A1.333 1.333 0 0 0 5.333 14.667h5.334a1.333 1.333 0 0 0 1.333-1.334L12.667 4"
+                                stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Xóa khỏi danh sách
+                      </button>
+                    </form>
+
+                  </div>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+
+        <!-- Table Footer / Pagination -->
+        <div class="table-footer" th:unless="${#lists.isEmpty(dangKyThis)}">
+          <p class="pagination-info">
+            Hiển thị
+            <strong th:text="${fromIndex}">1</strong> -
+            <strong th:text="${toIndex}">10</strong>
+            trên tổng số
+            <strong th:text="${totalElements}">0</strong>
+            sinh viên
+          </p>
+
+          <nav class="pagination" aria-label="Phân trang">
+            <!-- Nút Trước -->
+            <a th:href="@{/admin/ca-thi/{ma}/thao-tac(ma=${caThi.ma},page=${currentPage-1},daCheckIn=${daCheckInFilter},tuKhoa=${tuKhoa})}"
+               th:classappend="${currentPage == 0} ? ' disabled' : ''"
+               class="page-btn page-btn-nav"
+               aria-label="Trang trước">
+              <svg width="5" height="8" viewBox="0 0 5 8" fill="none">
+                <path d="M4 1L1 4l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+
+            <!-- Các nút số trang -->
+            <th:block th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                      th:if="${totalPages > 0}">
+              <a th:if="${i == 0 or i == totalPages - 1 or (i >= currentPage - 2 and i <= currentPage + 2)}"
+                 th:href="@{/admin/ca-thi/{ma}/thao-tac(ma=${caThi.ma},page=${i},daCheckIn=${daCheckInFilter},tuKhoa=${tuKhoa})}"
+                 th:text="${i + 1}"
+                 th:classappend="${i == currentPage} ? ' current' : ''"
+                 class="page-btn page-btn-num"
+                 th:aria-current="${i == currentPage} ? 'page' : null">1</a>
+              <span th:if="${(i == 1 and currentPage > 3) or (i == totalPages - 2 and currentPage < totalPages - 4)}"
+                    class="page-btn">…</span>
+            </th:block>
+
+            <!-- Nút Sau -->
+            <a th:href="@{/admin/ca-thi/{ma}/thao-tac(ma=${caThi.ma},page=${currentPage+1},daCheckIn=${daCheckInFilter},tuKhoa=${tuKhoa})}"
+               th:classappend="${currentPage >= totalPages - 1} ? ' disabled' : ''"
+               class="page-btn page-btn-nav"
+               aria-label="Trang tiếp theo">
+              <svg width="5" height="8" viewBox="0 0 5 8" fill="none">
+                <path d="M1 1l3 3-3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- ── Stats Grid ── -->
+      <div class="stats-grid">
+        <!-- Tổng số thí sinh -->
+        <div class="stat-card stat-card-blue">
+          <div class="stat-label stat-label-blue">Tổng số thí sinh</div>
+          <div class="stat-value-row">
+            <div class="stat-value" th:text="${thongKe.tongSo()}">45</div>
+            <div class="stat-sub">sinh viên đã đăng ký</div>
+          </div>
+        </div>
+
+        <!-- Đã có mặt -->
+        <div class="stat-card stat-card-green">
+          <div class="stat-label stat-label-green">Đã có mặt</div>
+          <div class="stat-value-row">
+            <div class="stat-value" th:text="${thongKe.soCheckIn()}">0</div>
+            <div class="stat-sub"
+                 th:text="${thongKe.phanTramCheckIn()} + '% hoàn thành điểm danh'">0% hoàn thành điểm danh</div>
+          </div>
+        </div>
+
+        <!-- Số máy trống -->
+        <div class="stat-card stat-card-orange">
+          <div class="stat-label stat-label-orange">Số máy trống</div>
+          <div class="stat-value-row">
+            <div class="stat-value"
+                 th:text="${caThi.soLuongToiDa != null ? thongKe.soMayTrong() : '—'}">—</div>
+            <div class="stat-sub"
+                 th:text="${caThi.soLuongToiDa != null
+                   ? 'trên tổng ' + caThi.soLuongToiDa + ' máy tại phòng'
+                   : 'chưa xác định sức chứa'}">chưa xác định sức chứa</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quay lại -->
+      <div>
+        <a th:href="@{/admin/ca-thi/{ma}(ma=${caThi.ma})}" class="btn-back">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M10 4L6 8l4 4" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Quay lại
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer class="page-footer">
+    <div class="footer-inner">
+      <span class="footer-copy">© 2026 Hệ thống Quản lý Khảo thí</span>
+      <div class="footer-links">
+        <a href="#" class="footer-link">Hướng dẫn</a>
+        <a href="#" class="footer-link">Hỗ trợ kỹ thuật</a>
+        <a href="#" class="footer-link">Bảo mật</a>
+      </div>
+    </div>
+  </footer>
+
+</div>
+  </div>
+</div>
+
+<!-- ═══ MODAL – Thêm sinh viên ═══ -->
+<div class="modal-overlay" id="modal-them-sv" role="dialog" aria-modal="true"
+     aria-labelledby="modal-title">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modal-title">Thêm sinh viên vào danh sách</h2>
+      <button class="modal-close" onclick="closeModal()" type="button" aria-label="Đóng">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <line x1="3" y1="3" x2="15" y2="15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="15" y1="3" x2="3" y2="15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <form th:action="@{/admin/ca-thi/{ma}/thao-tac/them-sinh-vien(ma=${caThi.ma})}"
+          method="post">
+      <div class="modal-body">
+        <label class="modal-label" for="input-mssv">
+          Mã số sinh viên (MSSV)
+          <span style="color:#EF4444; margin-left:2px;">*</span>
+        </label>
+        <input type="text"
+               id="input-mssv"
+               name="maSinhVien"
+               class="modal-input"
+               placeholder="Nhập MSSV, ví dụ: 20201234"
+               autocomplete="off"
+               required/>
+        <p class="modal-hint">Sinh viên phải tồn tại trong hệ thống và chưa có trong ca thi này.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" onclick="closeModal()">Huỷ</button>
+        <button type="submit" class="btn-primary">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <line x1="7" y1="1" x2="7" y2="13" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="1" y1="7" x2="13" y2="7" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          Thêm sinh viên
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ═══ SCRIPTS ═══ -->
+<script>
+  /* ── Modal ── */
+  function openModal() {
+    document.getElementById('modal-them-sv').classList.add('open');
+    document.getElementById('input-mssv').focus();
+  }
+
+  function closeModal() {
+    document.getElementById('modal-them-sv').classList.remove('open');
+    document.getElementById('input-mssv').value = '';
+  }
+
+  /* Đóng modal khi click ra ngoài */
+  document.getElementById('modal-them-sv').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  /* Đóng modal bằng phím Escape */
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  /* ── Action dropdown ── */
+  function toggleAction(ma) {
+    var menu = document.getElementById('action-menu-' + ma);
+    var isOpen = menu.classList.contains('open');
+    document.querySelectorAll('.action-menu.open').forEach(function(m) {
+      m.classList.remove('open');
+    });
+    if (!isOpen) menu.classList.add('open');
+  }
+
+  /* Đóng dropdown khi click ra ngoài */
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.action-menu')) {
+      document.querySelectorAll('.action-menu.open').forEach(function(m) {
+        m.classList.remove('open');
+      });
+    }
+  });
+
+  /* Tự đóng flash message sau 5 giây */
+  setTimeout(function() {
+    document.querySelectorAll('.alert').forEach(function(el) {
+      el.style.transition = 'opacity 0.4s';
+      el.style.opacity    = '0';
+      setTimeout(function() { el.remove(); }, 400);
+    });
+  }, 5000);
+</script>
+
+</body>
+</html>
