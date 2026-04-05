@@ -1,0 +1,831 @@
+/* ========================================
+   Thống kê kết quả thi và Báo cáo
+   ======================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #F8FAFC;
+    color: #0F172A;
+}
+
+/* ========================================
+   MAIN CONTENT
+   ======================================== */
+.main-content {
+    display: flex;
+    flex-direction: column;
+    width: 1024px;
+    min-height: 729px;
+}
+
+/* ========================================
+   PAGE HEADER
+   ======================================== */
+.page-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 32px;
+    width: 1024px;
+    height: 64px;
+    background: #FFFFFF;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.page-title {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 28px;
+    color: #0F172A;
+}
+
+.header-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.header-right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+}
+
+/* ========================================
+   PAGE BODY
+   ======================================== */
+.page-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 32px;
+    gap: 32px;
+}
+
+/* ========================================
+   STATS CARDS ROW
+   ======================================== */
+.stats-cards-row {
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+    width: 960px;
+    height: 134px;
+}
+
+.stat-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 24px;
+    gap: 4px;
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.stat-label {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    color: #64748B;
+}
+
+.stat-value {
+    font-size: 30px;
+    font-weight: 900;
+    line-height: 36px;
+    color: #1A355B;
+}
+
+.stat-sub {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    color: #94A3B8;
+    margin-top: 2px;
+}
+
+.stat-card#cardTyLeDat .stat-value {
+    color: #1A355B;
+}
+
+.stat-card#cardTyLeDat .stat-sub {
+    font-size: 12px;
+    color: #16A34A;
+    font-weight: 700;
+}
+
+.stat-card#cardCauKho .stat-value {
+    color: #EF4444;
+}
+
+/* Progress bar cho ti le dat */
+.stat-progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #F1F5F9;
+    border-radius: 9999px;
+    overflow: hidden;
+    margin-top: 8px;
+}
+
+.stat-progress-fill {
+    height: 100%;
+    background: #22C55E;
+    border-radius: 9999px;
+    transition: width 0.5s ease;
+    max-width: 100%;
+}
+
+/* ========================================
+   EXAM SELECT SECTION
+   ======================================== */
+.exam-select-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    width: 960px;
+}
+
+.section-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.section-title-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 28px;
+    color: #0F172A;
+}
+
+.btn-xem-chi-tiet {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 16px;
+    background: transparent;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #1A355B;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.2s;
+}
+
+.btn-xem-chi-tiet:hover {
+    background: #F1F5F9;
+}
+
+/* ========================================
+   EXAM CARDS GRID
+   ======================================== */
+.exam-cards-grid {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    width: 960px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+}
+
+.exam-card {
+    flex: 1;
+    min-width: 280px;
+    max-width: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px;
+    gap: 4px;
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    position: relative;
+}
+
+.exam-card:hover {
+    border-color: #1A355B;
+    box-shadow: 0px 4px 12px rgba(26, 53, 91, 0.1);
+}
+
+.exam-card.active {
+    border-color: #1A355B;
+    border-width: 2px;
+    box-shadow: 0px 4px 16px rgba(26, 53, 91, 0.15);
+}
+
+.exam-card-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+}
+
+.exam-card-badge {
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 16px;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: #1A355B;
+}
+
+.exam-card-title {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
+    color: #0F172A;
+    margin-top: 4px;
+    width: 100%;
+}
+
+.exam-card-meta {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    padding-top: 7.5px;
+    width: 100%;
+}
+
+.exam-card-time {
+    font-size: 14px;
+    font-weight: 400;
+    color: #64748B;
+}
+
+.exam-card-room {
+    font-size: 14px;
+    font-weight: 400;
+    color: #64748B;
+}
+
+.exam-card-stats {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    padding-top: 8px;
+    width: 100%;
+}
+
+.exam-card-stat {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #0F172A;
+}
+
+.exam-card-stat-icon {
+    width: 10.5px;
+    height: 11.67px;
+    background: #64748B;
+}
+
+.exam-card-footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 8px;
+    width: 100%;
+}
+
+.exam-card-ty-le {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 9999px;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 12px;
+}
+
+.exam-card-ty-le .ty-le-badge-text {
+    text-transform: uppercase;
+}
+
+.badge-green {
+    background: #DCFCE7;
+    color: #15803D;
+}
+
+.badge-orange {
+    background: #FFEDD5;
+    color: #C2410C;
+}
+
+.badge-red {
+    background: #FEE2E2;
+    color: #DC2626;
+}
+
+.badge-grey {
+    background: #F1F5F9;
+    color: #64748B;
+}
+
+.exam-card-cau-kho {
+    font-size: 12px;
+    font-weight: 400;
+    color: #94A3B8;
+}
+
+/* ========================================
+   RESULTS TABLE SECTION
+   ======================================== */
+.results-table-section {
+    width: 960px;
+}
+
+.results-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.results-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.results-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 28px;
+    color: #0F172A;
+}
+
+.card-hint {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    color: #64748B;
+}
+
+.results-header-right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-export-small {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 8px 16px;
+    gap: 8px;
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #0F172A;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.2s;
+}
+
+.btn-export-small:hover {
+    background: #F8FAFC;
+}
+
+.btn-print {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 8px 16px;
+    gap: 8px;
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #0F172A;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.2s;
+}
+
+.btn-print:hover {
+    background: #F8FAFC;
+}
+
+/* ========================================
+   RESULTS TABLE
+   ======================================== */
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.results-table thead {
+    background: #F8FAFC;
+}
+
+.results-table thead tr {
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.results-table th {
+    padding: 16px 24px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 16px;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: #64748B;
+}
+
+.results-table th:last-child {
+    text-align: right;
+}
+
+.results-table tbody tr {
+    border-bottom: 1px solid #E2E8F0;
+    transition: background 0.2s;
+}
+
+.results-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.results-table tbody tr:hover {
+    background: #F8FAFC;
+}
+
+.results-table td {
+    padding: 20px 24px;
+    font-size: 14px;
+    line-height: 20px;
+    color: #314158;
+    vertical-align: middle;
+}
+
+.results-table td:last-child {
+    text-align: right;
+}
+
+/* ========================================
+   XEP LOAI BADGE
+   ======================================== */
+.xeploai-badge {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 9999px;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 12px;
+    text-transform: uppercase;
+}
+
+.xeploai-badge.big {
+    font-size: 12px;
+    padding: 6px 12px;
+}
+
+.xl-xuat-sac { background: #DCFCE7; color: #15803D; }
+.xl-kha { background: #DBEAFE; color: #1D4ED8; }
+.xl-trung-binh { background: #FEF9C3; color: #A16207; }
+.xl-yeu { background: #FFEDD5; color: #C2410C; }
+.xl-kem { background: #FEE2E2; color: #DC2626; }
+.xl-default { background: #F1F5F9; color: #64748B; }
+
+/* Dat/Rot badge */
+.dat-badge { background: #DCFCE7; color: #15803D; padding: 3px 10px; border-radius: 4px; font-size: 12px; font-weight: 700; }
+.rot-badge { background: #FEE2E2; color: #DC2626; padding: 3px 10px; border-radius: 4px; font-size: 12px; font-weight: 700; }
+
+/* View detail button */
+.btn-view-detail {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 6px 12px;
+    gap: 4px;
+    background: rgba(26, 53, 91, 0.1);
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #1A355B;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.2s;
+}
+
+.btn-view-detail:hover {
+    background: rgba(26, 53, 91, 0.2);
+}
+
+/* ========================================
+   RESULTS FOOTER
+   ======================================== */
+.results-footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px;
+    border-top: 1px solid #E2E8F0;
+}
+
+.results-count {
+    font-size: 14px;
+    font-weight: 400;
+    color: #64748B;
+}
+
+/* ========================================
+   PAGINATION
+   ======================================== */
+.pagination {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.page-btn {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 4px 12px;
+    height: 30px;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    background: #FFFFFF;
+    font-size: 14px;
+    font-weight: 400;
+    color: #0F172A;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+}
+
+.page-btn:hover:not(.disabled):not(.active) {
+    background: #F8FAFC;
+    border-color: #1A355B;
+}
+
+.page-btn.active {
+    background: #1A355B;
+    color: #FFFFFF;
+    border-color: #1A355B;
+}
+
+.page-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ========================================
+   EMPTY & LOADING STATES
+   ======================================== */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 24px;
+    gap: 12px;
+    width: 100%;
+}
+
+.empty-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #45556C;
+}
+
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 24px;
+    gap: 16px;
+    width: 100%;
+    color: #64748B;
+}
+
+.loading-state p {
+    font-size: 14px;
+}
+
+.spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #E2E8F0;
+    border-top-color: #1A355B;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ========================================
+   MODAL
+   ======================================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.4);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    width: 480px;
+    max-width: 90vw;
+    box-shadow: 0px 20px 60px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.modal-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.modal-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0F172A;
+}
+
+.modal-close {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 32px;
+    height: 32px;
+    background: #F1F5F9;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #64748B;
+    transition: background 0.2s;
+}
+
+.modal-close:hover {
+    background: #E2E8F0;
+}
+
+.modal-body {
+    padding: 24px;
+}
+
+/* Detail grid in modal */
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.detail-item.full-width {
+    grid-column: 1 / -1;
+}
+
+.detail-label {
+    font-size: 12px;
+    font-weight: 400;
+    color: #94A3B8;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+}
+
+.detail-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: #0F172A;
+}
+
+.detail-value.bold {
+    font-weight: 700;
+}
+
+.detail-score {
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+/* ========================================
+   EXPORT BUTTON
+   ======================================== */
+.btn-export {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px;
+    height: 38px;
+    background: #16A34A;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #FFFFFF;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    gap: 8px;
+    transition: background 0.2s;
+}
+
+.btn-export:hover {
+    background: #15803D;
+}
+
+.btn-export svg {
+    width: 16px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 1100px) {
+    .main-content, .page-header, .stats-cards-row,
+    .exam-select-section, .exam-cards-grid, .results-table-section {
+        width: 100%;
+        min-width: unset;
+    }
+
+    .exam-cards-grid {
+        flex-wrap: wrap;
+    }
+
+    .exam-card {
+        min-width: 240px;
+    }
+}

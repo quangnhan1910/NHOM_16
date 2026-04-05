@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thống kê kết quả thi và báo cáo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/lecturer/lecturer-layout.css}">
+    <link rel="stylesheet" th:href="@{/css/lecturer/thong-ke-ket-qua-thi.css}">
+</head>
+<body>
+    <div class="lecturer-shell">
+        <aside th:replace="~{fragments/lecturer-sidebar :: sidebar (activeNav='thong-ke')}"></aside>
+        <div class="lecturer-main">
+    <div class="main-content">
+        <!-- Header -->
+        <div class="page-header">
+            <div class="header-left">
+                <h1 class="page-title">Kết quả &amp; Báo cáo</h1>
+            </div>
+            <div class="header-right">
+                <div class="search-input" style="position:relative; display:flex; flex-direction:row; align-items:center;">
+                    <svg style="position:absolute; left:15px; top:50%; transform:translateY(-50%);" width="18" height="18" viewBox="0 0 18 18" fill="none">
+                        <path d="M8 14C10.7614 14 13 11.7614 13 9C13 6.23858 10.7614 4 8 4C5.23858 4 3 6.23858 3 9C3 11.7614 5.23858 14 8 14Z" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M15 15L12 12" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Tìm kiếm kết quả..." style="width:256px; height:38px; padding:9px 16px 10px 40px; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; font-size:14px; color:#0F172A; outline:none; font-family:'Inter',sans-serif;">
+                </div>
+                <button class="btn-export" id="btnExport">
+                    <svg width="16" height="20" viewBox="0 0 16 20" fill="none">
+                        <path d="M8 2V12M8 12L5 9M8 12L11 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 14V16C2 16.5523 2.44772 17 3 17H13C13.5523 17 14 16.5523 14 16V14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    Xuất báo cáo
+                </button>
+            </div>
+        </div>
+
+        <!-- Scrollable Body -->
+        <div class="page-body">
+            <!-- Section: Thong ke tong quan -->
+            <div class="stats-cards-row">
+                <div class="stat-card" id="cardDiemTB">
+                    <div class="stat-label">Điểm trung bình</div>
+                    <div class="stat-value" id="statDiemTB">--</div>
+                    <div class="stat-sub" id="statDiemTBChange"></div>
+                </div>
+                <div class="stat-card" id="cardTyLeDat">
+                    <div class="stat-label">Tỷ lệ đạt</div>
+                    <div class="stat-value" id="statTyLeDat">--%</div>
+                    <div class="stat-progress-bar">
+                        <div class="stat-progress-fill" id="statProgressBar"></div>
+                    </div>
+                </div>
+                <div class="stat-card" id="cardHoanThanh">
+                    <div class="stat-label">Hoàn thành</div>
+                    <div class="stat-value" id="statHoanThanh">--/--</div>
+                    <div class="stat-sub" id="statVangThi"></div>
+                </div>
+                <div class="stat-card" id="cardCauKho">
+                    <div class="stat-label">Câu hỏi khó nhất</div>
+                    <div class="stat-value" id="statCauKho">--</div>
+                    <div class="stat-sub" id="statCauKhoSub"></div>
+                </div>
+            </div>
+
+            <!-- Section: Chon ca thi -->
+            <div class="exam-select-section">
+                <div class="section-header">
+                    <div class="section-title-row">
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                            <path d="M9 2V16M9 16L5 12M9 16L13 12" stroke="#1A355B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h2 class="section-title">Chọn kỳ thi để xem chi tiết</h2>
+                    </div>
+                    <button class="btn-xem-chi-tiet" id="btnXemChiTiet" style="display:none;">
+                        Xem chi tiết
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="exam-cards-grid" id="examCardsGrid">
+                    <!-- Dynamically loaded -->
+                    <div class="loading-state">
+                        <div class="spinner"></div>
+                        <p>Đang tải dữ liệu...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section: Bang ket qua chi tiet -->
+            <div class="results-table-section" id="resultsTableSection" style="display:none;">
+                <div class="results-card">
+                    <div class="results-header">
+                        <div class="results-header-left">
+                            <h3 class="card-title">Danh sách chi tiết kết quả</h3>
+                            <p class="card-hint" id="resultsCardHint"></p>
+                        </div>
+                        <div class="results-header-right">
+                            <button class="btn-export-small" id="btnExportTable">
+                                <svg width="20" height="18" viewBox="0 0 20 18" fill="none">
+                                    <path d="M10 2V10M10 10L7 7M10 10L13 7" stroke="#0F172A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M2 13V15C2 15.5523 2.44772 16 3 16H17C17.5523 16 18 15.5523 18 15V13" stroke="#0F172A" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                                Xuất file
+                            </button>
+                            <button class="btn-print" id="btnPrint">
+                                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                    <path d="M4 6V2H14V6M4 13H2C1.44772 13 1 12.5523 1 12V8C1 7.44772 1.44772 7 2 7H16C16.5523 7 17 7.44772 17 8V12C17 12.5523 16.5523 13 16 13H14M4 13H14M4 13V16H14V13" stroke="#0F172A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                In
+                            </button>
+                        </div>
+                    </div>
+                    <table class="results-table">
+                        <thead>
+                            <tr>
+                                <th style="width:48px; text-align:center;">STT</th>
+                                <th style="width:200px;">Họ và Tên</th>
+                                <th style="width:140px;">MSSV</th>
+                                <th style="width:100px; text-align:center;">Điểm</th>
+                                <th style="width:180px;">Xếp loại</th>
+                                <th style="width:140px;">Lớp SH</th>
+                                <th style="width:140px; text-align:right;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsTableBody">
+                            <!-- Dynamically loaded -->
+                        </tbody>
+                    </table>
+                    <div class="results-footer">
+                        <div class="results-footer-left">
+                            <span class="results-count" id="resultsCount"></span>
+                        </div>
+                        <div class="pagination" id="pagination">
+                            <!-- Dynamically rendered -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+
+    <!-- Chi tiet sinh vien Modal -->
+    <div class="modal-overlay" id="modalOverlay" style="display:none;">
+        <div class="modal-card" id="modalCard">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Chi tiết kết quả</h3>
+                <button class="modal-close" id="modalClose">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                        <path d="M1 1L13 13M1 13L13 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ==========================================
+    // CONFIG & STATE
+    // ==========================================
+    var PAGE_SIZE = 5;
+    var currentPage = 1;
+    var currentCaThi = null;
+    var allResults = [];
+    var timerId = null;
+    var REFRESH_INTERVAL_MS = 30000;
+
+    // ==========================================
+    // INIT
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', function() {
+        loadTongHop();
+        setupEventListeners();
+    });
+
+    function setupEventListeners() {
+        var searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', debounce(filterResults, 300));
+        }
+
+        var btnExport = document.getElementById('btnExport');
+        if (btnExport) {
+            btnExport.addEventListener('click', exportReport);
+        }
+
+        var btnExportTable = document.getElementById('btnExportTable');
+        if (btnExportTable) {
+            btnExportTable.addEventListener('click', exportTableData);
+        }
+
+        var btnPrint = document.getElementById('btnPrint');
+        if (btnPrint) {
+            btnPrint.addEventListener('click', printResults);
+        }
+
+        var btnXemChiTiet = document.getElementById('btnXemChiTiet');
+        if (btnXemChiTiet) {
+            btnXemChiTiet.addEventListener('click', function() {
+                showResultsSection(currentCaThi);
+            });
+        }
+
+        var modalOverlay = document.getElementById('modalOverlay');
+        var modalClose = document.getElementById('modalClose');
+        if (modalClose) {
+            modalClose.addEventListener('click', closeModal);
+        }
+        if (modalOverlay) {
+            modalOverlay.addEventListener('click', function(e) {
+                if (e.target === modalOverlay) closeModal();
+            });
+        }
+    }
+
+    // ==========================================
+    // API LOADS
+    // ==========================================
+    function showEmptyExamCards(message) {
+        var grid = document.getElementById('examCardsGrid');
+        if (grid) {
+            grid.innerHTML = '<div class="empty-state"><p class="empty-title">' + (message || 'Không có dữ liệu') + '</p></div>';
+        }
+    }
+
+    async function loadTongHop() {
+        var grid = document.getElementById('examCardsGrid');
+        try {
+            var response = await fetch('/api/thong-ke/tong-hop');
+            if (!response.ok) {
+                showEmptyExamCards('Không tải được dữ liệu. Vui lòng thử lại sau.');
+                return;
+            }
+            var data = await response.json();
+            if (!data) {
+                showEmptyExamCards('Không có dữ liệu');
+                return;
+            }
+            renderTongHopStats(data);
+            renderExamCards(data.danhSachCaThi);
+        } catch (error) {
+            console.error('Lỗi tải tổng hợp:', error);
+            showEmptyExamCards('Không có dữ liệu');
+        }
+    }
+
+    async function loadKetQua(maCaThi) {
+        try {
+            var response = await fetch('/api/thong-ke/ket-qua-sinh-vien?maCaThi=' + maCaThi);
+            if (!response.ok) return [];
+            return await response.json();
+        } catch (error) {
+            console.error('Lỗi tải kết quả:', error);
+            return [];
+        }
+    }
+
+    // ==========================================
+    // RENDER: Tong hop stats
+    // ==========================================
+    function renderTongHopStats(data) {
+        var diem = data.diemTongThe || {};
+        var diemTB = diem.diemTrungBinh;
+        var tiLeDat = diem.tiLeDat;
+        var tongSv = diem.tongSinhVien || 0;
+        var soDat = diem.soDat || 0;
+        var tongVang = diem.soVang || 0;
+        var soRot = diem.soRot || 0;
+        var soDaNop = data.tongDaNop || 0;
+
+        document.getElementById('statDiemTB').textContent = diemTB != null ? formatDiem(diemTB) : '—';
+        document.getElementById('statDiemTBChange').textContent = '+0.5 so với kỳ trước';
+
+        document.getElementById('statTyLeDat').textContent = tiLeDat != null ? tiLeDat + '%' : '—%';
+        var progressBar = document.getElementById('statProgressBar');
+        if (progressBar) {
+            progressBar.style.width = (tiLeDat || 0) + '%';
+        }
+
+        var tongSinh = data.tongSinhVien || 0;
+        document.getElementById('statHoanThanh').textContent = soDaNop + '/' + tongSinh;
+        var vangText = tongVang > 0 ? tongVang + ' học sinh vắng thi' : 'Không có vắng thi';
+        document.getElementById('statVangThi').textContent = vangText;
+
+        document.getElementById('statCauKho').textContent = '—';
+        document.getElementById('statCauKhoSub').textContent = 'Chưa có dữ liệu';
+
+        // tim cau hoi kho nhat tu danh sach ca thi
+        if (data.danhSachCaThi && data.danhSachCaThi.length > 0) {
+            var maxTyLeKho = 0;
+            var cauKhoInfo = null;
+            data.danhSachCaThi.forEach(function(ct) {
+                if (ct.cauHoiKhoNhatMa != null && ct.tiLeTraLoiDungCauHoiKho != null) {
+                    if (ct.tiLeTraLoiDungCauHoiKho < maxTyLeKho || maxTyLeKho === 0) {
+                        maxTyLeKho = ct.tiLeTraLoiDungCauHoiKho;
+                        cauKhoInfo = ct;
+                    }
+                }
+            });
+            if (cauKhoInfo) {
+                document.getElementById('statCauKho').textContent = 'Câu ' + cauKhoInfo.cauHoiKhoNhatMa;
+                var tiLe = cauKhoInfo.tiLeTraLoiDungCauHoiKho;
+                document.getElementById('statCauKhoSub').textContent =
+                    'Chỉ ' + tiLe + '% học sinh trả lời đúng';
+            }
+        }
+    }
+
+    // ==========================================
+    // RENDER: Exam cards
+    // ==========================================
+    function renderExamCards(danhSachCaThi) {
+        var grid = document.getElementById('examCardsGrid');
+        if (!danhSachCaThi || danhSachCaThi.length === 0) {
+            grid.innerHTML = '<div class="empty-state"><p class="empty-title">Chưa có kỳ thi nào kết thúc</p></div>';
+            return;
+        }
+
+        grid.innerHTML = danhSachCaThi.map(function(ct) {
+            var tiLe = ct.tiLeDat != null ? ct.tiLeDat + '%' : '—%';
+            var soDaNop = ct.soDaNop || 0;
+            var tongSv = ct.tongSoSinhVien || 0;
+            var diemTB = ct.diemTrungBinh != null ? formatDiem(ct.diemTrungBinh) : '—';
+            var timeInfo = ct.thoiGianHienThi || '';
+            var monInfo = ct.tenMonHoc || '';
+            var diaDiem = ct.diaDiem || '';
+            var cauKhoText = ct.cauHoiKhoNhatMa
+                ? ('Câu ' + ct.cauHoiKhoNhatMa + ' (' + ct.tiLeTraLoiDungCauHoiKho + '% đúng)')
+                : '—';
+            var badgeColor = tiLeDatColor(ct.tiLeDat);
+
+            return '<div class="exam-card" data-ma-ca-thi="' + ct.maCaThi + '" onclick="selectExamCard(this)">' +
+                '<div class="exam-card-header">' +
+                    '<span class="exam-card-badge">' + monInfo + '</span>' +
+                '</div>' +
+                '<div class="exam-card-title">' + (ct.tenCaThi || '—') + '</div>' +
+                '<div class="exam-card-meta">' +
+                    '<span class="exam-card-time">' + timeInfo + '</span>' +
+                    '<span class="exam-card-room">' + diaDiem + '</span>' +
+                '</div>' +
+                '<div class="exam-card-stats">' +
+                    '<div class="exam-card-stat">' +
+                        '<div class="exam-card-stat-icon time-icon"></div>' +
+                        '<span>' + soDaNop + '/' + tongSv + ' SV</span>' +
+                    '</div>' +
+                    '<div class="exam-card-stat">' +
+                        '<div class="exam-card-stat-icon score-icon"></div>' +
+                        '<span>' + diemTB + ' điểm TB</span>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="exam-card-footer">' +
+                    '<div class="exam-card-ty-le ' + badgeColor + '">' +
+                        '<span class="ty-le-badge-text">' + tiLe + ' đạt</span>' +
+                    '</div>' +
+                    '<div class="exam-card-cau-kho">' +
+                        '<span>' + cauKhoText + '</span>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+        }).join('');
+    }
+
+    function selectExamCard(el) {
+        var maCaThi = el.dataset.maCaThi;
+        currentCaThi = parseInt(maCaThi);
+
+        document.querySelectorAll('.exam-card').forEach(function(card) {
+            card.classList.remove('active');
+        });
+        el.classList.add('active');
+
+        var btnChiTiet = document.getElementById('btnXemChiTiet');
+        if (btnChiTiet) {
+            btnChiTiet.style.display = '';
+        }
+
+        // Tu dong load luon ket qua
+        showResultsSection(currentCaThi);
+    }
+
+    function tiLeDatColor(tiLe) {
+        if (tiLe === null || tiLe === undefined) return 'badge-grey';
+        if (tiLe >= 80) return 'badge-green';
+        if (tiLe >= 50) return 'badge-orange';
+        return 'badge-red';
+    }
+
+    // ==========================================
+    // RENDER: Results table
+    // ==========================================
+    async function showResultsSection(maCaThi) {
+        if (!maCaThi) return;
+
+        var section = document.getElementById('resultsTableSection');
+        if (section) section.style.display = '';
+
+        // Scroll to results
+        section.scrollIntoView({ behavior: 'smooth' });
+
+        var ketQua = await loadKetQua(maCaThi);
+        allResults = ketQua;
+
+        document.getElementById('resultsCardHint').textContent =
+            (ketQua.length || 0) + ' kết quả được tìm thấy';
+
+        renderResultsPage(currentPage);
+        renderPagination();
+    }
+
+    function renderResultsPage(page) {
+        var start = (page - 1) * PAGE_SIZE;
+        var end = start + PAGE_SIZE;
+        var pageItems = allResults.slice(start, end);
+        var tbody = document.getElementById('resultsTableBody');
+
+        if (!pageItems || pageItems.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><p class="empty-title">Chưa có kết quả thi nào</p></div></td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = pageItems.map(function(sv, index) {
+            var globalIndex = start + index + 1;
+            var diem = sv.tongDiem != null ? formatDiem(sv.tongDiem) : '—';
+            var diemColor = getDiemColor(sv.tongDiem);
+            var xepLoaiBadge = getXepLoaiBadge(sv.xepLoai);
+            var lopSh = sv.lopSinhHoat || '—';
+            var thoiGianNop = sv.thoiGianNop ? formatDateTime(sv.thoiGianNop) : '—';
+            var datClass = sv.dat ? 'dat-badge' : 'rot-badge';
+            var datText = sv.dat ? 'Đạt' : 'Rớt';
+
+            return '<tr>' +
+                '<td style="text-align:center; color:#62748E;">' + globalIndex + '</td>' +
+                '<td style="font-weight:600; color:#0F172B;">' + (sv.hoVaTen || '—') + '</td>' +
+                '<td style="color:#64748B;">' + (sv.maSinhVienStr || '—') + '</td>' +
+                '<td style="text-align:center; font-weight:700; color:' + diemColor + ';">' + diem + '</td>' +
+                '<td><span class="xeploai-badge ' + getXepLoaiClass(sv.xepLoai) + '">' + xepLoaiBadge + '</span></td>' +
+                '<td style="color:#64748B;">' + lopSh + '</td>' +
+                '<td style="text-align:right;">' +
+                    '<button class="btn-view-detail" onclick="viewDetail(' + sv.maBaiThi + ')">' +
+                        '<svg width="12.83" height="8.75" viewBox="0 0 12.83 8.75" fill="none">' +
+                            '<path d="M1 1L6 5L11 1" stroke="#1A355B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+                            '<path d="M1 7.75L6 4.25L11 7.75" stroke="#1A355B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+                        '</svg>' +
+                        'Xem chi tiết' +
+                    '</button>' +
+                '</td>' +
+            '</tr>';
+        }).join('');
+
+        document.getElementById('resultsCount').textContent =
+            'Hiển thị ' + Math.min(start + 1, allResults.length) + '–' +
+            Math.min(end, allResults.length) + ' trong tổng ' + allResults.length + ' kết quả';
+    }
+
+    function renderPagination() {
+        var totalPages = Math.ceil(allResults.length / PAGE_SIZE);
+        var pagination = document.getElementById('pagination');
+        if (totalPages <= 1) {
+            pagination.innerHTML = '';
+            return;
+        }
+
+        var html = '';
+
+        // Prev
+        var prevClass = currentPage === 1 ? 'page-btn disabled' : 'page-btn';
+        html += '<button class="' + prevClass + '" onclick="goToPage(' + (currentPage - 1) + ')">Trước</button>';
+
+        // Pages
+        for (var i = 1; i <= totalPages; i++) {
+            var btnClass = i === currentPage ? 'page-btn active' : 'page-btn';
+            html += '<button class="' + btnClass + '" onclick="goToPage(' + i + ')">' + i + '</button>';
+        }
+
+        // Next
+        var nextClass = currentPage === totalPages ? 'page-btn disabled' : 'page-btn';
+        html += '<button class="' + nextClass + '" onclick="goToPage(' + (currentPage + 1) + ')">Sau</button>';
+
+        pagination.innerHTML = html;
+    }
+
+    function goToPage(page) {
+        var totalPages = Math.ceil(allResults.length / PAGE_SIZE);
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        renderResultsPage(currentPage);
+        renderPagination();
+    }
+
+    // ==========================================
+    // CHI TIET SINH VIEN
+    // ==========================================
+    async function viewDetail(maBaiThi) {
+        var sv = allResults.find(function(s) { return s.maBaiThi === maBaiThi; });
+        if (!sv) return;
+
+        var diem = sv.tongDiem != null ? formatDiem(sv.tongDiem) : '—';
+        var diemColor = getDiemColor(sv.tongDiem);
+        var datText = sv.dat ? 'Đạt' : 'Rớt';
+        var datColor = sv.dat ? '#15803D' : '#DC2626';
+        var thoiGianNop = sv.thoiGianNop ? formatDateTime(sv.thoiGianNop) : '—';
+        var thoiGianLam = sv.thoiGianLamBaiPhut != null ? sv.thoiGianLamBaiPhut + ' phút' : '—';
+
+        var modalBody = document.getElementById('modalBody');
+        modalBody.innerHTML =
+            '<div class="detail-grid">' +
+                '<div class="detail-item">' +
+                    '<div class="detail-label">MSSV</div>' +
+                    '<div class="detail-value">' + (sv.maSinhVienStr || '—') + '</div>' +
+                '</div>' +
+                '<div class="detail-item">' +
+                    '<div class="detail-label">Họ và Tên</div>' +
+                    '<div class="detail-value bold">' + (sv.hoVaTen || '—') + '</div>' +
+                '</div>' +
+                '<div class="detail-item">' +
+                    '<div class="detail-label">Lớp Sinh Hoạt</div>' +
+                    '<div class="detail-value">' + (sv.lopSinhHoat || '—') + '</div>' +
+                '</div>' +
+                '<div class="detail-item">' +
+                    '<div class="detail-label">Thời gian nộp bài</div>' +
+                    '<div class="detail-value">' + thoiGianNop + '</div>' +
+                '</div>' +
+                '<div class="detail-item">' +
+                    '<div class="detail-label">Thời gian làm bài</div>' +
+                    '<div class="detail-value">' + thoiGianLam + '</div>' +
+                '</div>' +
+                '<div class="detail-item">' +
+                    '<div class="detail-label">Kết quả</div>' +
+                    '<div class="detail-value bold" style="color:' + datColor + ';">' + datText + '</div>' +
+                '</div>' +
+                '<div class="detail-item full-width">' +
+                    '<div class="detail-label">Điểm số</div>' +
+                    '<div class="detail-score" style="color:' + diemColor + ';">' + diem + '</div>' +
+                '</div>' +
+                '<div class="detail-item full-width">' +
+                    '<div class="detail-label">Xếp loại</div>' +
+                    '<span class="xeploai-badge ' + getXepLoaiClass(sv.xepLoai) + ' big">' +
+                        getXepLoaiBadge(sv.xepLoai) + '</span>' +
+                '</div>' +
+            '</div>';
+
+        document.getElementById('modalTitle').textContent = 'Chi tiết kết quả - ' + (sv.hoVaTen || '—');
+        openModal();
+    }
+
+    function openModal() {
+        document.getElementById('modalOverlay').style.display = '';
+    }
+
+    function closeModal() {
+        document.getElementById('modalOverlay').style.display = 'none';
+    }
+
+    // ==========================================
+    // SEARCH / FILTER
+    // ==========================================
+    function filterResults() {
+        var term = document.getElementById('searchInput').value.toLowerCase().trim();
+        var rows = document.querySelectorAll('#resultsTableBody tr');
+        rows.forEach(function(row) {
+            var text = row.textContent.toLowerCase();
+            row.style.display = text.includes(term) ? '' : 'none';
+        });
+    }
+
+    // ==========================================
+    // EXPORT / PRINT
+    // ==========================================
+    function exportReport() {
+        alert('Tính năng xuất báo cáo sẽ xuất file Excel/PDF cho tất cả kết quả.');
+    }
+
+    function exportTableData() {
+        if (!allResults || allResults.length === 0) {
+            alert('Không có dữ liệu để xuất.');
+            return;
+        }
+        var csv = 'STT,MSSV,Họ và Tên,Lớp SH,Điểm,Xếp loại,Đạt\n';
+        allResults.forEach(function(sv, i) {
+            csv += (i+1) + ',' + (sv.maSinhVienStr||'') + ',' + (sv.hoVaTen||'') + ','
+                + (sv.lopSinhHoat||'') + ',' + (sv.tongDiem||'') + ','
+                + getXepLoaiBadge(sv.xepLoai) + ',' + (sv.dat ? 'Đạt' : 'Rớt') + '\n';
+        });
+        downloadFile(csv, 'ket-qua-thi.csv', 'text/csv');
+    }
+
+    function printResults() {
+        window.print();
+    }
+
+    function downloadFile(content, filename, mimeType) {
+        var blob = new Blob([content], {type: mimeType});
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    // ==========================================
+    // HELPERS
+    // ==========================================
+    function formatDiem(diem) {
+        if (diem === null || diem === undefined) return '—';
+        return Number(diem).toFixed(1);
+    }
+
+    function getDiemColor(diem) {
+        if (diem === null || diem === undefined) return '#64748B';
+        diem = Number(diem);
+        if (diem >= 8) return '#16A34A';
+        if (diem >= 6.5) return '#D97706';
+        if (diem >= 5) return '#F97316';
+        return '#EF4444';
+    }
+
+    function getXepLoaiBadge(xepLoai) {
+        var map = {
+            'XUAT_SAC': 'Xuất sắc',
+            'KHA': 'Khá',
+            'TRUNG_BINH': 'Trung bình',
+            'YEU': 'Yếu',
+            'KEM': 'Kém'
+        };
+        return map[xepLoai] || xepLoai || '—';
+    }
+
+    function getXepLoaiClass(xepLoai) {
+        var map = {
+            'XUAT_SAC': 'xl-xuat-sac',
+            'KHA': 'xl-kha',
+            'TRUNG_BINH': 'xl-trung-binh',
+            'YEU': 'xl-yeu',
+            'KEM': 'xl-kem'
+        };
+        return map[xepLoai] || 'xl-default';
+    }
+
+    function formatDateTime(ldt) {
+        if (!ldt) return '—';
+        var d = new Date(ldt);
+        var dd = String(d.getDate()).padStart(2, '0');
+        var mm = String(d.getMonth() + 1).padStart(2, '0');
+        var yy = d.getFullYear();
+        var hh = String(d.getHours()).padStart(2, '0');
+        var mi = String(d.getMinutes()).padStart(2, '0');
+        return dd + '/' + mm + '/' + yy + ' ' + hh + ':' + mi;
+    }
+
+    function debounce(func, wait) {
+        var timeout;
+        return function() {
+            var context = this, args = arguments;
+            clearTimeout(timeout);
+            timeout = setTimeout(function() { func.apply(context, args); }, wait);
+        };
+    }
+    </script>
+</body>
+</html>
