@@ -1,0 +1,544 @@
+/* Variables */
+:root {
+    --primary-color: #155DFC;
+    --primary-hover: #0747ED;
+    --text-main: #1D293D;
+    --text-muted: #62748E;
+    --text-light: #90A1B9;
+    --bg-light: #F8FAFC;
+    --border-color: #E2E8F0;
+    --bg-white: #FFFFFF;
+}
+
+body {
+    background-color: var(--bg-light);
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+}
+
+/* Header Re-use (Nếu layout ko có) */
+.de-thi-quan-ly-root .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 32px;
+    background-color: var(--bg-white);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.de-thi-quan-ly-root .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.de-thi-quan-ly-root .breadcrumb-link {
+    color: var(--text-muted);
+    text-decoration: none;
+}
+
+.de-thi-quan-ly-root .breadcrumb-separator {
+    color: var(--text-light);
+    font-size: 12px;
+}
+
+.de-thi-quan-ly-root .breadcrumb-current {
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.de-thi-quan-ly-root .notification-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+/* Base structural classes */
+.de-thi-quan-ly-root .main-content {
+    padding: 32px;
+    background-color: var(--bg-white);
+    min-height: calc(100vh - 64px); /* Trừ header */
+}
+
+.de-thi-quan-ly-root .container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Page Header */
+.de-thi-quan-ly-root .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 32px;
+}
+
+.de-thi-quan-ly-root .title-box h1 {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin: 0 0 4px 0;
+}
+
+.de-thi-quan-ly-root .title-box p {
+    font-size: 16px;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.de-thi-quan-ly-root .action-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.de-thi-quan-ly-root .btn-filter, .de-thi-quan-ly-root .btn-create {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+}
+
+.de-thi-quan-ly-root .btn-filter {
+    background: var(--bg-white);
+    border: 1px solid var(--border-color);
+    color: #314158;
+}
+
+.de-thi-quan-ly-root .btn-filter:hover {
+    background: #f1f5f9;
+}
+
+.de-thi-quan-ly-root .btn-create {
+    background: var(--primary-color);
+    color: var(--bg-white);
+}
+
+.de-thi-quan-ly-root .btn-create:hover {
+    background: var(--primary-hover);
+}
+
+/* Search Area */
+.de-thi-quan-ly-root .search-section {
+    margin-bottom: 24px;
+    position: relative;
+    width: 100%;
+    max-width: 448px;
+}
+
+.de-thi-quan-ly-root .search-input {
+    width: 100%;
+    padding: 10px 16px 10px 40px;
+    background: var(--bg-light);
+    border-radius: 10px;
+    border: 1px solid transparent;
+    font-size: 16px;
+    color: var(--text-main);
+    outline: none;
+    box-sizing: border-box;
+    transition: all 0.2s;
+}
+
+.de-thi-quan-ly-root .search-input:focus {
+    border-color: var(--primary-color);
+    background: var(--bg-white);
+}
+
+.de-thi-quan-ly-root .search-input::placeholder {
+    color: var(--text-light);
+}
+
+.de-thi-quan-ly-root .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-light);
+}
+
+/* Tabs */
+.de-thi-quan-ly-root .tabs-section {
+    display: flex;
+    gap: 24px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 24px;
+}
+
+.de-thi-quan-ly-root .tab-item {
+    padding-bottom: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    position: relative;
+}
+
+.de-thi-quan-ly-root .tab-item.active {
+    color: var(--primary-color);
+}
+
+.de-thi-quan-ly-root .tab-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--primary-color);
+}
+
+/* EXAM TABLE STYLES */
+.de-thi-quan-ly-root .exam-table-card {
+    background: var(--bg-white);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 32px;
+}
+
+.de-thi-quan-ly-root .exam-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.de-thi-quan-ly-root .exam-table th, .de-thi-quan-ly-root .exam-table td {
+    padding: 16px 20px;
+    text-align: left;
+}
+
+.de-thi-quan-ly-root .exam-table th {
+    background: var(--bg-light);
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.de-thi-quan-ly-root .exam-table td {
+    border-bottom: 1px solid #F1F5F9;
+    vertical-align: middle;
+}
+
+.de-thi-quan-ly-root .exam-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 4px;
+}
+
+.de-thi-quan-ly-root .exam-code {
+    font-size: 12px;
+    color: var(--text-light);
+}
+
+.de-thi-quan-ly-root .exam-duration, .de-thi-quan-ly-root .exam-score {
+    font-size: 14px;
+    color: #314158;
+    font-weight: 500;
+}
+
+/* Bagdes */
+.de-thi-quan-ly-root .subject-badge {
+    display: inline-flex;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.de-thi-quan-ly-root .subject-toan { background: #EFF6FF; color: #155DFC; }
+.de-thi-quan-ly-root .subject-anh { background: #FAF5FF; color: #9810FA; }
+.de-thi-quan-ly-root .subject-ly { background: #FFFBEB; color: #E17100; }
+.de-thi-quan-ly-root .subject-hoa { background: #FFF1F2; color: #EC003F; }
+
+.de-thi-quan-ly-root .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.de-thi-quan-ly-root .status-published {
+    background: #D0FAE5;
+    color: #007A55;
+}
+.de-thi-quan-ly-root .status-published::before {
+    content: ''; display: block; width: 6px; height: 6px; border-radius: 50%; background: #00BC7D;
+}
+
+.de-thi-quan-ly-root .status-draft {
+    background: #F1F5F9;
+    color: #45556C;
+}
+.de-thi-quan-ly-root .status-draft::before {
+    content: ''; display: block; width: 6px; height: 6px; border-radius: 50%; background: #90A1B9;
+}
+
+.de-thi-quan-ly-root .action-menu {
+    color: var(--text-light);
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-size: 18px;
+    padding: 4px;
+}
+
+.de-thi-quan-ly-root .action-menu:hover {
+    color: var(--text-main);
+}
+
+/* Dropdown menu cho thao tác */
+.de-thi-quan-ly-root .action-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.de-thi-quan-ly-root .action-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background: var(--bg-white);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    min-width: 140px;
+    z-index: 100;
+    overflow: hidden;
+}
+
+.de-thi-quan-ly-root .action-dropdown.show {
+    display: block;
+}
+
+.de-thi-quan-ly-root .action-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    font-size: 14px;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: background 0.15s;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+}
+
+.de-thi-quan-ly-root .action-dropdown-item:hover {
+    background: var(--bg-light);
+}
+
+.de-thi-quan-ly-root .action-dropdown-item.delete {
+    color: #EF4444;
+}
+
+.de-thi-quan-ly-root .action-dropdown-item.delete:hover {
+    background: #FEF2F2;
+}
+
+/* Pagination */
+.de-thi-quan-ly-root .pagination-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: var(--bg-white);
+}
+
+.de-thi-quan-ly-root .page-info {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.de-thi-quan-ly-root .page-controls {
+    display: flex;
+    gap: 4px;
+}
+
+.de-thi-quan-ly-root .page-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+    background: transparent;
+    border: none;
+    color: #45556C;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.de-thi-quan-ly-root .page-btn.active {
+    background: var(--primary-color);
+    color: var(--bg-white);
+}
+
+.de-thi-quan-ly-root .page-btn:hover:not(.active) {
+    background: var(--bg-light);
+}
+
+/* Bottom Cards */
+.de-thi-quan-ly-root .bottom-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.de-thi-quan-ly-root .card-shuffle, .de-thi-quan-ly-root .card-ready {
+    border-radius: 16px;
+    padding: 24px;
+    min-height: 180px;
+}
+
+.de-thi-quan-ly-root .card-shuffle {
+    background: var(--bg-white);
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+}
+
+.de-thi-quan-ly-root .card-shuffle-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 12px;
+}
+.de-thi-quan-ly-root .card-shuffle-header i { 
+    color: var(--primary-color); 
+    font-size: 20px;
+}
+
+.de-thi-quan-ly-root .card-shuffle-desc {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: auto;
+}
+
+.de-thi-quan-ly-root .shuffle-control {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: var(--bg-light);
+    border-radius: 14px;
+    border: 1px solid #F1F5F9;
+    margin-top: 24px;
+}
+
+.de-thi-quan-ly-root .shuffle-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #314158;
+}
+
+.de-thi-quan-ly-root .shuffle-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.de-thi-quan-ly-root .card-ready {
+    background: var(--primary-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.de-thi-quan-ly-root .card-ready-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--bg-white);
+    margin-bottom: 12px;
+}
+
+.de-thi-quan-ly-root .card-ready-desc {
+    font-size: 14px;
+    color: #DBEAFE;
+    line-height: 1.6;
+    margin-bottom: 24px;
+}
+
+.de-thi-quan-ly-root .card-ready-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.de-thi-quan-ly-root .btn-setup, .de-thi-quan-ly-root .btn-preview {
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.de-thi-quan-ly-root .btn-setup {
+    background: var(--bg-white);
+    color: var(--primary-color);
+}
+.de-thi-quan-ly-root .btn-setup:hover {
+    background: #F1F5F9;
+}
+
+.de-thi-quan-ly-root .btn-preview {
+    background: #2B7FFF;
+    color: var(--bg-white);
+}
+.de-thi-quan-ly-root .btn-preview:hover {
+    background: #4A90E2;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .de-thi-quan-ly-root .bottom-cards {
+        grid-template-columns: 1fr;
+    }
+}
+
+/*
+ * Trang đề thi + shell giảng viên: lecturer-layout đặt .lecturer-main > .main-content { min-height: 0; flex: 1 }
+ * có thể khiến cột nội dung co hết (trang trắng). Tăng độ ưu tiên để vùng main luôn có chiều cao đọc được.
+ */
+.de-thi-quan-ly-root.lecturer-shell {
+    align-items: stretch;
+}
+
+.de-thi-quan-ly-root.lecturer-shell > .lecturer-main {
+    flex: 1 1 0%;
+    min-width: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.de-thi-quan-ly-root.lecturer-shell > .lecturer-main > .nhq-layout > .main-content {
+    flex: 1 1 auto;
+    min-height: calc(100vh - 72px);
+    overflow-y: auto;
+}
