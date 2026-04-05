@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ngân hàng Câu hỏi - UniExam</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:unless="${dungGiaoDienGiangVien == true}" th:href="@{/css/admin.css}" href="/css/admin.css">
+    <link rel="stylesheet" th:if="${dungGiaoDienGiangVien == true}" th:href="@{/css/lecturer/lecturer-layout.css}">
+    <!-- CSS trang sau layout để ghi đè đúng vùng nội dung khi dùng lecturer-main -->
+    <link rel="stylesheet" th:href="@{/css/ngan-hang-cau-hoi.css}" href="/css/ngan-hang-cau-hoi.css">
+</head>
+<body>
+<div th:class="${dungGiaoDienGiangVien == true} ? 'lecturer-shell' : 'admin-shell'">
+    <aside th:replace="${dungGiaoDienGiangVien == true} ? ~{fragments/lecturer-sidebar :: sidebar (activeNav='ngan-hang')} : ~{fragments/admin-sidebar :: sidebar (activeNav='ngan-hang')}"></aside>
+    <div th:class="${dungGiaoDienGiangVien == true} ? 'lecturer-main' : 'admin-main'">
+        <div class="nhq-layout">
+
+    <!-- Header -->
+    <header class="header">
+        <div class="search-container">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInput" class="search-input" placeholder="Tìm kiếm câu hỏi...">
+        </div>
+        <div class="header-actions">
+            <button class="notification-btn" title="Thông báo">
+                <i class="fa-regular fa-bell"></i>
+            </button>
+            <a th:href="@{/ngan-hang-cau-hoi/them}" href="/ngan-hang-cau-hoi/them" class="btn-primary" id="btnThemCauHoi" style="text-decoration: none;">
+                <i class="fa-solid fa-plus"></i>
+                Thêm câu hỏi mới
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div th:replace="~{fragments/lecturer-hub-back :: backToKhoaHoc}"></div>
+        <!-- Page Title -->
+        <div class="page-header">
+            <h1 class="page-title">Ngân hàng Câu hỏi</h1>
+            <p class="page-desc">Quản lý và tổ chức các câu hỏi học thuật theo môn học và độ khó.</p>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-section">
+            <div class="nav-tabs" id="subjectTabs">
+                <button class="nav-tab active" data-mon-hoc="">Tất cả</button>
+                <!-- Các tab môn học sẽ được thêm động bởi JS nếu cần -->
+            </div>
+
+            <div class="filter-dropdowns">
+                <select class="dropdown-btn" id="filterLoaiCauHoi">
+                    <option value="">Loại câu hỏi</option>
+                    <option value="TRAC_NGHIEM_1_DAP_AN">Một đáp án</option>
+                    <option value="TRAC_NGHIEM_NHIEU_DAP_AN">Nhiều đáp án</option>
+                    <option value="DIEN_DAP_AN">Điền khuyết</option>
+                </select>
+                <select class="dropdown-btn" id="filterMucDoKho">
+                    <option value="">Mức độ</option>
+                    <option value="DE">Dễ</option>
+                    <option value="TRUNG_BINH">Trung bình</option>
+                    <option value="KHO">Khó</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Table Card -->
+        <div class="table-card">
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="col-content">Nội dung câu hỏi</th>
+                            <th>Môn học</th>
+                            <th>Loại</th>
+                            <th>Mức độ</th>
+                            <th style="text-align: center;">Điểm số</th>
+                            <th style="text-align: right;">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="questionTableBody">
+                        <!-- Dữ liệu sẽ được render bởi JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Hiển thị khi không có dữ liệu -->
+            <div id="emptyState" style="display:none; text-align:center; padding:48px 24px; color:#64748B;">
+                <i class="fa-regular fa-folder-open" style="font-size:48px; margin-bottom:16px; display:block; color:#94A3B8;"></i>
+                <p style="font-size:16px; font-weight:500;">Chưa có câu hỏi nào</p>
+                <p style="font-size:14px;">Hãy thêm câu hỏi mới để bắt đầu.</p>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination" id="paginationContainer">
+                <div class="pagination-info" id="paginationInfo">
+                    <!-- Render bởi JS -->
+                </div>
+                <div class="pagination-controls" id="paginationControls">
+                    <!-- Render bởi JS -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+        </div>
+    </div>
+</div>
+
+    <script th:src="@{/js/ngan-hang-cau-hoi.js}" src="/js/ngan-hang-cau-hoi.js"></script>
+</body>
+</html>

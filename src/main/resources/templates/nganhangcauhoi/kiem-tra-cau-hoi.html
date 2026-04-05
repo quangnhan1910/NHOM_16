@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiểm tra & Xác nhận - UniExam</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- CSS riêng -->
+    <link rel="stylesheet" th:href="@{/css/kiem-tra-cau-hoi.css}" href="/css/kiem-tra-cau-hoi.css">
+    <link rel="stylesheet" th:if="${dungGiaoDienGiangVien == true}" th:href="@{/css/lecturer/lecturer-layout.css}">
+</head>
+<body>
+
+<div th:classappend="${dungGiaoDienGiangVien == true} ? 'lecturer-shell'">
+    <aside th:if="${dungGiaoDienGiangVien == true}" th:replace="~{fragments/lecturer-sidebar :: sidebar (activeNav='ngan-hang')}"></aside>
+    <div th:classappend="${dungGiaoDienGiangVien == true} ? 'lecturer-main'">
+    <!-- App Container -->
+    <div class="app-container">
+
+        <main class="main-content">
+
+            <div th:replace="~{fragments/lecturer-hub-back :: backToKhoaHoc}"></div>
+            <!-- Context Header -->
+            <div class="context-header">
+                <div class="breadcrumb">
+                    <span class="text-secondary">Ngân hàng câu hỏi</span>
+                    <i class="fa-solid fa-chevron-right separator"></i>
+                    <span class="text-primary-dark">Thêm câu hỏi mới</span>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn"><i class="fa-regular fa-bell"></i></button>
+                    <button class="icon-btn"><i class="fa-solid fa-gear"></i></button>
+                </div>
+            </div>
+
+            <!-- Page Title Bar -->
+            <div class="page-title-bar">
+                <div class="title-info">
+                    <h1>Kiểm tra & Xác nhận</h1>
+                    <p id="summaryText">Đang tải dữ liệu...</p>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-outline" onclick="window.location.href='/ngan-hang-cau-hoi/them'">Tải lại file khác</button>
+                    <button class="btn btn-primary" id="btnConfirmSave">Xác nhận Lưu</button>
+                </div>
+            </div>
+
+            <!-- Table/List Area -->
+            <div class="table-container">
+                <div class="data-table">
+                    <!-- Header -->
+                    <div class="row header-row">
+                        <div class="col col-checkbox"><input type="checkbox" id="checkAll"></div>
+                        <div class="col col-id">TT</div>
+                        <div class="col col-content">Nội dung câu hỏi</div>
+                        <div class="col col-type">Loại</div>
+                        <div class="col col-answer">Đáp án</div>
+                        <div class="col col-score">Điểm</div>
+                        <div class="col col-diff">Mức độ</div>
+                        <div class="col col-status">Trạng thái</div>
+                    </div>
+
+                    <!-- Rows sẽ được JS render động -->
+                    <div id="tableBody"></div>
+                </div>
+            </div>
+
+            <!-- Footer Hint & Back -->
+            <div class="bottom-actions">
+                <span class="hint-text">Mẹo: Nhấn "Quay lại" để chỉnh sửa nội dung trước khi lưu.</span>
+                <button class="btn-back" onclick="window.location.href='/ngan-hang-cau-hoi/chinh-sua'">Quay lại</button>
+            </div>
+
+        </main>
+    </div>
+    </div>
+</div>
+
+    <script th:src="@{/js/kiem-tra-cau-hoi.js}" src="/js/kiem-tra-cau-hoi.js"></script>
+</body>
+</html>
