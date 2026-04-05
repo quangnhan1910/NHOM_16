@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khóa học của tôi - Giảng Viên</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/lecturer/lecturer-layout.css}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #F8FAFC;
+            min-height: 100vh;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 0;
+            width: 100%;
+            max-width: 1278px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 32px;
+            width: 100%;
+            height: 72px;
+            background: #FFFFFF;
+            border-bottom: 0.8px solid #E2E8F0;
+        }
+
+        .header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0F172B;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* Search Input */
+        .search-box {
+            position: relative;
+            width: 320px;
+            height: 40px;
+        }
+
+        .search-box input {
+            width: 100%;
+            height: 100%;
+            padding: 0 16px 0 40px;
+            background: #F1F5F9;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #314158;
+            outline: none;
+        }
+
+        .search-box input::placeholder {
+            color: rgba(49, 65, 88, 0.5);
+        }
+
+        .search-box .search-icon {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* Button */
+        .btn-primary {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 16px;
+            gap: 8px;
+            background: #1A355B;
+            box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1), 0px 1px 2px -1px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-decoration: none;
+        }
+
+        a.btn-primary {
+            color: inherit;
+        }
+
+        .btn-primary:hover {
+            background: #142a4a;
+        }
+
+        .btn-primary span {
+            font-size: 14px;
+            font-weight: 500;
+            color: #FFFFFF;
+        }
+
+        .btn-primary .plus-icon {
+            width: 12px;
+            height: 12px;
+            border: 1.5px solid #FFFFFF;
+        }
+
+        /* Container — sát header hơn */
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 12px 32px 0;
+            width: 100%;
+        }
+
+        /* Thanh gợi ý dưới tiêu đề */
+        .description {
+            padding: 10px 14px;
+            background: #F1F5F9;
+            border: 1px solid #E2E8F0;
+            border-radius: 10px;
+            margin-bottom: 24px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .description p {
+            font-size: 14px;
+            line-height: 20px;
+            color: #45556C;
+            margin: 0;
+        }
+
+        /* Course Grid */
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            width: 100%;
+        }
+
+        /* Course Card */
+        .course-card {
+            background: #FFFFFF;
+            border: 0.8px solid #E2E8F0;
+            box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1), 0px 1px 2px -1px rgba(0, 0, 0, 0.1);
+            border-radius: 14px;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .course-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Card Header */
+        .card-header {
+            height: 128px;
+            background: #F8FAFC;
+            border-bottom: 0.8px solid #F1F5F9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .card-header .book-icon {
+            width: 40px;
+            height: 40px;
+            color: #CAD5E2;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 16px;
+        }
+
+        .status-badge.dang-dien-ra {
+            background: #F0FDF4;
+            border: 0.8px solid #B9F8CF;
+            color: #008236;
+        }
+
+        .status-badge.sap-bat-dau {
+            background: #EFF6FF;
+            border: 0.8px solid #BEDBFF;
+            color: #1447E6;
+        }
+
+        .status-badge.len-ke-hoach {
+            background: #F8FAFC;
+            border: 0.8px solid #E2E8F0;
+            color: #45556C;
+        }
+
+        /* Card Body */
+        .card-body {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .card-body h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0F172B;
+            line-height: 28px;
+        }
+
+        .card-body .course-code {
+            font-size: 14px;
+            font-weight: 500;
+            color: #62748E;
+        }
+
+        .card-body .course-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: #45556C;
+        }
+
+        .info-item .icon {
+            width: 16px;
+            height: 16px;
+            color: #90A1B9;
+        }
+
+        .info-item strong {
+            color: #314158;
+            font-weight: 700;
+        }
+
+        /* Button */
+        .btn-view {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 0;
+            gap: 8px;
+            margin-top: 20px;
+            background: #F8FAFC;
+            border: 0.8px solid #E2E8F0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-view:hover {
+            background: #F1F5F9;
+            border-color: #CBD5E1;
+        }
+
+        .btn-view span {
+            font-size: 14px;
+            font-weight: 600;
+            color: #314158;
+        }
+
+        /* Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            width: 100%;
+        }
+
+        .empty-state .empty-icon {
+            width: 64px;
+            height: 64px;
+            color: #CBD5E1;
+            margin-bottom: 16px;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            color: #62748E;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .course-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .course-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                height: auto;
+                padding: 16px;
+                gap: 16px;
+            }
+
+            .header-actions {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="lecturer-shell">
+        <aside th:replace="~{fragments/lecturer-sidebar :: sidebar (activeNav='khoa-hoc')}"></aside>
+        <div class="lecturer-main">
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <h2>Khóa học của tôi</h2>
+            <div class="header-actions">
+                <div class="search-box">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                    <input type="text" placeholder="Tìm kiếm khóa học...">
+                </div>
+                <a th:href="@{/de-thi/them-moi}" class="btn-primary" role="button">
+                    <span class="plus-icon">+</span>
+                    <span>Tạo kỳ thi mới</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Container -->
+        <div class="container">
+            <!-- Description -->
+            <div class="description">
+                <p>Đây là danh sách các học phần bạn được phân công giảng dạy trong học kỳ này.</p>
+            </div>
+
+            <!-- Course List -->
+            <div th:if="${coKhoaHoc}" class="course-grid">
+                <div th:each="khoaHoc : ${danhSachKhoaHoc}" class="course-card">
+                    <!-- Card Header -->
+                    <div class="card-header">
+                        <svg class="book-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                        </svg>
+                        <!-- Status Badge -->
+                        <span th:class="${'status-badge ' + 
+                            (khoaHoc.trangThai == 'DANG_DIEN_RA' ? 'dang-dien-ra' : 
+                             (khoaHoc.trangThai == 'SAP_BAT_DAU' ? 'sap-bat-dau' : 'len-ke-hoach'))}"
+                              th:text="${khoaHoc.trangThai == 'DANG_DIEN_RA' ? 'Đang diễn ra' : 
+                                       (khoaHoc.trangThai == 'SAP_BAT_DAU' ? 'Sắp bắt đầu' : 'Lên kế hoạch')}">
+                        </span>
+                    </div>
+                    
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <h3 th:text="${khoaHoc.tenMonHoc}">Tên môn học</h3>
+                        <p class="course-code">
+                            <span th:text="${khoaHoc.maDinhDanh}">Mã môn</span>
+                            <span> • </span>
+                            <span th:text="${khoaHoc.soTinChi + ' Tín chỉ'}">0 Tín chỉ</span>
+                        </p>
+                        
+                        <div class="course-info">
+                            <div class="info-item">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                </svg>
+                                <span><strong th:text="${khoaHoc.soLuongSinhVien}">0</strong> Sinh viên</span>
+                            </div>
+                            <div class="info-item">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                    <line x1="16" y1="2" x2="16" y2="6"/>
+                                    <line x1="8" y1="2" x2="8" y2="6"/>
+                                    <line x1="3" y1="10" x2="21" y2="10"/>
+                                </svg>
+                                <span th:text="${khoaHoc.lichHoc}">Lịch học</span>
+                            </div>
+                        </div>
+                        
+                        <a th:href="@{/lecturer/chitietkhoahoc(maGiangVienMonHoc=${khoaHoc.maGiangVienMonHoc})}" class="btn-view">
+                            <span>Xem chi tiết</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div th:unless="${coKhoaHoc}" class="empty-state">
+                <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                </svg>
+                <p th:if="${taiKhoanKhongPhaiGiangVien}">
+                    Tài khoản đang đăng nhập chưa liên kết với hồ sơ giảng viên (bảng <code>giang_vien</code>).
+                    Trang này chỉ hiển thị môn đã phân công trong <code>giang_vien_mon_hoc</code> — khác với danh sách môn học trong quản trị.
+                </p>
+                <p th:unless="${taiKhoanKhongPhaiGiangVien}">
+                    Chưa có khóa học nào được phân công. Hãy thêm bản ghi <code>giang_vien_mon_hoc</code> (nối mã giảng viên của bạn với môn học).
+                </p>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+
+    <script>
+        // Search functionality
+        document.querySelector('.search-box input').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('.course-card');
+            
+            cards.forEach(card => {
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                const code = card.querySelector('.course-code').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || code.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
