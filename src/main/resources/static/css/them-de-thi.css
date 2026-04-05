@@ -1,0 +1,321 @@
+/*
+ * Tạo đề thi mới — chỉ áp trong .de-thi-quan-ly-root.de-thi-them-moi-page
+ * để không đè .main-content / .header của admin + lecturer-layout.
+ */
+:root {
+    --tdt-primary-color: #001EFF;
+    --tdt-primary-hover: #0016CC;
+    --tdt-text-main: #0F172A;
+    --tdt-text-muted: #64748B;
+    --tdt-text-dark: #334155;
+    --tdt-border-color: #E2E8F0;
+    --tdt-bg-light: #F8FAFC;
+    --tdt-bg-white: #FFFFFF;
+    --tdt-danger-orange: #EC5B13;
+}
+
+/* Cho inline style trong them-de-thi.js (var(--primary-color)) */
+.de-thi-quan-ly-root.de-thi-them-moi-page {
+    --primary-color: var(--tdt-primary-color);
+}
+
+/* Cột nội dung form (thay cho .main-content toàn cục) */
+.de-thi-quan-ly-root.de-thi-them-moi-page .de-thi-them-moi-body {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 0 24px;
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .container-center {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .page-title-section {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .page-title-section .page-title {
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 36px;
+    color: var(--tdt-text-main);
+    margin: 0;
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .page-title-section .page-desc {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    color: var(--tdt-text-muted);
+    margin: 0;
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .form-card {
+    background: var(--tdt-bg-white);
+    border-radius: 12px;
+    border: 1px solid var(--tdt-border-color);
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .form-body {
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .form-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--tdt-text-dark);
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .upload-zone {
+    border: 2px dashed #CBD5E1;
+    border-radius: 12px;
+    background: var(--tdt-bg-light);
+    padding: 48px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .upload-zone:hover,
+.de-thi-quan-ly-root.de-thi-them-moi-page .upload-zone.dragover {
+    border-color: var(--tdt-primary-color);
+    background: #F0F4FF;
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .upload-icon-wrapper {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(0, 30, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--tdt-primary-color);
+    font-size: 28px;
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .upload-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--tdt-text-main);
+    margin: 0;
+    text-align: center;
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .upload-subtitle {
+    font-size: 14px;
+    color: var(--tdt-text-muted);
+    margin: 0;
+    text-align: center;
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .btn-choose-file {
+    background: var(--tdt-primary-color);
+    color: var(--tdt-bg-white);
+    padding: 10px 24px;
+    border-radius: 12px;
+    border: none;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+    pointer-events: none;
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .form-input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid var(--tdt-border-color);
+    border-radius: 12px;
+    font-size: 16px;
+    font-family: inherit;
+    color: var(--tdt-text-main);
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .form-input:focus {
+    border-color: var(--tdt-primary-color);
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .form-input::placeholder {
+    color: #94A3B8;
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .form-row {
+    display: flex;
+    gap: 24px;
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .form-group.half {
+    flex: 1;
+    min-width: 0;
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .select-wrapper,
+.de-thi-quan-ly-root.de-thi-them-moi-page .input-icon-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .form-select {
+    width: 100%;
+    padding: 14px 40px 14px 16px;
+    border: 1px solid var(--tdt-border-color);
+    border-radius: 12px;
+    font-size: 16px;
+    font-family: inherit;
+    color: var(--tdt-text-main);
+    outline: none;
+    box-sizing: border-box;
+    appearance: none;
+    background: var(--tdt-bg-white);
+    cursor: pointer;
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .form-select:focus {
+    border-color: var(--tdt-primary-color);
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .select-icon {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6B7280;
+    pointer-events: none;
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .input-with-icon {
+    padding-right: 40px;
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .suffix-icon {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94A3B8;
+    font-size: 18px;
+    pointer-events: none;
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .form-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px;
+    background: var(--tdt-bg-light);
+    border-top: 1px solid var(--tdt-border-color);
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .btn-cancel {
+    background: none;
+    border: none;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--tdt-text-muted);
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .btn-continue {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 40px;
+    border-radius: 12px;
+    border: none;
+    font-size: 14px;
+    font-weight: 700;
+    color: #9694B8;
+    background: #E2E8F0;
+    cursor: not-allowed;
+    transition: 0.2s;
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .btn-continue.active {
+    background: var(--tdt-primary-color);
+    color: var(--tdt-bg-white);
+    cursor: pointer;
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .btn-continue.active:hover {
+    background: var(--tdt-primary-hover);
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .info-cards-row {
+    display: flex;
+    gap: 24px;
+    width: 100%;
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .info-card {
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px;
+    background: rgba(236, 91, 19, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(236, 91, 19, 0.10);
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .info-card i {
+    font-size: 20px;
+    color: var(--tdt-danger-orange);
+    margin-top: 2px;
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .info-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .info-content h4 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--tdt-text-main);
+}
+
+.de-thi-quan-ly-root.de-thi-them-moi-page .info-content p {
+    margin: 0;
+    font-size: 12px;
+    color: var(--tdt-text-muted);
+    line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+    .de-thi-quan-ly-root.de-thi-them-moi-page .form-row {
+        flex-direction: column;
+    }
+    .de-thi-quan-ly-root.de-thi-them-moi-page .info-cards-row {
+        flex-direction: column;
+    }
+}

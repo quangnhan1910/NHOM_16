@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm Câu hỏi mới - UniExam</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" th:unless="${dungGiaoDienGiangVien == true}" th:href="@{/css/admin.css}" href="/css/admin.css">
+    <link rel="stylesheet" th:if="${dungGiaoDienGiangVien == true}" th:href="@{/css/lecturer/lecturer-layout.css}">
+    <!-- CSS riêng cho trang thêm câu hỏi -->
+    <link rel="stylesheet" th:href="@{/css/them-cau-hoi.css}" href="/css/them-cau-hoi.css">
+</head>
+
+<body>
+<div th:class="${dungGiaoDienGiangVien == true} ? 'lecturer-shell' : 'admin-shell'">
+    <aside th:replace="${dungGiaoDienGiangVien == true} ? ~{fragments/lecturer-sidebar :: sidebar (activeNav='ngan-hang')} : ~{fragments/admin-sidebar :: sidebar (activeNav='ngan-hang')}"></aside>
+    <div th:class="${dungGiaoDienGiangVien == true} ? 'lecturer-main' : 'admin-main'">
+        <div class="nhq-layout">
+
+    <!-- Header (Breadcrumb style) -->
+    <header class="header">
+        <div class="breadcrumb">
+            <a href="/ngan-hang-cau-hoi" class="breadcrumb-link">Ngân hàng câu hỏi</a>
+            <i class="fa-solid fa-chevron-right breadcrumb-separator"></i>
+            <span class="breadcrumb-current">Thêm câu hỏi mới</span>
+        </div>
+        <div class="header-actions">
+            <button class="notification-btn" title="Thông báo">
+                <i class="fa-regular fa-bell"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div th:replace="~{fragments/lecturer-hub-back :: backToKhoaHoc}"></div>
+        <div class="container">
+            <!-- Page Title -->
+            <div class="page-header">
+                <h1 class="page-title">Thêm câu hỏi mới</h1>
+                <p class="page-desc">Chọn môn học và tải lên file dữ liệu để hệ thống tự động nhận diện câu hỏi.</p>
+            </div>
+
+            <!-- Upload Card -->
+            <div class="upload-card">
+
+                <!-- Step 1: Chọn môn học -->
+                <div class="step-section">
+                    <label class="step-title">1. Chọn môn học <span class="required">*</span></label>
+                    <select id="monHocSelect" class="form-select">
+                        <option value="">-- Chọn môn học --</option>
+                        <!-- Dữ liệu sẽ được load qua JS -->
+                    </select>
+                </div>
+
+                <!-- Step 2: Tải file mẫu -->
+                <div class="step-section step-2-container">
+                    <div class="step-2-info">
+                        <div class="icon-box-blue">
+                            <i class="fa-solid fa-file-word"></i>
+                        </div>
+                        <div class="info-text">
+                            <h3>2. Tải File Mẫu</h3>
+                            <p>File mẫu định dạng Word chứa cấu trúc chuẩn:
+                                Bắt đầu bằng <strong>"Câu X."</strong>, các đáp án bắt đầu bằng <strong>A, B, C,
+                                    D</strong>, và thêm <strong>dấu sao (*)</strong> trước đáp án đúng.
+                            </p>
+                        </div>
+                    </div>
+                    <button class="btn-secondary" id="btnDownloadTemplate">
+                        <i class="fa-solid fa-download"></i> Tải File Mẫu Word
+                    </button>
+                </div>
+
+                <!-- Step 3: Tải lên dữ liệu -->
+                <div class="step-section">
+                    <label class="step-title">3. Tải lên dữ liệu</label>
+
+                    <div class="upload-zone" id="uploadZone">
+                        <div class="upload-icon-circle">
+                            <i class="fa-solid fa-file-arrow-up"></i>
+                        </div>
+                        <h4 class="upload-title">Chọn File hoặc kéo thả File vào đây</h4>
+                        <p class="upload-desc">Hỗ trợ định dạng: .xlsx, .xls, .doc, .docx, .pdf</p>
+
+                        <input type="file" id="fileInput" hidden accept=".xlsx,.xls,.doc,.docx,.pdf">
+                        <button class="btn-primary" id="btnSelectFile">Chọn File từ máy tính</button>
+                    </div>
+
+                    <!-- Khu vực hiển thị file đã chọn -->
+                    <div class="file-info-container" id="fileInfoContainer" style="display: none;">
+                        <div class="file-details">
+                            <i class="fa-solid fa-file-lines file-type-icon"></i>
+                            <span class="file-name" id="fileNameDisplay">tentailieu.xlsx</span>
+                        </div>
+                        <button class="btn-remove-file" id="btnRemoveFile" title="Xóa file">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="card-actions">
+                    <a href="/ngan-hang-cau-hoi" class="btn-back">Quay lại</a>
+                    <button class="btn-primary" id="btnSubmitUpload" disabled>Tải lên hệ thống</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+        </div>
+    </div>
+</div>
+
+    <!-- JS riêng -->
+    <script th:src="@{/js/them-cau-hoi.js}" src="/js/them-cau-hoi.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết khóa học</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/lecturer/lecturer-layout.css}">
+    <link rel="stylesheet" th:href="@{/css/lecturer/chi-tiet-khoa-hoc.css}">
+</head>
+<body>
+    <div class="lecturer-shell">
+        <aside th:replace="~{fragments/lecturer-sidebar :: sidebar (activeNav='khoa-hoc')}"></aside>
+        <div class="lecturer-main">
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <a th:href="@{/lecturer/khoahoccoatoi}" class="back-button">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M10 12L6 8L10 4" stroke="#8EC5FF" stroke-width="1.333" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Quay lại danh sách
+                </a>
+            </div>
+            <h2 class="header-title">Chi tiết khóa học</h2>
+            <div class="header-right">
+                <div class="search-box">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M7 12C9.76142 12 12 9.76142 12 7C12 4.23858 9.76142 2 7 2C4.23858 2 2 4.23858 2 7C2 9.76142 4.23858 12 7 12Z" stroke="#90A1B9" stroke-width="1.333" stroke-linecap="round"/>
+                        <path d="M14 14L10.5 10.5" stroke="#90A1B9" stroke-width="1.333" stroke-linecap="round"/>
+                    </svg>
+                    <input type="text" placeholder="Tìm kiếm...">
+                </div>
+            </div>
+        </div>
+
+        <!-- Course Info Banner -->
+        <div class="course-banner" th:if="${chiTietKhoaHoc != null}">
+            <div class="course-info">
+                <h1 class="course-title" th:text="${chiTietKhoaHoc.tenMonHoc}">Vật lý đại cương 1</h1>
+                <span class="course-code" th:text="${chiTietKhoaHoc.maDinhDanh}">PHY101</span>
+            </div>
+            <div class="course-meta">
+                <span class="meta-item">
+                    <span th:text="${chiTietKhoaHoc.soTinChi}">3</span> Tín chỉ
+                </span>
+                <span class="meta-dot"></span>
+                <span class="meta-item">
+                    Tổng sĩ số: <span th:text="${chiTietKhoaHoc.soLuongSinhVien}">120</span>
+                </span>
+                <span class="meta-dot"></span>
+                <span class="meta-item">
+                    Lịch học: <span th:text="${chiTietKhoaHoc.lichHoc}">Thứ 2, 4 (Sáng)</span>
+                </span>
+                <span class="meta-dot" th:if="${chiTietKhoaHoc.sinhVienGanKemHoTen != null or chiTietKhoaHoc.sinhVienGanKemMssv != null}"></span>
+                <span class="meta-item" th:if="${chiTietKhoaHoc.sinhVienGanKemHoTen != null or chiTietKhoaHoc.sinhVienGanKemMssv != null}">
+                    SV phân công:
+                    <span th:text="${chiTietKhoaHoc.sinhVienGanKemHoTen != null ? chiTietKhoaHoc.sinhVienGanKemHoTen : '—'}">—</span>
+                    <span th:if="${chiTietKhoaHoc.sinhVienGanKemMssv != null}"> (<span th:text="${chiTietKhoaHoc.sinhVienGanKemMssv}">MSSV</span>)</span>
+                </span>
+            </div>
+            <p class="course-sync-hint" th:if="${hienNutSuaPhanCongAdmin}"
+               style="margin-top:14px;font-size:13px;color:#64748B;line-height:1.5;">
+                Mã phân công (đồng bộ với <code>ChiTietKhoaHocService</code>):
+                <strong th:text="${maGiangVienMonHoc}">1</strong>.
+                <a th:href="@{/admin/phan-cong-giang-vien-lop}" style="color:#1A355B;font-weight:600;">Sửa phân công</a>
+                — sau khi lưu, F5 trang này để thấy môn / lịch cập nhật (cùng <code>maGiangVienMonHoc</code>).
+            </p>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tab-container">
+            <button class="tab active" data-tab="lichta" onclick="switchTab('lichta')">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.333" stroke-linecap="round"/>
+                </svg>
+                Lịch giảng dạy
+            </button>
+            <button class="tab" data-tab="sinhvien" onclick="switchTab('sinhvien')">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <circle cx="6" cy="5" r="2.5" stroke="currentColor" stroke-width="1.333"/>
+                    <path d="M1 14c0-2.5 2-4 5-4s5 1.5 5 4" stroke="currentColor" stroke-width="1.333" stroke-linecap="round"/>
+                    <circle cx="12" cy="5" r="2" stroke="currentColor" stroke-width="1.333"/>
+                    <path d="M13 14c0-2 1.5-3 3-3" stroke="currentColor" stroke-width="1.333" stroke-linecap="round"/>
+                </svg>
+                Danh sách sinh viên
+            </button>
+        </div>
+
+        <!-- Tab Content: Lịch giảng dạy -->
+        <div class="tab-content active" id="tab-lichgiangday">
+            <div class="schedule-section">
+                <h3 class="section-title">Lịch trình & Tiến độ (Học kỳ II)</h3>
+                <div class="table-container">
+                    <table class="schedule-table">
+                        <thead>
+                            <tr>
+                                <th>Ca</th>
+                                <th>Ngày</th>
+                                <th>Thời gian / Tiết</th>
+                                <th>Phòng</th>
+                                <th>Nội dung giảng dạy</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="lich : ${chiTietKhoaHoc.lichGiangDay}">
+                                <td th:text="${lich.buoi != null && !lich.buoi.isEmpty()} ? ${lich.buoi} : '—'">1</td>
+                                <td th:text="${lich.ngay != null} ? ${#temporals.format(lich.ngay, 'dd/MM/yyyy')} : '—'">12/03/2026</td>
+                                <td>
+                                    <span th:if="${lich.tietBatDau != null || lich.tietKetThuc != null}">
+                                        Tiết <span th:text="${lich.tietBatDau != null} ? ${lich.tietBatDau} : '—'">1</span>
+                                        —
+                                        <span th:text="${lich.tietKetThuc != null} ? ${lich.tietKetThuc} : '—'">2</span>
+                                    </span>
+                                    <span th:if="${(lich.tietBatDau == null && lich.tietKetThuc == null) && (lich.thoiGianBatDau != null || lich.thoiGianKetThuc != null)}">
+                                        <span th:text="${lich.thoiGianBatDau != null} ? ${lich.thoiGianBatDau} : '—'">07:30</span>
+                                        —
+                                        <span th:text="${lich.thoiGianKetThuc != null} ? ${lich.thoiGianKetThuc} : '—'">09:30</span>
+                                    </span>
+                                    <span th:if="${lich.tietBatDau == null && lich.tietKetThuc == null && lich.thoiGianBatDau == null && lich.thoiGianKetThuc == null}">—</span>
+                                </td>
+                                <td th:text="${lich.phong != null && !lich.phong.isEmpty()} ? ${lich.phong} : '—'">A3-201</td>
+                                <td th:text="${lich.noiDung != null && !lich.noiDung.isEmpty()} ? ${lich.noiDung} : '—'">Chương 1: Động học chất điểm</td>
+                                <td>
+                                    <span class="status-badge"
+                                          th:classappend="${lich.trangThai == 'DA_DAY'} ? 'status-done' : (${lich.trangThai == 'SAI_TOI'} ? 'status-upcoming' : 'status-pending')"
+                                          th:text="${lich.trangThai == 'DA_DAY'} ? 'Đã dạy' : (${lich.trangThai == 'SAI_TOI'} ? 'Sắp tới' : (${lich.trangThai == 'CHUA_DAY'} ? 'Chưa dạy' : ${lich.trangThai}))">
+                                        Đã dạy
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr th:if="${chiTietKhoaHoc.lichGiangDay == null or chiTietKhoaHoc.lichGiangDay.empty}">
+                                <td colspan="6" class="empty-cell">Chưa có lịch giảng dạy</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: Danh sách sinh viên -->
+        <div class="tab-content" id="tab-danhsachsinhvien">
+            <div th:replace="~{lecturer/danh-sach-sv-khoa-hoc :: danhSachSinhVienFragment(${maGiangVienMonHoc})}"></div>
+        </div>
+    </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        var currentTab = 'lichta';
+
+        function switchTab(tab) {
+            currentTab = tab;
+
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            if (tab === 'lichta') {
+                document.getElementById('tab-lichgiangday').classList.add('active');
+            } else {
+                document.getElementById('tab-danhsachsinhvien').classList.add('active');
+            }
+        }
+
+        document.querySelector('.header .search-box input').addEventListener('input', function(e) {
+            console.log('Search:', e.target.value);
+        });
+    </script>
+</body>
+</html>

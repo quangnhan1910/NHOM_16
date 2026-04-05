@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý đề thi - UniExam</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Quản trị: admin.css + khối nhq-layout giống Ngân hàng câu hỏi; Giảng viên: lecturer-layout -->
+    <link rel="stylesheet" th:unless="${dungGiaoDienGiangVien == true}" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:if="${dungGiaoDienGiangVien == true}" th:href="@{/css/lecturer/lecturer-layout.css}">
+    <link rel="stylesheet" th:href="@{/css/quan-ly-de-thi.css}" href="/css/quan-ly-de-thi.css">
+</head>
+
+<body>
+
+<div th:class="${dungGiaoDienGiangVien == true} ? 'de-thi-quan-ly-root lecturer-shell' : 'de-thi-quan-ly-root admin-shell'">
+    <aside th:replace="${dungGiaoDienGiangVien == true} ? ~{fragments/lecturer-sidebar :: sidebar (activeNav='de-thi')} : ~{fragments/admin-sidebar :: sidebar (activeNav='de-thi')}"></aside>
+    <div th:class="${dungGiaoDienGiangVien == true} ? 'lecturer-main' : 'admin-main'">
+        <div class="nhq-layout">
+    <!-- Header (Breadcrumb style) -->
+    <header class="header">
+        <div class="breadcrumb">
+            <a href="/de-thi" class="breadcrumb-link">Đề thi</a>
+            <i class="fa-solid fa-chevron-right breadcrumb-separator"></i>
+            <span class="breadcrumb-current">Quản lý đề thi</span>
+        </div>
+        <div class="header-actions">
+            <button class="notification-btn" title="Thông báo">
+                <i class="fa-regular fa-bell"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div th:replace="~{fragments/lecturer-hub-back :: backToKhoaHoc}"></div>
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="title-box">
+                    <h1>Danh sách đề thi</h1>
+                    <p>Quản lý và theo dõi trạng thái các đề thi của bạn</p>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn-filter" id="btnFilter">
+                        <i class="fa-solid fa-filter"></i> Bộ lọc
+                    </button>
+                    <a href="/de-thi/them-moi" class="btn-create" style="text-decoration: none;">
+                        <i class="fa-solid fa-plus"></i> Tạo đề thi mới
+                    </a>
+                </div>
+            </div>
+
+            <!-- Search Area -->
+            <div class="search-section">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" class="search-input" id="searchInput" placeholder="Tìm kiếm đề thi...">
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs-section">
+                <div class="tab-item active" data-tab="all" id="tabAll">Tất cả (<span id="countAll">0</span>)</div>
+                <div class="tab-item" data-tab="published" id="tabPublished">Đã xuất bản (<span id="countPublished">0</span>)</div>
+                <div class="tab-item" data-tab="draft" id="tabDraft">Bản nháp (<span id="countDraft">0</span>)</div>
+            </div>
+
+            <!-- Data Table Card -->
+            <div class="exam-table-card">
+                <table class="exam-table">
+                    <thead>
+                        <tr>
+                            <th>TÊN ĐỀ THI</th>
+                            <th>MÔN HỌC</th>
+                            <th>THỜI LƯỢNG</th>
+                            <th style="text-align: center;">TỔNG ĐIỂM</th>
+                            <th>TRẠNG THÁI</th>
+                            <th style="text-align: center;">THAO TÁC</th>
+                        </tr>
+                    </thead>
+                    <tbody id="examTableBody">
+                        <!-- Dữ liệu sẽ được render bởi JS từ API -->
+                        <tr id="loadingRow">
+                            <td colspan="6" style="text-align: center; padding: 40px; color: #94A3B8;">
+                                <i class="fa-solid fa-spinner fa-spin"></i> Đang tải dữ liệu...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!-- Pagination -->
+                <div class="pagination-footer" id="paginationFooter">
+                    <div class="page-info" id="pageInfo">Hiển thị 0 đề thi</div>
+                    <div class="page-controls" id="pageControls">
+                        <!-- Pagination buttons sẽ được render bởi JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Dashboard Cards -->
+            <div class="bottom-cards">
+                <!-- Smart Shuffle Card -->
+                <div class="card-shuffle">
+                    <div class="card-shuffle-header">
+                        <i class="fa-solid fa-shuffle"></i> Xáo trộn thông minh
+                    </div>
+                    <div class="card-shuffle-desc">
+                        Khi bật tính năng xáo trộn, hệ thống sẽ tự động tạo ra nhiều phiên bản đề thi khác nhau từ cùng một bộ câu hỏi để tránh gian lận trong thi cử.
+                    </div>
+                    <div class="shuffle-control">
+                        <span class="shuffle-label">Mức độ xáo trộn câu hỏi</span>
+                        <span class="shuffle-value">
+                            Ngẫu nhiên hoàn toàn <i class="fa-solid fa-chevron-down"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Ready Card -->
+                <div class="card-ready">
+                    <div>
+                        <div class="card-ready-title">Sẵn sàng tổ chức thi?</div>
+                        <div class="card-ready-desc">
+                            Xuất bản đề thi ngay để học sinh có thể bắt đầu làm bài. Bạn có thể đặt lịch thi hoặc mật khẩu truy cập cho từng đề.
+                        </div>
+                    </div>
+                    <div class="card-ready-actions">
+                        <button class="btn-setup">Thiết lập kỳ thi</button>
+                        <button class="btn-preview">Xem trước</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+        </div>
+    </div>
+</div>
+
+    <!-- JS riêng -->
+    <script th:src="@{/js/quan-ly-de-thi.js}" src="/js/quan-ly-de-thi.js"></script>
+</body>
+
+</html>

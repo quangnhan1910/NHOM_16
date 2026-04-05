@@ -1,0 +1,386 @@
+:root {
+    --primary: #1C74E9;
+    --primary-hover: #155DFC;
+    --text-main: #1D293D;
+    --text-secondary: #45556C;
+    --text-muted: #62748E;
+    --bg-body: #F6F7F8;
+    --bg-white: #FFFFFF;
+    --border-color: #E2E8F0;
+    --bg-light: #F8FAFC;
+    --danger: #FB2C36;
+    --success: #00A63E;
+    --success-bg: #F0FDF4;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* --- Header & Breadcrumb --- */
+.header {
+    height: 64px;
+    padding: 0 24px;
+    background-color: var(--bg-white);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.breadcrumb-link {
+    color: var(--text-muted);
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.breadcrumb-link:hover {
+    color: var(--primary);
+}
+
+.breadcrumb-separator {
+    color: #90A1B9;
+    font-size: 10px;
+}
+
+.breadcrumb-current {
+    color: var(--text-main);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.notification-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.notification-btn:hover {
+    background-color: var(--bg-light);
+}
+
+/* --- Main Content --- */
+.main-content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    padding: 32px 24px;
+}
+
+.container {
+    width: 100%;
+    max-width: 768px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.page-header {
+    text-align: center;
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 32px;
+    margin-bottom: 8px;
+}
+
+.page-desc {
+    color: var(--text-secondary);
+    font-size: 16px;
+}
+
+/* --- Upload Card --- */
+.upload-card {
+    background-color: var(--bg-white);
+    border-radius: 14px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.step-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+.step-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #314158;
+}
+
+.required {
+    color: var(--danger);
+}
+
+/* Step 1: Select */
+.form-select {
+    width: 100%;
+    height: 48px;
+    padding: 0 16px;
+    background-color: var(--bg-light);
+    border: 1px solid #CAD5E2;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text-main);
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2362748E'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 20px;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.form-select:focus {
+    border-color: var(--primary);
+}
+
+/* Step 2: Info Box */
+.step-2-container {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #F1F5F9;
+}
+
+.step-2-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+}
+
+.icon-box-green, .icon-box-blue {
+    min-width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+}
+
+.icon-box-green {
+    background-color: var(--success-bg);
+    color: var(--success);
+}
+
+.icon-box-blue {
+    background-color: rgba(21, 93, 252, 0.1);
+    color: var(--primary-main);
+}
+.info-text h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.info-text p {
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.info-text strong {
+    color: #314158;
+    font-weight: 500;
+}
+
+.btn-secondary {
+    padding: 10px 16px;
+    background-color: var(--bg-light);
+    border: 1px solid transparent;
+    border-radius: 10px;
+    color: #314158;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+    background-color: #E2E8F0;
+}
+
+/* Step 3: Upload Zone */
+.upload-zone {
+    border: 1.6px dashed #CAD5E2;
+    border-radius: 14px;
+    padding: 40px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background-color: var(--bg-white);
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.upload-zone.dragover {
+    border-color: var(--primary);
+    background-color: #F0F7FF;
+}
+
+.upload-icon-circle {
+    width: 64px;
+    height: 64px;
+    background-color: var(--bg-light);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+}
+
+.upload-title {
+    font-size: 18px;
+    font-weight: 500;
+    color: #314158;
+    margin-bottom: 4px;
+}
+
+.upload-desc {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+}
+
+.btn-primary {
+    padding: 10px 24px;
+    background-color: var(--primary);
+    border: none;
+    border-radius: 10px;
+    color: var(--bg-white);
+    font-size: 16px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: var(--primary-hover);
+}
+
+.btn-primary:disabled {
+    background-color: #94A3B8;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* File Info Display */
+.file-info-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    background-color: var(--bg-light);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    margin-top: 8px;
+}
+
+.file-details {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.file-type-icon {
+    font-size: 24px;
+    color: var(--primary);
+}
+
+.file-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-main);
+    word-break: break-all;
+}
+
+.btn-remove-file {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.btn-remove-file:hover {
+    background-color: #F1F5F9;
+    color: var(--danger);
+}
+
+/* Actions */
+.card-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.btn-back {
+    padding: 10px 24px;
+    background-color: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 16px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.btn-back:hover {
+    color: var(--text-main);
+}

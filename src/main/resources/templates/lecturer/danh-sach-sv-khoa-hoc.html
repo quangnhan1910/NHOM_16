@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách SV khóa học</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/lecturer/chi-tiet-khoa-hoc.css}">
+</head>
+<body>
+    <div class="main-content" th:fragment="danhSachSinhVienFragment(maGiangVienMonHocParam)">
+        <div class="student-section">
+            <div class="student-header">
+                <h3 class="section-title">
+                    Danh sách lớp (<span id="totalStudents">0</span> SV)
+                </h3>
+                <div class="student-actions">
+                    <div class="search-box student-search">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M7 12C9.76142 12 12 9.76142 12 7C12 4.23858 9.76142 2 7 2C4.23858 2 2 4.23858 2 7C2 9.76142 4.23858 12 7 12Z" stroke="#90A1B9" stroke-width="1.333" stroke-linecap="round"/>
+                            <path d="M14 14L10.5 10.5" stroke="#90A1B9" stroke-width="1.333" stroke-linecap="round"/>
+                        </svg>
+                        <input type="text" id="searchStudent" placeholder="Tìm kiếm MSSV, Tên..." autocomplete="off">
+                    </div>
+                    <button type="button" class="btn-export" id="btnExportDanhSachSv">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.333" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M3 11v2h10v-2" stroke="currentColor" stroke-width="1.333" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Xuất Excel
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="student-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 64px;">STT</th>
+                            <th style="width: 128px;">MSSV</th>
+                            <th style="width: 256px;">Họ và Tên</th>
+                            <th style="width: 128px;">Lớp SH</th>
+                            <th style="width: 427px;">Email</th>
+                            <th style="width: 160px;">Tình trạng</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <script th:inline="javascript">
+            var maGiangVienMonHoc = [[${maGiangVienMonHocParam}]];
+            var danhSachSinhVienCache = [];
+
+            function normalizeForSearch(s) {
+                if (s == null || s === '') return '';
+                return String(s)
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/\p{M}/gu, '')
+                    .replace(/đ/g, 'd')
+                    .replace(/Đ/g, 'd');
+            }
+
+            function csvEscapeCell(val) {
+                if (val == null) return '""';
+                var s = String(val);
+                return '"' + s.replace(/"/g, '""') + '"';
+            }
+
+            async function loadStudents() {
+                try {
+                    const response = await fetch('/api/lecturer/danhsachsinhvien?maGiangVienMonHoc=' + maGiangVienMonHoc);
+                    if (response.ok) {
+                        const data = await response.json();
+                        danhSachSinhVienCache = data.danhSach || [];
+                        renderStudents(danhSachSinhVienCache);
+                        refreshListedStudentCount();
+                    }
+                } catch (error) {
+                    console.error('Lỗi load dữ liệu sinh viên:', error);
+                }
+            }
+
+            function renderStudents(students) {
+                const tbody = document.getElementById('studentTableBody');
+                if (!students || students.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="empty-cell">Chưa có sinh viên đăng ký</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = students.map((sv, index) => {
+                    const statusClass = getStatusClass(sv.tinhTrang);
+                    const statusText = getStatusText(sv.tinhTrang);
+                    const statusIcon = getStatusIcon(sv.tinhTrang);
+
+                    return `
+                        <tr>
+                            <td class="text-center">${index + 1}</td>
+                            <td class="mssv">${sv.maSinhVienStr || ''}</td>
+                            <td class="hoten">${sv.hoVaTen || ''}</td>
+                            <td>${sv.lopSinhHoat || ''}</td>
+                            <td>${sv.email || ''}</td>
+                            <td>
+                                <span class="tinhtrang-badge ${statusClass}">
+                                    ${statusIcon}
+                                    ${statusText}
+                                </span>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            function getStatusClass(status) {
+                switch(status) {
+                    case 'DU_DIEU_KIEN': return 'status-du';
+                    case 'CANH_BAO_VANG': return 'status-canh-bao';
+                    case 'CAM_THI': return 'status-cam';
+                    default: return 'status-du';
+                }
+            }
+
+            function getStatusText(status) {
+                switch(status) {
+                    case 'DU_DIEU_KIEN': return 'Đủ điều kiện';
+                    case 'CANH_BAO_VANG': return 'Cảnh báo vắng';
+                    case 'CAM_THI': return 'Cấm thi';
+                    default: return 'Đủ điều kiện';
+                }
+            }
+
+            function getStatusIcon(status) {
+                if (status === 'CAM_THI') {
+                    return `<svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                        <path d="M3 3l6 6M9 3l-6 6" stroke="currentColor" stroke-width="1.333" stroke-linecap="round"/>
+                    </svg>`;
+                }
+                return '';
+            }
+
+            function rowMatchesSearch(row, termNorm) {
+                if (!termNorm) return true;
+                var mssv = row.querySelector('td.mssv');
+                var hoten = row.querySelector('td.hoten');
+                if (!mssv || !hoten) return true;
+                var tds = row.querySelectorAll('td');
+                var lop = tds.length > 3 ? (tds[3].textContent || '') : '';
+                var email = tds.length > 4 ? (tds[4].textContent || '') : '';
+                var haystack = normalizeForSearch(
+                    (mssv.textContent || '') + ' ' +
+                    (hoten.textContent || '') + ' ' +
+                    lop + ' ' + email
+                );
+                return haystack.indexOf(termNorm) !== -1;
+            }
+
+            function searchStudents() {
+                var input = document.getElementById('searchStudent');
+                if (!input) return;
+                var termNorm = normalizeForSearch(input.value);
+                document.querySelectorAll('#studentTableBody tr').forEach(function (row) {
+                    row.style.display = rowMatchesSearch(row, termNorm) ? '' : 'none';
+                });
+                refreshListedStudentCount();
+            }
+
+            function refreshListedStudentCount() {
+                var n = 0;
+                document.querySelectorAll('#studentTableBody tr').forEach(function (row) {
+                    if (row.style.display === 'none') return;
+                    if (row.querySelector('td.mssv')) n++;
+                });
+                var el = document.getElementById('totalStudents');
+                if (el) el.textContent = String(n);
+            }
+
+            function exportExcel() {
+                var input = document.getElementById('searchStudent');
+                var termNorm = normalizeForSearch(input ? input.value : '');
+                var list = (danhSachSinhVienCache || []).filter(function (sv) {
+                    if (!termNorm) return true;
+                    var hay = normalizeForSearch(
+                        [sv.maSinhVienStr, sv.hoVaTen, sv.lopSinhHoat, sv.email].filter(Boolean).join(' ')
+                    );
+                    return hay.indexOf(termNorm) !== -1;
+                });
+                if (!list.length) {
+                    alert('Không có dữ liệu để xuất.');
+                    return;
+                }
+                var headers = ['STT', 'MSSV', 'Họ và tên', 'Lớp SH', 'Email', 'Tình trạng'];
+                var lines = [headers.map(csvEscapeCell).join(',')];
+                list.forEach(function (sv, i) {
+                    lines.push([
+                        csvEscapeCell(String(i + 1)),
+                        csvEscapeCell(sv.maSinhVienStr),
+                        csvEscapeCell(sv.hoVaTen),
+                        csvEscapeCell(sv.lopSinhHoat),
+                        csvEscapeCell(sv.email),
+                        csvEscapeCell(getStatusText(sv.tinhTrang))
+                    ].join(','));
+                });
+                var bom = '\uFEFF';
+                var blob = new Blob([bom + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+                var a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'danh-sach-sinh-vien-gvmh-' + maGiangVienMonHoc + '.csv';
+                a.click();
+                URL.revokeObjectURL(a.href);
+            }
+
+            loadStudents();
+
+            (function bindStudentListActions() {
+                var searchEl = document.getElementById('searchStudent');
+                if (searchEl) searchEl.addEventListener('input', searchStudents);
+                var btn = document.getElementById('btnExportDanhSachSv');
+                if (btn) btn.addEventListener('click', exportExcel);
+            })();
+        </script>
+    </div>
+</body>
+</html>

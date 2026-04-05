@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theo dõi bài thi sinh viên</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/lecturer/lecturer-layout.css}">
+    <link rel="stylesheet" th:href="@{/css/lecturer/giam-sat.css}">
+</head>
+<body>
+    <div class="lecturer-shell">
+        <aside th:replace="~{fragments/lecturer-sidebar :: sidebar (activeNav='giam-sat')}"></aside>
+        <div class="lecturer-main">
+            <div class="main-content theo-doi-page" th:attr="data-ma-ca-thi=${maCaThi},data-ma-bai-thi=${maBaiThi}">
+                <div class="detail-header">
+                    <a th:href="@{/lecturer/giam-sat-thi/chi-tiet(maCaThi=${maCaThi})}" class="detail-back-btn">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.333" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Quay lại danh sách
+                    </a>
+                    <div class="detail-info">
+                        <h2 class="detail-exam-name" id="pageTitle">Đang tải...</h2>
+                        <p class="detail-meta" id="pageMeta"></p>
+                    </div>
+                </div>
+
+                <div class="monitor-body">
+                    <div class="theo-doi-summary exam-list-card" id="summaryBlock" style="display:none;">
+                        <div class="theo-doi-summary-grid" id="summaryGrid"></div>
+                        <p class="theo-doi-hint" id="hintBlock" style="display:none;"></p>
+                    </div>
+
+                    <div class="exam-list-card" style="margin-top: 16px;">
+                        <div class="card-header">
+                            <div class="card-header-left">
+                                <h3 class="card-title">Nội dung bài làm (theo dữ liệu máy chủ)</h3>
+                                <div class="live-badge">
+                                    <div class="dot"></div>
+                                    <span>LIVE</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body theo-doi-cau-list" id="cauListBody">
+                            <p class="empty-desc" id="loadingText">Đang tải...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        var root = document.querySelector('.theo-doi-page');
+        var maCaThi = root.dataset.maCaThi;
+        var maBaiThi = root.dataset.maBaiThi;
+        var REFRESH_INTERVAL_MS = 5000;
+        var timerId = null;
+
+        function escapeHtml(s) {
+            if (s == null || s === '') return '';
+            var d = document.createElement('div');
+            d.textContent = s;
+            return d.innerHTML;
+        }
+
+        function formatDateTime(ldt) {
+            if (!ldt) return '—';
+            var d = new Date(ldt);
+            if (isNaN(d.getTime())) return '—';
+            var dd = String(d.getDate()).padStart(2, '0');
+            var mm = String(d.getMonth() + 1).padStart(2, '0');
+            var yy = d.getFullYear();
+            var hh = String(d.getHours()).padStart(2, '0');
+            var mi = String(d.getMinutes()).padStart(2, '0');
+            return dd + '/' + mm + '/' + yy + ' ' + hh + ':' + mi;
+        }
+
+        function badgeTrangThai(tt) {
+            if (!tt) return '—';
+            var cls = 'cho-nop';
+            var label = tt;
+            if (tt === 'DANG_LAM') { cls = 'dang-thi'; label = 'Đang thi'; }
+            else if (tt === 'DA_NOP') { cls = 'da-nop'; label = 'Đã nộp'; }
+            else if (tt === 'DA_CHAM') { cls = 'cho-nop'; label = 'Đã chấm'; }
+            return '<span class="trangthai-badge ' + cls + '">' + escapeHtml(label) + '</span>';
+        }
+
+        function renderSummary(data) {
+            document.getElementById('pageTitle').textContent =
+                (data.hoVaTen || '—') + ' · ' + (data.maSinhVienStr || '');
+            var meta = [
+                data.tenCaThi,
+                data.tenMonHoc,
+                data.maDinhDanhMonHoc
+            ].filter(Boolean).join(' · ');
+            document.getElementById('pageMeta').textContent = meta;
+
+            var grid = document.getElementById('summaryGrid');
+            grid.innerHTML =
+                '<div class="theo-doi-kv"><span class="theo-doi-k">Lớp SH</span><span class="theo-doi-v">' + escapeHtml(data.lopSinhHoat || '—') + '</span></div>' +
+                '<div class="theo-doi-kv"><span class="theo-doi-k">Thời gian vào</span><span class="theo-doi-v">' + escapeHtml(formatDateTime(data.batDauLuc)) + '</span></div>' +
+                '<div class="theo-doi-kv"><span class="theo-doi-k">Nộp bài</span><span class="theo-doi-v">' + escapeHtml(formatDateTime(data.nopBaiLuc)) + '</span></div>' +
+                '<div class="theo-doi-kv"><span class="theo-doi-k">Trạng thái</span><span class="theo-doi-v">' + badgeTrangThai(data.trangThai) + '</span></div>' +
+                '<div class="theo-doi-kv"><span class="theo-doi-k">Tiến độ</span><span class="theo-doi-v">' + (data.soCauDaTraLoi != null ? data.soCauDaTraLoi : 0) + '/' + (data.tongCauHoi != null ? data.tongCauHoi : 0) + '</span></div>' +
+                '<div class="theo-doi-kv"><span class="theo-doi-k">Điểm</span><span class="theo-doi-v">' + (data.tongDiem != null ? Number(data.tongDiem).toFixed(2) : '—') + '</span></div>';
+
+            document.getElementById('summaryBlock').style.display = '';
+
+            var hint = document.getElementById('hintBlock');
+            if (data.canhBaoChuaLuuTraLoiLenServer) {
+                hint.style.display = '';
+                hint.textContent = 'Lưu ý: Đề thi hiển thị đầy đủ bên dưới. Đáp án sinh viên chọn chỉ xuất hiện trên máy chủ sau khi nộp bài (trong lúc đang làm, phần lựa chọn có thể trống).';
+            } else {
+                hint.style.display = 'none';
+                hint.textContent = '';
+            }
+        }
+
+        function renderCauList(data) {
+            var body = document.getElementById('cauListBody');
+            var list = data.chiTietCauTraLoi || [];
+            if (list.length === 0) {
+                body.innerHTML = '<p class="empty-desc">Đề thi chưa có câu hỏi hoặc chưa tải được.</p>';
+                return;
+            }
+            var html = '';
+            list.forEach(function(cau, i) {
+                var dung;
+                if (cau.laDapAnDung === true) {
+                    dung = '<span style="color:#15803D;font-weight:600;">Đúng</span>';
+                } else if (cau.laDapAnDung === false) {
+                    dung = '<span style="color:#DC2626;font-weight:600;">Sai / một phần</span>';
+                } else {
+                    dung = '<span class="theo-doi-chua-phan">Chưa có trên máy chủ</span>';
+                }
+                var lcList = cau.luaChonDaChon || [];
+                var chonBlock;
+                if (lcList.length > 0) {
+                    var chon = lcList.map(function(lc) {
+                        return '<li>' + escapeHtml(lc.noiDungLuaChon || '') + '</li>';
+                    }).join('');
+                    chonBlock = '<ul class="theo-doi-cau-chon">' + chon + '</ul>';
+                } else {
+                    chonBlock = '<p class="theo-doi-chua-chon-msg">Chưa có lựa chọn lưu trên máy chủ — thường gặp khi sinh viên đang làm bài (chỉ đồng bộ sau khi nộp).</p>';
+                }
+                html +=
+                    '<div class="theo-doi-cau-item">' +
+                    '<div class="theo-doi-cau-stt">Câu ' + (i + 1) + '</div>' +
+                    '<div class="theo-doi-cau-content">' + escapeHtml(cau.noiDungCauHoi || '') + '</div>' +
+                    '<div class="theo-doi-cau-meta">Kết quả: ' + dung + '</div>' +
+                    chonBlock +
+                    '</div>';
+            });
+            body.innerHTML = html;
+        }
+
+        async function loadTheoDoi() {
+            try {
+                var url = '/api/giam-sat/theo-doi-bai-thi?maBaiThi=' + encodeURIComponent(maBaiThi) + '&maCaThi=' + encodeURIComponent(maCaThi);
+                var response = await fetch(url);
+                if (!response.ok) {
+                    document.getElementById('cauListBody').innerHTML =
+                        '<p class="empty-title">Không tải được dữ liệu (' + response.status + ')</p>';
+                    return;
+                }
+                var data = await response.json();
+                renderSummary(data);
+                renderCauList(data);
+            } catch (e) {
+                console.error(e);
+                document.getElementById('cauListBody').innerHTML = '<p class="empty-title">Lỗi kết nối máy chủ</p>';
+            }
+        }
+
+        function startAutoRefresh() {
+            if (timerId) clearInterval(timerId);
+            timerId = setInterval(loadTheoDoi, REFRESH_INTERVAL_MS);
+        }
+
+        loadTheoDoi();
+        startAutoRefresh();
+    </script>
+</body>
+</html>

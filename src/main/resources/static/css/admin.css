@@ -1,0 +1,1053 @@
+/* Base styles - Figma Admin Dashboard */
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #F6F7F8;
+    color: #0F172A;
+    min-height: 100vh;
+}
+
+.admin-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* ── Layout: sidebar + nội dung (Figma UniExam admin) ───────────────── */
+.admin-shell {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    align-items: stretch;
+    background: #F6F7F8;
+}
+
+.admin-sidebar {
+    width: 288px;
+    flex-shrink: 0;
+    background: #FFFFFF;
+    border-right: 1px solid #E2E8F0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    transition: width 0.2s ease;
+}
+
+.admin-shell.sidebar-collapsed .admin-sidebar {
+    width: 76px;
+}
+
+.admin-sidebar-toggle {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #64748B;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.admin-sidebar-toggle:hover {
+    background: #F1F5F9;
+    color: #0F172A;
+}
+
+.admin-sidebar-toggle svg {
+    transition: transform 0.2s ease;
+}
+
+.admin-shell.sidebar-collapsed .admin-sidebar-toggle svg {
+    transform: scaleX(-1);
+}
+
+.admin-sidebar-brand-main {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    flex: 1;
+}
+
+.admin-shell.sidebar-collapsed .admin-sidebar-brand {
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 10px;
+    gap: 10px;
+}
+
+.admin-shell.sidebar-collapsed .admin-sidebar-brand-main {
+    flex-direction: column;
+    flex: none;
+    gap: 0;
+}
+
+.admin-shell.sidebar-collapsed .admin-sidebar-titles {
+    display: none;
+}
+
+.admin-shell.sidebar-collapsed .admin-nav-heading {
+    display: none;
+}
+
+.admin-shell.sidebar-collapsed .admin-nav-link {
+    position: relative;
+    justify-content: center;
+    padding: 10px;
+    gap: 0;
+}
+
+.admin-shell.sidebar-collapsed .admin-nav-link > span:not(.admin-nav-icon) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.admin-shell.sidebar-collapsed .admin-sidebar-user-text {
+    display: none;
+}
+
+.admin-shell.sidebar-collapsed .admin-sidebar-user {
+    justify-content: center;
+    padding: 8px;
+}
+
+.admin-shell.sidebar-collapsed .admin-sidebar-footer {
+    padding: 12px 8px;
+}
+
+.admin-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.admin-main > .admin-wrapper,
+.admin-main > .subjects-wrapper,
+.admin-main > .users-wrapper,
+.admin-main > .main-content,
+.admin-main > .logs-wrapper,
+.admin-main > .settings-wrapper,
+.admin-main > .pc-wrap,
+.admin-main > .nhq-layout,
+.admin-main > .de-thi-sua-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+/* Khối nội dung trang Ngân hàng câu hỏi (và trang con cùng layout) */
+.nhq-layout {
+    min-height: 0;
+}
+
+.nhq-layout > .header {
+    flex-shrink: 0;
+}
+
+.nhq-layout > .main-content {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.admin-sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 16px 20px 12px;
+    flex-shrink: 0;
+}
+
+/* Logo ảnh: static/images/brand/uniexam-logo.png (xuất từ Background.png) */
+.admin-sidebar-logo {
+    width: 38px;
+    height: 34px;
+    padding: 0;
+    background: transparent;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.admin-sidebar-logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.admin-sidebar-titles {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    min-width: 0;
+}
+
+.admin-sidebar-title {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 22.5px;
+    color: #0F172A;
+}
+
+.admin-sidebar-subtitle {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: #64748B;
+}
+
+.admin-sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.admin-nav-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px 0;
+}
+
+.admin-nav-heading {
+    padding: 0 12px;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 15px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #94A3B8;
+}
+
+.admin-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    color: #475569;
+    transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.admin-nav-link:hover {
+    background: #F1F5F9;
+    color: #0F172A;
+}
+
+.admin-nav-link.is-active {
+    background: #1C74E9;
+    color: #FFFFFF;
+    box-shadow: 0 1px 2px rgba(28, 116, 233, 0.2);
+}
+
+.admin-nav-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    color: inherit;
+}
+
+/* Icon theo spec Figma — Cơ cấu tổ chức */
+.admin-nav-icon--co-cau {
+    width: 16.67px;
+    height: 15px;
+    color: #475569;
+}
+
+/* Icon theo spec Figma — Người dùng */
+.admin-nav-icon--nguoi-dung {
+    width: 18.33px;
+    height: 13.33px;
+    color: #475569;
+}
+
+/* Icon Cài đặt — Bootstrap Icons (bi-gear-fill) */
+.admin-nav-icon--cai-dat {
+    width: 16.75px;
+    height: 16.67px;
+    color: #475569;
+}
+
+.admin-nav-icon--cai-dat .bi {
+    display: block;
+    font-size: 16.75px;
+    line-height: 1;
+}
+
+.admin-nav-link.is-active .admin-nav-icon--co-cau,
+.admin-nav-link.is-active .admin-nav-icon--nguoi-dung,
+.admin-nav-link.is-active .admin-nav-icon--cai-dat {
+    color: #FFFFFF;
+}
+
+.admin-nav-icon--co-cau svg,
+.admin-nav-icon--nguoi-dung svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.admin-nav-link:not(.is-active) .admin-nav-icon {
+    color: #475569;
+}
+
+.admin-nav-link.is-active .admin-nav-icon {
+    color: #FFFFFF;
+}
+
+.admin-sidebar-footer {
+    flex-shrink: 0;
+    padding: 16px;
+    border-top: 1px solid #E2E8F0;
+}
+
+.admin-sidebar-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+    background: #F8FAFC;
+    border-radius: 12px;
+}
+
+.admin-sidebar-user-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.admin-sidebar-user-name {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 20px;
+    color: #0F172A;
+}
+
+.admin-sidebar-user-role {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    color: #64748B;
+}
+
+.admin-sidebar-logout-form {
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.admin-sidebar-logout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #94A3B8;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.admin-sidebar-logout:hover {
+    background: #E2E8F0;
+    color: #64748B;
+}
+
+/* Header */
+.admin-header {
+    height: 64px;
+    background: #FFFFFF;
+    border-bottom: 1px solid #E2E8F0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-left {
+    flex: 1;
+    max-width: 576px;
+}
+
+.search-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.search-input-wrapper .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 9px 16px 10px 40px;
+    background: #F8FAFC;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    color: #6B7280;
+    outline: none;
+}
+
+.search-input::placeholder {
+    color: #6B7280;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.header-icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: transparent;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.2s;
+}
+
+.header-icon-btn:hover {
+    background: #F1F5F9;
+}
+
+.header-icon-btn .notification-dot {
+    position: absolute;
+    top: 7px;
+    right: 7px;
+    width: 8px;
+    height: 8px;
+    background: #EF4444;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.header-divider {
+    width: 1px;
+    height: 24px;
+    background: #E2E8F0;
+}
+
+.server-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.server-status-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #94A3B8;
+    text-transform: uppercase;
+}
+
+.server-status-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 8px;
+    background: #DCFCE7;
+    border-radius: 9999px;
+}
+
+.server-status-dot {
+    width: 6px;
+    height: 6px;
+    background: #22C55E;
+    border-radius: 50%;
+}
+
+.server-status-text {
+    font-size: 10px;
+    font-weight: 700;
+    color: #16A34A;
+    text-transform: uppercase;
+}
+
+/* Main Content */
+.admin-content {
+    flex: 1;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+/* Section - Greeting */
+.greeting-section h1 {
+    font-size: 24px;
+    font-weight: 800;
+    color: #0F172A;
+    margin-bottom: 4px;
+}
+
+.greeting-section p {
+    font-size: 16px;
+    color: #64748B;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    height: 162px;
+}
+
+.stat-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 24px;
+    position: relative;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.stat-card-header {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    right: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+/* Khối icon thẻ thống kê — theo spec Figma */
+.stat-icon-wrap {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 8px;
+    padding: 8px;
+}
+
+.stat-icon-wrap--khoa {
+    width: 36px;
+    height: 36px;
+    background: rgba(28, 116, 233, 0.1);
+}
+
+.stat-icon-wrap--khoa .stat-icon-img--khoa {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    display: block;
+}
+
+.stat-icon-wrap--sinh-vien {
+    width: 40px;
+    height: 28px;
+    background: #F3E8FF;
+}
+
+.stat-icon-wrap--sinh-vien svg {
+    width: 24px;
+    height: 12px;
+    display: block;
+}
+
+.stat-icon-wrap--cau-hoi {
+    width: 34px;
+    height: 34px;
+    background: #FEF3C7;
+}
+
+.stat-icon-wrap--cau-hoi svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+
+.stat-icon-wrap--ky-thi {
+    width: 34px;
+    height: 37px;
+    background: #FEE2E2;
+}
+
+.stat-icon-wrap--ky-thi svg {
+    width: 18px;
+    height: 21px;
+    display: block;
+}
+
+.stat-change {
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.stat-change.positive {
+    color: #22C55E;
+}
+
+.stat-change.warning {
+    color: #F59E0B;
+}
+
+.stat-change.negative {
+    color: #EF4444;
+}
+
+.stat-card-label {
+    position: absolute;
+    top: 80px;
+    left: 24px;
+    right: 24px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #64748B;
+}
+
+.stat-card-value {
+    position: absolute;
+    top: 104px;
+    left: 24px;
+    right: 24px;
+    font-size: 24px;
+    font-weight: 700;
+    color: #0F172A;
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1004px 486px;
+    gap: 32px;
+    justify-content: center;
+}
+
+/* System Log Table */
+.log-table-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.log-table-header {
+    padding: 24px;
+    border-bottom: 1px solid #F1F5F9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.log-table-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #0F172A;
+}
+
+.log-table-title svg {
+    width: 18px;
+    height: 18px;
+}
+
+.view-all-link {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1C74E9;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.view-all-link:hover {
+    text-decoration: underline;
+}
+
+.log-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.log-table thead {
+    background: #F8FAFC;
+}
+
+.log-table th {
+    padding: 16px 24px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 700;
+    color: #64748B;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.log-table th:last-child {
+    text-align: right;
+}
+
+.log-table td {
+    padding: 19px 24px 21px;
+    font-size: 12px;
+    color: #64748B;
+    border-top: 1px solid #F1F5F9;
+}
+
+.log-table td:last-child {
+    text-align: right;
+}
+
+.log-table .user-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #0F172A;
+}
+
+.log-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.log-action-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.log-action-badge.start {
+    background: #DCFCE7;
+    color: #15803D;
+}
+
+.log-action-badge.add {
+    background: #DBEAFE;
+    color: #1D4ED8;
+}
+
+.log-action-badge.error {
+    background: #FEF3C7;
+    color: #B45309;
+}
+
+.log-action-badge.backup {
+    background: #F3E8FF;
+    color: #7E22CE;
+}
+
+.log-action-detail {
+    color: #64748B;
+}
+
+.log-ip {
+    font-family: 'Liberation Mono', monospace;
+    color: #94A3B8;
+}
+
+/* Aside Column */
+.aside-column {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* System Health Widget */
+.health-widget {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.health-widget-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #0F172A;
+    margin-bottom: 24px;
+}
+
+.health-widget-title svg {
+    width: 18px;
+    height: 18px;
+}
+
+.health-item {
+    margin-bottom: 24px;
+}
+
+.health-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.health-item-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #475569;
+}
+
+.health-item-label svg {
+    width: 11px;
+    height: 11px;
+}
+
+.health-item-status {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.health-item-status.online {
+    color: #22C55E;
+}
+
+.health-item-status.active {
+    color: #1C74E9;
+}
+
+.health-progress {
+    height: 6px;
+    background: #F1F5F9;
+    border-radius: 9999px;
+    overflow: hidden;
+}
+
+.health-progress-bar {
+    height: 100%;
+    border-radius: 9999px;
+}
+
+.health-progress-bar.green {
+    background: #22C55E;
+}
+
+.health-progress-bar.blue {
+    background: #1C74E9;
+}
+
+.health-item-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+}
+
+.health-item-footer span {
+    font-size: 10px;
+    color: #94A3B8;
+}
+
+.health-divider {
+    border-top: 1px solid #F1F5F9;
+    padding-top: 17px;
+    margin-top: 8px;
+}
+
+.active-rooms-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #94A3B8;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 12px;
+}
+
+.active-room-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.active-room-item:last-child {
+    margin-bottom: 0;
+}
+
+.active-room-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.room-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.room-status-dot.green {
+    background: #22C55E;
+}
+
+.room-status-dot.yellow {
+    background: #F59E0B;
+}
+
+.room-name {
+    font-size: 14px;
+    color: #334155;
+}
+
+.room-capacity {
+    font-size: 12px;
+    font-family: 'Liberation Mono', monospace;
+    color: #64748B;
+}
+
+/* Quick Actions - Emergency Button */
+.quick-actions {
+    background: linear-gradient(160.615deg, #1C74E9 0%, #1D4ED8 100%);
+    border-radius: 12px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+}
+
+.quick-actions::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0);
+    border-radius: 12px;
+    box-shadow: 0 10px 15px -3px rgba(28, 116, 233, 0.2), 0 4px 6px -4px rgba(28, 116, 233, 0.2);
+    pointer-events: none;
+}
+
+.quick-actions-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 8px;
+}
+
+.quick-actions-desc {
+    font-size: 12px;
+    color: #DBEAFE;
+    line-height: 19.5px;
+    margin-bottom: 16px;
+}
+
+.quick-actions-btn {
+    width: 100%;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    color: white;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.quick-actions-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 1400px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    .aside-column {
+        flex-direction: row;
+    }
+    .health-widget, .quick-actions {
+        flex: 1;
+    }
+}
+
+@media (max-width: 1024px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        height: auto;
+    }
+    .aside-column {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-header {
+        padding: 0 16px;
+    }
+    .admin-content {
+        padding: 16px;
+    }
+    .header-right {
+        gap: 8px;
+    }
+    .server-status-label {
+        display: none;
+    }
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}

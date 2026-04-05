@@ -1,0 +1,627 @@
+/* ========================================
+   Giám sát thi - Real-time Exam Monitoring
+   ======================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #F8FAFC;
+    color: #0F172B;
+}
+
+/* Main Content */
+.main-content {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    width: 1278px;
+    min-height: 729.6px;
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+.monitor-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 32px;
+    width: 1278.4px;
+    height: 72px;
+    background: #FFFFFF;
+    border-bottom: 0.8px solid #E2E8F0;
+}
+
+.header-title {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 28px;
+    color: #0F172B;
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.search-input {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0 16px 0 40px;
+    width: 320px;
+    height: 40px;
+    background: #F1F5F9;
+    border-radius: 10px;
+    position: relative;
+}
+
+.search-input svg {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.search-input input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    color: #314158;
+    outline: none;
+}
+
+.search-input input::placeholder {
+    color: rgba(49, 65, 88, 0.5);
+}
+
+.btn-tao-ky-thi {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 20px;
+    height: 40px;
+    background: #1A355B;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1), 0px 1px 2px -1px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    color: #FFFFFF;
+    cursor: pointer;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.btn-tao-ky-thi:hover {
+    background: #142B4A;
+}
+
+.btn-tao-ky-thi svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+/* ========================================
+   MAIN BODY
+   ======================================== */
+.monitor-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 32px;
+    gap: 24px;
+}
+
+/* ========================================
+   SECTION: DANH SACH CA THI DANG DIEN RA
+   ======================================== */
+.exam-list-card {
+    width: 100%;
+    background: #FFFFFF;
+    border: 0.8px solid #E2E8F0;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1), 0px 1px 2px -1px rgba(0, 0, 0, 0.1);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.card-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 24px 20px;
+    border-bottom: 0.8px solid #E2E8F0;
+}
+
+.card-header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.card-title {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 28px;
+    color: #0F172B;
+}
+
+.live-badge {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: #FFE2E2;
+    opacity: 0.82;
+    border-radius: 4px;
+}
+
+.live-badge .dot {
+    width: 8px;
+    height: 8px;
+    background: #E7000B;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+.live-badge span {
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 16px;
+    color: #C10007;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+.card-body {
+    padding: 0;
+}
+
+.card-hint {
+    padding: 16px 24px;
+    font-size: 14px;
+    line-height: 20px;
+    color: #62748E;
+    border-bottom: 0.8px solid #E2E8F0;
+}
+
+/* ========================================
+   TABLE
+   ======================================== */
+.monitor-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.monitor-table thead {
+    background: #F8FAFC;
+}
+
+.monitor-table thead tr {
+    border-bottom: 0.8px solid #E2E8F0;
+}
+
+.monitor-table th {
+    padding: 16px;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 20px;
+    color: #45556C;
+}
+
+.monitor-table th:last-child {
+    text-align: right;
+}
+
+.monitor-table tbody tr {
+    border-bottom: 0.8px solid #E2E8F0;
+    transition: background 0.2s;
+}
+
+.monitor-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.monitor-table tbody tr:hover {
+    background: #F8FAFC;
+}
+
+.monitor-table td {
+    padding: 20px 16px;
+    font-size: 14px;
+    line-height: 20px;
+    color: #314158;
+    vertical-align: middle;
+}
+
+.monitor-table td:last-child {
+    text-align: right;
+}
+
+/* Column widths */
+.monitor-table th:nth-child(1) { width: 24%; }
+.monitor-table th:nth-child(2) { width: 20%; }
+.monitor-table th:nth-child(3) { width: 19%; }
+.monitor-table th:nth-child(4) { width: 13%; text-align: center; }
+.monitor-table th:nth-child(5) { width: 13%; text-align: center; }
+.monitor-table th:nth-child(6) { width: 11%; text-align: right; }
+
+.monitor-table td:nth-child(4),
+.monitor-table td:nth-child(5) {
+    text-align: center;
+}
+
+/* Cell: Ten mon thi */
+.cell-ten-mon {
+    font-weight: 700;
+    color: #0F172B;
+}
+
+.cell-sub {
+    font-size: 12px;
+    font-weight: 400;
+    color: #62748E;
+    margin-top: 2px;
+}
+
+/* Cell: Thoi gian */
+.cell-thoi-gian {
+    color: #45556C;
+}
+
+/* Cell: Phong */
+.cell-phong {
+    font-weight: 500;
+    color: #45556C;
+}
+
+/* Progress info */
+.cell-progress {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.progress-numbers {
+    font-size: 13px;
+    font-weight: 600;
+    color: #314158;
+}
+
+.progress-sub {
+    font-size: 11px;
+    color: #62748E;
+}
+
+/* Status badge */
+.trangthai-badge {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 4px 10px;
+    gap: 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 16px;
+    min-width: 80px;
+    justify-content: center;
+}
+
+.trangthai-badge.dang-thi {
+    background: #FFE2E2;
+    color: #C10007;
+}
+
+.trangthai-badge.da-nop {
+    background: #F0FDF4;
+    color: #008236;
+}
+
+.trangthai-badge.cho-nop {
+    background: #EFF6FF;
+    color: #1447E6;
+}
+
+/* Action button */
+.btn-giam-sat {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 16px;
+    height: 40px;
+    background: #1A355B;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1), 0px 1px 2px -1px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    color: #FFFFFF;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btn-giam-sat:hover {
+    background: #142B4A;
+}
+
+.btn-giam-sat svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+.btn-theo-doi-sv {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 88px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #FFFFFF;
+    background: #1A355B;
+    border-radius: 8px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-theo-doi-sv:hover {
+    background: #142B4A;
+    color: #FFFFFF;
+}
+
+.btn-theo-doi-sv--disabled {
+    background: #E2E8F0;
+    color: #94A3B8;
+    cursor: default;
+    min-width: auto;
+    padding: 6px 10px;
+}
+
+.btn-theo-doi-sv--disabled:hover {
+    background: #E2E8F0;
+    color: #94A3B8;
+}
+
+/* ========================================
+   EMPTY STATE
+   ======================================== */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 24px;
+    gap: 12px;
+}
+
+.empty-icon {
+    width: 48px;
+    height: 48px;
+    color: #CBD5E1;
+}
+
+.empty-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #45556C;
+}
+
+.empty-desc {
+    font-size: 14px;
+    color: #62748E;
+}
+
+/* ========================================
+   PAGE TRANSITION (Chi tiet giám sát)
+   ======================================== */
+.detail-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 24px 32px;
+    gap: 24px;
+    background: #FFFFFF;
+    border-bottom: 0.8px solid #E2E8F0;
+}
+
+.detail-back-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    color: #62748E;
+    transition: color 0.2s;
+}
+
+.detail-back-btn:hover {
+    color: #1A355B;
+}
+
+.detail-info {
+    flex: 1;
+}
+
+.detail-exam-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: #0F172B;
+    margin-bottom: 4px;
+}
+
+.detail-meta {
+    font-size: 14px;
+    color: #62748E;
+}
+
+.detail-stats {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.stat-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: #0F172B;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: #62748E;
+}
+
+.stat-divider {
+    width: 1px;
+    height: 40px;
+    background: #E2E8F0;
+}
+
+/* Theo dõi bài thi SV */
+.theo-doi-page.main-content {
+    width: 100%;
+    max-width: 1278px;
+}
+
+.theo-doi-summary {
+    margin: 0 0 0 0;
+}
+
+.theo-doi-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px 24px;
+    padding: 8px 0;
+}
+
+.theo-doi-kv {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.theo-doi-k {
+    font-size: 12px;
+    color: #62748E;
+    font-weight: 500;
+}
+
+.theo-doi-v {
+    font-size: 14px;
+    color: #0F172B;
+    font-weight: 600;
+}
+
+.theo-doi-hint {
+    margin-top: 16px;
+    padding: 12px 14px;
+    background: #FFFBEB;
+    border: 1px solid #FDE68A;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #92400E;
+    line-height: 1.45;
+}
+
+.theo-doi-cau-list {
+    padding: 8px 0 16px;
+}
+
+.theo-doi-cau-item {
+    padding: 16px 0;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.theo-doi-cau-item:last-child {
+    border-bottom: none;
+}
+
+.theo-doi-cau-stt {
+    font-size: 12px;
+    font-weight: 600;
+    color: #62748E;
+    margin-bottom: 8px;
+}
+
+.theo-doi-cau-content {
+    font-size: 14px;
+    color: #0F172B;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    margin-bottom: 8px;
+}
+
+.theo-doi-cau-meta {
+    font-size: 13px;
+    color: #45556C;
+    margin-bottom: 8px;
+}
+
+.theo-doi-cau-chon {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 13px;
+    color: #314158;
+    line-height: 1.5;
+}
+
+.theo-doi-chua-chon-msg {
+    margin: 8px 0 0;
+    font-size: 13px;
+    color: #64748B;
+    font-style: italic;
+    line-height: 1.45;
+}
+
+.theo-doi-chua-phan {
+    color: #64748B;
+    font-weight: 500;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 1280px) {
+    .main-content {
+        width: 100%;
+        min-width: unset;
+    }
+
+    .monitor-header {
+        width: 100%;
+    }
+
+    .monitor-table th,
+    .monitor-table td {
+        padding: 12px 10px;
+    }
+}

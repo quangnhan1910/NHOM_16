@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- Liên kết nhanh về khu vực giảng viên (khi đang dùng giao diện GV trên trang học thuật dùng chung) -->
+<div th:fragment="backToKhoaHoc" class="lecturer-hub-back" th:if="${dungGiaoDienGiangVien == true}">
+    <a th:href="@{/lecturer/khoahoccoatoi}" class="lecturer-hub-back-link" title="Về Khóa học của tôi">
+        <span class="lecturer-hub-back-icon" aria-hidden="true">←</span>
+        <span>Khóa học của tôi</span>
+    </a>
+</div>
+</body>
+</html>

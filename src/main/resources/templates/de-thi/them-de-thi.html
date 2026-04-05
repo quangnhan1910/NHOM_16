@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tạo đề thi mới - UniExam</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" th:unless="${dungGiaoDienGiangVien == true}" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:if="${dungGiaoDienGiangVien == true}" th:href="@{/css/lecturer/lecturer-layout.css}">
+    <link rel="stylesheet" th:href="@{/css/quan-ly-de-thi.css}">
+    <link rel="stylesheet" th:href="@{/css/them-de-thi.css}">
+</head>
+
+<body>
+
+<div th:class="${dungGiaoDienGiangVien == true} ? 'de-thi-quan-ly-root lecturer-shell de-thi-them-moi-page' : 'de-thi-quan-ly-root admin-shell de-thi-them-moi-page'">
+    <aside th:replace="${dungGiaoDienGiangVien == true} ? ~{fragments/lecturer-sidebar :: sidebar (activeNav='de-thi')} : ~{fragments/admin-sidebar :: sidebar (activeNav='de-thi')}"></aside>
+    <div th:class="${dungGiaoDienGiangVien == true} ? 'lecturer-main' : 'admin-main'">
+        <div class="nhq-layout">
+            <header class="header">
+                <div class="breadcrumb">
+                    <a href="/de-thi" class="breadcrumb-link">Đề thi</a>
+                    <i class="fa-solid fa-chevron-right breadcrumb-separator"></i>
+                    <span class="breadcrumb-current">Tạo đề thi mới</span>
+                </div>
+                <div class="header-actions">
+                    <button type="button" class="notification-btn" title="Thông báo">
+                        <i class="fa-regular fa-bell"></i>
+                    </button>
+                </div>
+            </header>
+
+            <main class="main-content">
+                <div th:replace="~{fragments/lecturer-hub-back :: backToKhoaHoc}"></div>
+                <div class="de-thi-them-moi-body">
+                    <div class="container-center">
+
+                        <div class="page-title-section">
+                            <h1 class="page-title">Tạo đề thi mới</h1>
+                            <p class="page-desc">Tải lên tài liệu của bạn và điền các thông tin cần thiết để bắt đầu tạo nội dung bài thi.</p>
+                        </div>
+
+                        <div class="form-card">
+                            <div class="form-body">
+
+                                <div class="form-group">
+                                    <label class="form-label">Tài liệu nguồn</label>
+                                    <div class="upload-zone" id="uploadZone">
+                                        <div class="upload-icon-wrapper">
+                                            <i class="fa-solid fa-cloud-arrow-up cloud-icon"></i>
+                                        </div>
+                                        <h3 class="upload-title">Kéo và thả tệp tại đây</h3>
+                                        <p class="upload-subtitle">Hỗ trợ định dạng PDF, Word (.doc, .docx). Tối đa 25MB.</p>
+                                        <button type="button" class="btn-choose-file">Chọn tệp từ máy tính</button>
+                                        <input type="file" id="fileInput" hidden accept=".pdf,.doc,.docx">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Tên đề thi</label>
+                                    <input type="text" id="examName" class="form-input" placeholder="Ví dụ: Kiểm tra cuối kỳ môn Toán Giải Tích 1">
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group half">
+                                        <label class="form-label">Môn học</label>
+                                        <div class="select-wrapper">
+                                            <select class="form-select" id="subject">
+                                                <option value="" disabled selected>Chọn môn học</option>
+                                            </select>
+                                            <i class="fa-solid fa-chevron-down select-icon"></i>
+                                        </div>
+                                    </div>
+                                    <div class="form-group half">
+                                        <label class="form-label">Thời lượng (phút)</label>
+                                        <div class="input-icon-wrapper">
+                                            <input type="number" id="examDuration" class="form-input input-with-icon" placeholder="Ví dụ: 90" min="1">
+                                            <i class="fa-regular fa-clock suffix-icon"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-footer">
+                                <a href="/de-thi" class="btn-cancel">Hủy bỏ</a>
+                                <button type="button" class="btn-continue" id="btnContinue" disabled>
+                                    Tiếp tục <i class="fa-solid fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="info-cards-row">
+                            <div class="info-card">
+                                <i class="fa-solid fa-shield-halved"></i>
+                                <div class="info-content">
+                                    <h4>Dữ liệu an toàn</h4>
+                                    <p>Tài liệu của bạn sẽ được mã hóa và bảo mật tuyệt đối.</p>
+                                </div>
+                            </div>
+                            <div class="info-card">
+                                <i class="fa-regular fa-file-lines"></i>
+                                <div class="info-content">
+                                    <h4>Định dạng chuẩn</h4>
+                                    <p>Nên sử dụng tệp có chữ rõ ràng để AI xử lý tốt hơn.</p>
+                                </div>
+                            </div>
+                            <div class="info-card">
+                                <i class="fa-solid fa-clock-rotate-left"></i>
+                                <div class="info-content">
+                                    <h4>Lưu tự động</h4>
+                                    <p>Hệ thống sẽ tự động lưu bản nháp mỗi 30 giây.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/them-de-thi.js}"></script>
+</body>
+
+</html>

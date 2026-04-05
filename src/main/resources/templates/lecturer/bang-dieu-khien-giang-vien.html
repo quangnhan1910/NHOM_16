@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+    <!-- 
+        =================================================================
+        File: bang-dieu-khien-giang-vien.html
+        Mô tả: Giao diện trang Bang dieu khien (Giang Vien) dành cho Giang Vien
+        Framework: Spring Boot + Thymeleaf
+        =================================================================
+    -->
+<!-- 
+    xmlns:th="http://www.thymeleaf.org" - Namespace của Thymeleaf 
+    dùng để render dữ liệu động từ server 
+-->
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Thiết lập mã hóa ký tự UTF-8 để hỗ trợ tiếng Việt -->
+    <meta charset="UTF-8">
+    <!-- Đảm bảo giao diện responsive trên mọi thiết bị -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Tiêu đề trang hiển thị trên tab trình duyệt -->
+    <title>Bảng điều khiển (Giảng Viên)</title>
+    
+    <!-- 
+        Liên kết file CSS stylesheet 
+        th:href="@{/css/bang-dieu-khien-giang-vien.css}" - Thymeleaf syntax
+        để resolve đường dẫn tĩnh trong Spring Boot
+    -->
+    <link rel="stylesheet" th:href="@{/css/lecturer/lecturer-layout.css}">
+    <link rel="stylesheet" th:href="@{/css/bang-dieu-khien-giang-vien.css}">
+    <!-- Nhúng font Inter từ Google Fonts để đồng nhất typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="lecturer-shell">
+        <aside th:replace="~{fragments/lecturer-sidebar :: sidebar (activeNav='dashboard')}"></aside>
+        <div class="lecturer-main">
+    <!-- 
+        app-container: Wrapper chính chứa toàn bộ ứng dụng 
+        Sử dụng flexbox để tạo layout dọc 
+    -->
+    <div class="app-container">
+        
+        <!-- 
+            =================================================================
+            HEADER - Thanh tiêu đề nằm ở trên cùng
+            Chứa: tiêu đề trang, ô tìm kiếm, nút thông báo, nút tạo mới
+            =================================================================
+        -->
+        <header class="header">
+            <!-- Phần bên trái header: Tiêu đề trang -->
+            <div class="header-left">
+                <h2 class="page-title">Bảng điều khiển</h2>
+            </div>
+            
+            <!-- Phần giữa header: Ô tìm kiếm -->
+            <div class="header-center">
+                <div class="search-box">
+                    <!-- Icon kính lúp (SVG) cho ô tìm kiếm -->
+                    <svg class="search-icon" width="13" height="13" viewBox="0 0 13 13" fill="none">
+                        <path d="M5.5 1C7.98528 1 10 3.01472 10 5.5C10 7.98528 7.98528 10 5.5 10C3.01472 10 1 7.98528 1 5.5C1 3.01472 3.01472 1 5.5 1Z" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 12L9.5 9.5" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <!-- Input tìm kiếm - placeholder là text gợi ý -->
+                    <input type="text" placeholder="Tìm kiếm kỳ thi..." class="search-input">
+                </div>
+            </div>
+            
+            <!-- Phần bên phải header: Các nút hành động -->
+            <div class="header-right">
+                <!-- Nút thông báo có badge đỏ (chưa đọc) -->
+                <button class="notification-btn">
+                    <!-- Icon chuông (SVG) -->
+                    <svg width="16" height="20" viewBox="0 0 16 20" fill="none">
+                        <path d="M8 2C5.376 2 3.333 4.043 3.333 6.667V9.333L1.666 12H14.333L12.667 9.333V6.667C12.667 4.043 10.624 2 8 2Z" stroke="#475569" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M6.333 12V13.333C6.333 14.6 7.4 15.667 8.667 15.667C9.933 15.667 11 14.6 11 13.333V12" stroke="#475569" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <!-- Badge đỏ hiển thị số thông báo chưa đọc -->
+                    <span class="notification-badge"></span>
+                </button>
+                
+                <!-- Nút tạo mới (màu xanh đậm) -->
+                <button class="create-btn">
+                    <!-- Icon dấu cộng (+) -->
+                    <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
+                        <path d="M4 1V7M1 4H7" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    <span>Tạo mới</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Nội dung trang (sidebar/menu sẽ đặt ở layout tổng sau) -->
+        <div class="main-content">
+            <!-- 
+                =================================================================
+                CONTENT AREA - Khu vực nội dung chính
+                =================================================================
+            -->
+            <main class="content">
+                
+                <!-- 
+                    =================================================================
+                    OVERVIEW CARDS - Các thẻ tổng quan
+                    Hiển thị 3 thống kê chính:
+                    1. Tổng số kỳ thi
+                    2. Tổng câu hỏi  
+                    3. Lượt làm bài
+                    =================================================================
+                -->
+                <div class="overview-cards">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">
+                            <img class="stat-icon-img" th:src="@{/images/lecturer/background3.png}" src="/images/lecturer/background3.png" width="24" height="24" alt=""/>
+                        </div>
+                        <span class="stat-label">Tổng số khoá học</span>
+                        <span class="stat-value" th:text="${tongCaThi}">0</span>
+                        <span class="stat-hint" th:if="${tongCaThi == 0}">Chưa có ca thi trong hệ thống</span>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple">
+                            <img class="stat-icon-img" th:src="@{/images/lecturer/background4.png}" src="/images/lecturer/background4.png" width="24" height="24" alt=""/>
+                        </div>
+                        <span class="stat-label">Câu hỏi đã tạo</span>
+                        <span class="stat-value" th:text="${tongCauHoi}">0</span>
+                        <span class="stat-hint" th:if="${tongCauHoi == 0}">Chưa có câu hỏi</span>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange">
+                            <img class="stat-icon-img" th:src="@{/images/lecturer/background5.png}" src="/images/lecturer/background5.png" width="24" height="24" alt=""/>
+                        </div>
+                        <span class="stat-label">Kỳ thi đã xuất bản</span>
+                        <span class="stat-value" th:text="${luotLamBai}">0</span>
+                        <span class="stat-hint" th:if="${luotLamBai == 0}">Chưa có kỳ thi nào</span>
+                    </div>
+                </div>
+
+                <!-- 
+                    =================================================================
+                    STATISTICS SECTION - Phần thống kê chi tiết
+                    Bao gồm: Biểu đồ cột + Trạng thái kỳ thi
+                    =================================================================
+                -->
+                <div class="statistics-section">
+                    <!-- Container biểu đồ cột -->
+                    <div class="chart-container">
+                        <div class="section-header">
+                            <h3 class="section-title">Số đề thi theo loại</h3>
+                            <span class="chart-note">Theo trường loại đề (giữa kỳ / cuối kỳ / thực hành)</span>
+                        </div>
+                        <div class="chart-empty" th:if="${!coDuLieuBieuDoDe}">
+                            <p>Chưa có đề thi nào được tạo.</p>
+                            <p class="chart-empty-sub">Thêm đề trong mục <strong>Quản lý đề thi</strong> để xem biểu đồ.</p>
+                        </div>
+                        <div class="bar-chart" th:if="${coDuLieuBieuDoDe}">
+                            <div class="bar-item" th:each="row : ${deThiTheoLoai}">
+                                <span class="bar-count" th:text="${row.soLuong}">0</span>
+                                <div class="bar" th:style="|height: ${row.chieuCaoPhanTram}%;|"></div>
+                                <span class="bar-label" th:text="${row.nhan}">—</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Container trạng thái kỳ thi -->
+                    <div class="status-container">
+                        <h3 class="section-title">Trạng thái ca thi</h3>
+                        <div class="chart-empty chart-empty--compact" th:if="${!coDuLieuTrangThaiCa}">
+                            <p>Chưa có ca thi nào.</p>
+                        </div>
+                        <div class="status-list" th:if="${coDuLieuTrangThaiCa}">
+                            <div class="status-item">
+                                <span class="status-dot green"></span>
+                                <div class="status-info">
+                                    <span class="status-name">Đã kết thúc</span>
+                                    <span class="status-count" th:text="${caDaKetThuc}">0</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress green" th:style="|width: ${pctKetThuc}%;|"></div>
+                                </div>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-dot blue"></span>
+                                <div class="status-info">
+                                    <span class="status-name">Đang diễn ra</span>
+                                    <span class="status-count" th:text="${caDangDienRa}">0</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress blue" th:style="|width: ${pctDang}%;|"></div>
+                                </div>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-dot orange"></span>
+                                <div class="status-info">
+                                    <span class="status-name">Chờ đăng ký</span>
+                                    <span class="status-count" th:text="${caChoDangKy}">0</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress orange" th:style="|width: ${pctCho}%;|"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="detail-btn">Xem chi tiết báo cáo</button>
+                    </div>
+                </div>
+
+                <!-- 
+                    =================================================================
+                    RECENT ACTIVITY SECTION - Phần hoạt động gần đây
+                    Hiển thị danh sách các hoạt động/thao tác gần nhất
+                    =================================================================
+                -->
+                <div class="activity-section">
+                    <!-- Header với tiêu đề và nút xem tất cả -->
+                    <div class="section-header">
+                        <h3 class="section-title">Hoạt động gần đây</h3>
+                        <button class="view-all-btn">Xem tất cả</button>
+                    </div>
+                    
+                    <!-- Danh sách các hoạt động -->
+                    <div class="activity-list">
+                        <div class="activity-empty" th:if="${!coHoatDong}">
+                            <p>Chưa có hoạt động ghi nhận.</p>
+                            <p class="chart-empty-sub">Nhật ký lấy từ bảng <code>nhat_ky_he_thong</code> khi ứng dụng ghi log.</p>
+                        </div>
+                        <th:block th:if="${coHoatDong}">
+                            <div class="activity-item" th:each="log : ${hoatDongGanDay}">
+                                <div class="activity-icon blue">
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                        <path d="M8 1v14M1 8h14" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round"/>
+                                    </svg>
+                                </div>
+                                <div class="activity-content">
+                                    <span class="activity-title" th:text="${log.hanhDong}">Hành động</span>
+                                    <span class="activity-time">
+                                        <span th:text="${log.thoiGianHienThi}">—</span>
+                                        <span th:if="${log.bangMucTieu != null}"> • Bảng: [[${log.bangMucTieu}]]</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </th:block>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+        </div>
+    </div>
+</body>
+</html>
