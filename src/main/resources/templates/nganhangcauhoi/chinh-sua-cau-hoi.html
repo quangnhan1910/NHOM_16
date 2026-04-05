@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chỉnh sửa nội dung - UniExam</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS riêng cho trang chỉnh sửa câu hỏi -->
+    <link rel="stylesheet" th:href="@{/css/chinh-sua-cau-hoi.css}" href="/css/chinh-sua-cau-hoi.css">
+    <link rel="stylesheet" th:if="${dungGiaoDienGiangVien == true}" th:href="@{/css/lecturer/lecturer-layout.css}">
+</head>
+<body>
+<div th:classappend="${dungGiaoDienGiangVien == true} ? 'lecturer-shell'">
+    <aside th:if="${dungGiaoDienGiangVien == true}" th:replace="~{fragments/lecturer-sidebar :: sidebar (activeNav='ngan-hang')}"></aside>
+    <div th:classappend="${dungGiaoDienGiangVien == true} ? 'lecturer-main'">
+    <div class="app-container">
+        
+        <!-- Main Editor Area -->
+        <main class="main-editor">
+
+            <div th:replace="~{fragments/lecturer-hub-back :: backToKhoaHoc}"></div>
+            <!-- Sub-header -->
+            <div class="editor-header">
+                <div class="breadcrumb">
+                    <a href="/ngan-hang-cau-hoi">Ngân hàng câu hỏi</a>
+                    <i class="fa-solid fa-chevron-right"></i>
+                    <a href="/ngan-hang-cau-hoi/them">Thêm câu hỏi mới</a>
+                    <i class="fa-solid fa-chevron-right"></i>
+                    <span class="current">Chỉnh sửa nội dung</span>
+                </div>
+                
+                <div class="title-bar">
+                    <div class="title-group">
+                        <h1 class="page-title">CS101: Nhập môn Khoa học Máy tính</h1>
+                        <div class="title-meta">
+                            <span class="badge-tag">GIỮA KỲ 2026</span>
+                            <div class="score-input-widget" id="scoreWidget">
+                                <span class="score-label" id="scoreLabel">Chia điểm</span>
+                                <div class="score-input-box" id="scoreInputBox" style="display:none;">
+                                    <input type="number" id="scoreInput" min="0" step="0.5" placeholder="điểm">
+                                </div>
+                                <span class="score-value" id="scoreValue" style="display:none;"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="action-group">
+                        <a href="/ngan-hang-cau-hoi/them" class="btn btn-text">Hủy bỏ</a>
+                        <button class="btn btn-outline">Lưu bản nháp</button>
+                        <button class="btn btn-primary" id="btnContinue">Tiếp tục <i class="fa-solid fa-arrow-right"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Split Pane -->
+            <div class="editor-workspace">
+                
+                <!-- Left Pane: Live Preview -->
+                <div class="pane left-pane">
+                    <div class="pane-header">
+                        <h2>XEM TRƯỚC TRỰC TIẾP</h2>
+                        <div class="pane-icons">
+                            <button><i class="fa-solid fa-magnifying-glass"></i></button>
+                            <button><i class="fa-solid fa-print"></i></button>
+                        </div>
+                    </div>
+                    <div class="pane-content preview-content" id="livePreviewContainer">
+                        <!-- Rendered Questions will be injected here via JS -->
+                    </div>
+                </div>
+
+                <!-- Right Pane: Raw Text Editor -->
+                <div class="pane right-pane">
+                    <div class="pane-header">
+                        <h2>TRÌNH CHỈNH SỬA VĂN BẢN THÔ</h2>
+                        <span class="hint">Thêm <code>*</code> trước chữ cái đáp án để chọn đáp án đúng</span>
+                        <button class="btn-sync" id="btnSync">
+                            <i class="fa-solid fa-rotate"></i> Đồng bộ thay đổi
+                        </button>
+                    </div>
+                    <div class="pane-content editor-content">
+                        <!-- Line Numbers -->
+                        <div class="line-numbers" id="lineNumbers"></div>
+                        <!-- Textarea -->
+                        <textarea id="rawEditor" spellcheck="false" wrap="off"></textarea>
+                    </div>
+                </div>
+                
+            </div>
+            
+        </main>
+    </div>
+    </div>
+</div>
+
+    <!-- JS -->
+    <script th:src="@{/js/chinh-sua-cau-hoi.js}" src="/js/chinh-sua-cau-hoi.js"></script>
+</body>
+</html>
