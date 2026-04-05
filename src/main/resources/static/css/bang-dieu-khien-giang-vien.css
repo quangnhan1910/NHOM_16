@@ -1,0 +1,1067 @@
+/* 
+    =================================================================
+    File: bang-dieu-khien-giang-vien.css
+    Mô tả: Stylesheet cho trang Bảng điều khiển Giảng Viên
+    Framework: Custom CSS (không dùng framework)
+    =================================================================
+*/
+
+/* 
+    =================================================================
+    BASE STYLES - Các style cơ bản cho toàn bộ trang
+    =================================================================
+*/
+
+/* Reset CSS - Loại bỏ margin/padding mặc định của trình duyệt */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 
+    Body styles 
+    - Font chữ: Inter (Google Fonts) với fallback
+    - Background: Màu xám nhạt (#F6F7F8)
+    - Màu chữ mặc định: #0F172A (đen xanh đậm)
+*/
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #F6F7F8;
+    color: #0F172A;
+    line-height: 1.5;
+}
+
+/* 
+    app-container: Wrapper chính bao bọc toàn bộ ứng dụng
+    Sử dụng flexbox với flex-direction: column để tạo layout dọc
+*/
+.app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* 
+    =================================================================
+    HEADER STYLES - Styles cho thanh tiêu đề
+    =================================================================
+*/
+
+/* 
+    Header container
+    - display: flex để căn chỉnh các phần tử con
+    - backdrop-filter: blur(6px) tạo hiệu ứng mờ nền
+    - position: sticky để header luôn ở trên cùng khi scroll
+*/
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 32px;
+    background: rgba(255, 255, 255, 0.8);
+    border-bottom: 1px solid #E2E8F0;
+    backdrop-filter: blur(6px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+/* Phần bên trái header */
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+/* Tiêu đề trang - font size 20px, font-weight 700 (đậm) */
+.page-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #0F172A;
+}
+
+/* Phần giữa header - ô tìm kiếm */
+.header-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    max-width: 400px;
+    margin: 0 24px;
+}
+
+/* 
+    search-box: Wrapper cho ô tìm kiếm
+    position: relative để định vị icon bên trong
+*/
+.search-box {
+    position: relative;
+    width: 100%;
+}
+
+/* Icon kính lúp - định vị tuyệt đối bên trong search-box */
+.search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* 
+    search-input: Input tìm kiếm
+    - border-radius: 8px bo tròn góc
+    - background: #F1F5F9 (xám nhạt)
+    - outline: none loại bỏ viền mặc định khi focus
+*/
+.search-input {
+    width: 100%;
+    padding: 8px 16px 8px 40px;
+    border: none;
+    border-radius: 8px;
+    background: #F1F5F9;
+    font-size: 14px;
+    color: #0F172A;
+    outline: none;
+}
+
+/* Placeholder text - màu xám */
+.search-input::placeholder {
+    color: #6B7280;
+}
+
+/* Phần bên phải header - các nút hành động */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* 
+    notification-btn: Nút thông báo
+    - border-radius: 50% để tạo hình tròn
+    - cursor: pointer để hiển thị con trỏ tay khi hover
+*/
+.notification-btn {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Hover effect cho nút thông báo */
+.notification-btn:hover {
+    background: #F1F5F9;
+}
+
+/* 
+    notification-badge: Badge đỏ hiển thị số thông báo chưa đọc
+    - position: absolute để định vị góc phải trên của nút
+    - border: 2px solid white tạo viền tách biệt
+*/
+.notification-badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 8px;
+    height: 8px;
+    background: #EF4444;
+    border: 2px solid #FFFFFF;
+    border-radius: 50%;
+}
+
+/* 
+    create-btn: Nút tạo mới
+    - background: #1A355B (màu xanh đậm của trường)
+    - transition: background để tạo hiệu ứng chuyển màu mượt
+*/
+.create-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: #1A355B;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+/* Hover effect cho nút tạo mới */
+.create-btn:hover {
+    background: #2a4a7a;
+}
+
+/* 
+    =================================================================
+    MAIN CONTENT LAYOUT - Bố cục chính
+    =================================================================
+*/
+
+/* 
+    main-content: Container chứa sidebar và content
+    display: flex để tạo layout ngang (sidebar + content)
+*/
+.main-content {
+    display: flex;
+    flex: 1;
+}
+
+/* 
+    =================================================================
+    SIDEBAR STYLES - Thanh bên trái
+    =================================================================
+*/
+
+/* 
+    sidebar: Thanh điều hướng bên trái
+    - width: 256px cố định
+    - background: white
+    - position: sticky để luôn hiển thị khi scroll
+    - height: calc(100vh - 69px) trừ đi chiều cao header
+*/
+.sidebar {
+    width: 256px;
+    background: #FFFFFF;
+    border-right: 1px solid #E2E8F0;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 69px;
+    height: calc(100vh - 69px);
+}
+
+/* Phần header của sidebar: Logo */
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    padding: 24px;
+    gap: 12px;
+}
+
+/* 
+    logo-box: Hộp chứa icon logo
+    - background: #1A355B (màu thương hiệu)
+    - border-radius: 8px bo tròn góc
+*/
+.logo-box {
+    width: 40px;
+    height: 40px;
+    background: #1A355B;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Phần text bên cạnh logo */
+.logo-text {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Tiêu đề logo - in hoa, letter-spacing tạo khoảng cách giữa các chữ cái */
+.logo-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1A355B;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+}
+
+/* Phụ đề dưới logo - màu xám */
+.logo-subtitle {
+    font-size: 12px;
+    color: #64748B;
+}
+
+/* 
+    sidebar-nav: Menu điều hướng
+    - display: flex với flex-direction: column để xếp các link theo cột
+    - gap: 4px tạo khoảng cách nhỏ giữa các mục
+*/
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    padding: 0 16px;
+    gap: 4px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+/* 
+    nav-item: Mỗi mục trong menu
+    - display: flex để căn chỉnh icon và text
+    - gap: 12px tạo khoảng cách giữa icon và text
+    - border-radius: 8px bo tròn góc
+    - text-decoration: none loại bỏ gạch chân mặc định của thẻ a
+*/
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #475569;
+    font-size: 14px;
+    font-weight: 400;
+    transition: all 0.2s;
+}
+
+/* Hover effect - đổi màu nền nhẹ */
+.nav-item:hover {
+    background: rgba(26, 53, 91, 0.05);
+}
+
+/* 
+    nav-item.active: Mục đang được chọn
+    - background: màu xanh nhạt rgba(26, 53, 91, 0.1)
+    - color: #1A355B (đậm hơn)
+    - font-weight: 600 (semi-bold)
+*/
+.nav-item.active {
+    background: rgba(26, 53, 91, 0.1);
+    color: #1A355B;
+    font-weight: 600;
+}
+
+/* Icon trong nav-item - flex-shrink: 0 để không bị co lại */
+.nav-item svg {
+    flex-shrink: 0;
+}
+
+/* Footer sidebar: user + nút đăng xuất */
+.sidebar-footer {
+    padding: 16px;
+    border-top: 1px solid #E2E8F0;
+    margin-top: auto;
+}
+
+.user-footer-row {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+}
+
+/* 
+    user-info: Wrapper thông tin người dùng
+*/
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+    border-radius: 8px;
+    cursor: default;
+}
+
+/* Nút đăng xuất — góc dưới trái sidebar */
+.logout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    color: #DC2626;
+    background: rgba(220, 38, 38, 0.08);
+    border: 1px solid rgba(220, 38, 38, 0.2);
+    transition: background 0.2s, color 0.2s;
+}
+
+.logout-btn:hover {
+    background: #DC2626;
+    color: #FFFFFF;
+    border-color: #DC2626;
+}
+
+.logout-text {
+    flex: 1;
+    text-align: left;
+}
+
+/* Hover effect cho user info */
+.user-info:hover {
+    background: #F1F5F9;
+}
+
+/* Container chứa tên và email user */
+.user-details {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Tên user */
+.user-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #0F172A;
+}
+
+/* Email user */
+.user-email {
+    font-size: 12px;
+    color: #64748B;
+}
+
+/* 
+    =================================================================
+    CONTENT AREA - Khu vực nội dung chính
+    =================================================================
+*/
+
+/* 
+    content: Container chính bên phải
+    - flex: 1 để chiếm toàn bộ không gian còn lại
+    - padding: 32px tạo khoảng cách với các cạnh
+    - display: flex với flex-direction: column để xếp các section theo chiều dọc
+    - gap: 32px tạo khoảng cách giữa các section
+*/
+.content {
+    flex: 1;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+/* 
+    =================================================================
+    OVERVIEW CARDS - Các thẻ thống kê
+    =================================================================
+*/
+
+/* 
+    overview-cards: Container chứa các thẻ thống kê
+    - display: grid với 3 cột bằng nhau
+    - gap: 24px tạo khoảng cách giữa các thẻ
+*/
+.overview-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+/* 
+    stat-card: Mỗi thẻ thống kê
+    - background: white
+    - border: 1px solid #E2E8F0 (viền xám nhạt)
+    - border-radius: 12px bo tròn góc
+    - box-shadow: đổ bóng nhẹ tạo chiều sâu
+    - padding: 25px tạo khoảng cách bên trong
+*/
+.stat-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 25px;
+    position: relative;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* 
+    stat-icon: Icon trong thẻ thống kê
+    - border-radius: 8px bo tròn
+    - Các class màu khác nhau: blue, purple, orange
+*/
+.stat-icon {
+    width: 38px;
+    height: 34px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+/* Màu xanh dương - cho thẻ tổng số kỳ thi */
+.stat-icon.blue {
+    background: #DBEAFE;
+}
+
+/* Màu tím - cho thẻ tổng câu hỏi */
+.stat-icon.purple {
+    background: #F3E8FF;
+    width: 36px;
+    height: 36px;
+}
+
+/* Màu cam - cho thẻ lượt làm bài */
+.stat-icon.orange {
+    background: #FFEDD5;
+    width: 32px;
+    height: 32px;
+}
+
+.stat-icon-img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    display: block;
+}
+
+/* 
+    stat-status: Phần trăm tăng/giảm
+    - position: absolute để định vị góc phải trên
+    - color: #22C55E (xanh lá) cho số dương (tăng)
+*/
+.stat-status {
+    position: absolute;
+    top: 25px;
+    right: 25px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #22C55E;
+}
+
+/* Class bổ sung cho số âm (giảm) - màu đỏ */
+.stat-status.negative {
+    color: #EF4444;
+}
+
+/* 
+    stat-label: Nhãn mô tả thống kê
+    - font-weight: 500 (medium)
+    - color: #64748B (xám)
+    - display: block để xuống dòng riêng
+*/
+.stat-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: #64748B;
+    margin-bottom: 8px;
+}
+
+/* 
+    stat-value: Giá trị số của thống kê
+    - font-size: 30px lớn để nổi bật
+    - font-weight: 700 (đậm)
+    - line-height: 1.2 để căn chỉnh chiều cao dòng
+*/
+.stat-value {
+    font-size: 30px;
+    font-weight: 700;
+    color: #0F172A;
+    line-height: 1.2;
+}
+
+/* 
+    =================================================================
+    STATISTICS SECTION - Phần thống kê chi tiết
+    =================================================================
+*/
+
+/* 
+    statistics-section: Container chứa biểu đồ và trạng thái
+    - display: grid với 2 cột, cột left rộng gấp 1.5 lần cột right
+*/
+.statistics-section {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 24px;
+}
+
+/* 
+    chart-container & status-container: Container chung cho các box
+    - Giống nhau về basic styling
+*/
+.chart-container,
+.status-container {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* 
+    section-header: Header của mỗi section
+    - display: flex với justify-content: space-between để đẩy title sang left, dropdown sang right
+*/
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+/* 
+    section-title: Tiêu đề section
+    - font-size: 18px
+    - font-weight: 700 (đậm)
+*/
+.section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0F172A;
+}
+
+/* 
+    dropdown: Nút dropdown chọn thời gian
+    - background: #F8FAFC (xám rất nhạt)
+    - border-radius: 8px
+    - cursor: pointer để biết có thể click
+*/
+.dropdown {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px;
+    background: #F8FAFC;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #0F172A;
+    cursor: pointer;
+}
+
+/* 
+    bar-chart: Container biểu đồ cột
+    - display: flex với justify-content: space-around để phân bố đều các cột
+    - align-items: flex-end để căn các cột xuống đáy
+    - height: 200px cố định chiều cao
+*/
+.bar-chart {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    height: 200px;
+    padding: 0 8px;
+}
+
+/* 
+    bar-item: Mỗi cột trong biểu đồ
+    - flex: 1 để chiếm không gian bằng nhau
+    - display: flex với flex-direction: column để xếp cột và nhãn theo chiều dọc
+*/
+.bar-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+/* 
+    bar: Thanh cột biểu đồ
+    - height: % được set inline trong HTML
+    - background: linear-gradient tạo hiệu ứng chuyển màu
+    - border-radius: 8px 8px 0 0 chỉ bo tròn góc trên
+*/
+.bar {
+    width: 100%;
+    max-width: 80px;
+    background: linear-gradient(180deg, #1A355B 0%, #2a4a7a 100%);
+    border-radius: 8px 8px 0 0;
+    min-height: 20px;
+    transition: height 0.3s ease;
+}
+
+/* Nhãn dưới mỗi cột */
+.bar-label {
+    font-size: 12px;
+    color: #64748B;
+    text-align: center;
+}
+
+/* 
+    =================================================================
+    STATUS CONTAINER STYLES - Styles cho phần trạng thái kỳ thi
+    =================================================================
+*/
+
+/* Danh sách các trạng thái */
+.status-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+/* Mỗi item trạng thái */
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* 
+    status-dot: Chấm tròn thể hiện màu trạng thái
+    - border-radius: 50% tạo hình tròn
+*/
+.status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* Các class màu cho status-dot */
+.status-dot.green {
+    background: #22C55E;
+}
+
+.status-dot.blue {
+    background: #3B82F6;
+}
+
+.status-dot.orange {
+    background: #F97316;
+}
+
+/* Container chứa tên và số lượng */
+.status-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* Tên trạng thái */
+.status-name {
+    font-size: 14px;
+    color: #0F172A;
+}
+
+/* Số lượng */
+.status-count {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0F172A;
+}
+
+/* 
+    progress-bar: Thanh progress
+    - background: #F1F5F9 (xám nhạt) làm nền
+    - border-radius: 9999px tạo hình pill/rounded hoàn toàn
+    - position: relative để định vị phần tử con
+*/
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #F1F5F9;
+    border-radius: 9999px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* 
+    progress: Phần đã hoàn thành trong thanh progress
+    - position: absolute để định vị trong progress-bar
+*/
+.progress {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    border-radius: 9999px;
+}
+
+/* Width được set inline trong HTML */
+
+/* Các class màu cho progress */
+.progress.green {
+    background: #22C55E;
+    width: 60%;
+}
+
+.progress.blue {
+    background: #3B82F6;
+    width: 25%;
+}
+
+.progress.orange {
+    background: #F97316;
+    width: 15%;
+}
+
+/* 
+    detail-btn: Nút xem chi tiết
+    - background: transparent (trong suốt)
+    - border: none không có viền
+    - cursor: pointer để biết có thể click
+*/
+.detail-btn {
+    width: 100%;
+    padding: 10px 24px;
+    background: transparent;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1A355B;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.detail-btn:hover {
+    background: #F1F5F9;
+}
+
+/* 
+    =================================================================
+    ACTIVITY SECTION - Styles cho phần hoạt động gần đây
+    =================================================================
+*/
+
+/* 
+    activity-section: Container cho phần hoạt động
+    - overflow: hidden để cắt các phần tử con vượt ra ngoài
+*/
+.activity-section {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Header của activity section - có border-bottom */
+.activity-section .section-header {
+    padding: 24px;
+    border-bottom: 1px solid #E2E8F0;
+    margin-bottom: 0;
+}
+
+/* Nút xem tất cả */
+.view-all-btn {
+    background: transparent;
+    border: none;
+    font-size: 14px;
+    color: #64748B;
+    cursor: pointer;
+}
+
+.view-all-btn:hover {
+    color: #1A355B;
+}
+
+/* Danh sách các hoạt động */
+.activity-list {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Mỗi item hoạt động */
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 24px;
+    border-bottom: 1px solid #F1F5F9;
+}
+
+/* Bỏ border-bottom cho item cuối cùng */
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+/* 
+    activity-icon: Icon trong mỗi hoạt động
+    - width: 40px cố định
+    - border-radius: 50% hình tròn
+    - flex-shrink: 0 để không bị co lại
+*/
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* Các class màu cho activity-icon */
+.activity-icon.blue {
+    background: #DBEAFE;
+}
+
+.activity-icon.green {
+    background: #DCFCE7;
+}
+
+.activity-icon.purple {
+    background: #F3E8FF;
+}
+
+.activity-icon.orange {
+    background: #FFEDD5;
+}
+
+/* Container chứa tiêu đề và thời gian */
+.activity-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* Tiêu đề hoạt động */
+.activity-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #0F172A;
+}
+
+/* Thời gian hoạt động - màu xám */
+.activity-time {
+    font-size: 12px;
+    color: #64748B;
+}
+
+/* 
+    =================================================================
+    RESPONSIVE STYLES - Styles cho các màn hình khác nhau
+    =================================================================
+*/
+
+/* 
+    Media Query cho màn hình <= 1280px
+    Giảm số lượng cột trong overview-cards từ 3 xuống 2
+*/
+@media (max-width: 1280px) {
+    .overview-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .statistics-section {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 
+    Media Query cho màn hình <= 1024px
+    Thu nhỏ sidebar
+*/
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 80px;
+    }
+
+    /* Logo header - chuyển thành column và căn giữa */
+    .sidebar-header {
+        flex-direction: column;
+        padding: 16px 8px;
+    }
+
+    /* Ẩn text logo */
+    .logo-text {
+        display: none;
+    }
+
+    /* Ẩn text trong nav-item */
+    .nav-item span {
+        display: none;
+    }
+
+    /* Căn giữa icon trong nav-item */
+    .nav-item {
+        justify-content: center;
+        padding: 12px;
+    }
+
+    /* Ẩn thông tin user */
+    .user-details {
+        display: none;
+    }
+
+    /* Căn giữa user info */
+    .user-info {
+        justify-content: center;
+    }
+
+    .logout-text {
+        display: none;
+    }
+
+    .logout-btn {
+        padding: 10px;
+        justify-content: center;
+    }
+}
+
+/* 
+    Media Query cho màn hình <= 768px (mobile)
+    Chuyển layout thành 1 cột
+*/
+@media (max-width: 768px) {
+    /* Header - cho phép wrap */
+    .header {
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    /* Di chuyển ô search xuống dưới */
+    .header-center {
+        order: 3;
+        max-width: 100%;
+        margin: 0;
+    }
+
+    /* Overview cards - 1 cột */
+    .overview-cards {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Trạng thái không có dữ liệu (biểu đồ / nhật ký) */
+.chart-empty {
+    padding: 28px 20px;
+    text-align: center;
+    color: #64748B;
+    font-size: 14px;
+    background: #F8FAFC;
+    border-radius: 12px;
+    border: 1px dashed #E2E8F0;
+}
+
+.chart-empty--compact {
+    padding: 16px;
+    margin-bottom: 12px;
+}
+
+.chart-empty p,
+.activity-empty p {
+    margin: 0 0 6px;
+}
+
+.chart-empty-sub {
+    font-size: 12px;
+    color: #94A3B8;
+    margin: 0 !important;
+}
+
+.chart-empty-sub code {
+    font-size: 11px;
+    background: #EEF2FF;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.activity-empty {
+    padding: 24px 16px;
+    text-align: center;
+    color: #64748B;
+    font-size: 14px;
+}
+
+.bar-count {
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 4px;
+}

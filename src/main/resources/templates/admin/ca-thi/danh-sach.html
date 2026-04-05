@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Danh sách Ca Thi – UniExam</title>
+  <meta name="description" content="Quản lý và theo dõi lịch trình các buổi thi trong hệ thống UniExam."/>
+  <link rel="stylesheet" th:href="@{/css/admin/ca-thi.css}"/>
+  <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+</head>
+<body>
+
+<div class="admin-shell">
+  <aside th:replace="~{fragments/admin-sidebar :: sidebar (activeNav='ca-thi')}"></aside>
+  <div class="admin-main">
+  <main class="main-content">
+
+    <!-- === Flash Messages === -->
+    <div th:if="${successMessage}" class="alert alert-success" role="alert">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <circle cx="9" cy="9" r="8" stroke="#15803D" stroke-width="1.5"/>
+        <path d="M5.5 9l2.5 2.5 4.5-5" stroke="#15803D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span th:text="${successMessage}"></span>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-error" role="alert">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <circle cx="9" cy="9" r="8" stroke="#B91C1C" stroke-width="1.5"/>
+        <line x1="9" y1="5.5" x2="9" y2="9.5" stroke="#B91C1C" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="9" cy="12" r="0.75" fill="#B91C1C"/>
+      </svg>
+      <span th:text="${errorMessage}"></span>
+    </div>
+
+    <!-- === Page Header === -->
+    <div class="page-header">
+      <div class="page-title-group">
+        <h2 class="page-title">Danh sách Ca thi</h2>
+        <p class="page-subtitle">Quản lý và theo dõi lịch trình các buổi thi trong hệ thống.</p>
+      </div>
+      <a href="/admin/ca-thi/tao-moi" id="btn-tao-ca-thi" class="btn-primary">
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="8" y1="2" x2="8" y2="14" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <line x1="2" y1="8" x2="14" y2="8" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        Tạo ca thi mới
+      </a>
+    </div>
+
+    <!-- === Filter Bar === -->
+    <div class="filter-bar">
+      <div class="filter-tabs" role="tablist" aria-label="Lọc theo trạng thái">
+
+        <!-- Tab: Tất cả -->
+        <a id="tab-tat-ca"
+           th:href="@{/admin/ca-thi(page=0,maKhoa=${maKhoaFilter})}"
+           th:classappend="${trangThaiFilter == null} ? 'active-tab' : ''"
+           class="filter-tab"
+           role="tab">Tất cả</a>
+
+        <!-- Tab: Sắp diễn ra (CHO_DANG_KY) -->
+        <a id="tab-sap-dien-ra"
+           th:href="@{/admin/ca-thi(page=0,trangThai='CHO_DANG_KY',maKhoa=${maKhoaFilter})}"
+           th:classappend="${trangThaiFilter != null and trangThaiFilter.name() == 'CHO_DANG_KY'} ? 'active-tab' : ''"
+           class="filter-tab"
+           role="tab">Sắp diễn ra</a>
+
+        <!-- Tab: Đang thi (DANG_DIEN_RA) -->
+        <a id="tab-dang-thi"
+           th:href="@{/admin/ca-thi(page=0,trangThai='DANG_DIEN_RA',maKhoa=${maKhoaFilter})}"
+           th:classappend="${trangThaiFilter != null and trangThaiFilter.name() == 'DANG_DIEN_RA'} ? 'active-tab' : ''"
+           class="filter-tab"
+           role="tab">Đang thi</a>
+
+        <!-- Tab: Đã kết thúc (DA_KET_THUC) -->
+        <a id="tab-da-ket-thuc"
+           th:href="@{/admin/ca-thi(page=0,trangThai='DA_KET_THUC',maKhoa=${maKhoaFilter})}"
+           th:classappend="${trangThaiFilter != null and trangThaiFilter.name() == 'DA_KET_THUC'} ? 'active-tab' : ''"
+           class="filter-tab"
+           role="tab">Đã kết thúc</a>
+      </div>
+
+      <div class="filter-divider" aria-hidden="true"></div>
+
+      <!-- Dropdown lọc theo Khoa -->
+      <div class="filter-select-wrap">
+        <select id="filter-khoa"
+                class="filter-select"
+                onchange="filterByKhoa(this.value)"
+                aria-label="Lọc theo Khoa">
+          <option value="">Lọc theo Khoa</option>
+          <option th:each="khoa : ${danhSachKhoa}"
+                  th:value="${khoa.ma}"
+                  th:text="${khoa.ten}"
+                  th:selected="${maKhoaFilter != null and maKhoaFilter == khoa.ma}"></option>
+        </select>
+        <span class="filter-select-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M4 6l4 4 4-4" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </div>
+
+      <!-- Bộ lọc nâng cao -->
+      <button id="btn-bo-loc-nang-cao" class="btn-filter-advanced" type="button"
+              onclick="toggleAdvancedFilter()" aria-expanded="false">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <line x1="2" y1="5" x2="14" y2="5" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="4" y1="9" x2="12" y2="9" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="6" y1="13" x2="10" y2="13" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        Bộ lọc nâng cao
+      </button>
+    </div>
+
+    <!-- === Table Card === -->
+    <div class="table-card">
+
+      <!-- Table -->
+      <table class="data-table" aria-label="Danh sách ca thi">
+        <thead>
+          <tr>
+            <th scope="col">Thông tin ca thi</th>
+            <th scope="col">Đề thi / Khoa</th>
+            <th scope="col">Thời gian</th>
+            <th scope="col">Phòng / SV</th>
+            <th scope="col">Trạng thái</th>
+            <th scope="col">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- Empty state -->
+          <tr th:if="${#lists.isEmpty(caThis)}">
+            <td colspan="6">
+              <div class="empty-state">
+                <div class="empty-state-icon">📋</div>
+                <h3>Chưa có ca thi nào</h3>
+                <p>Hãy tạo ca thi đầu tiên bằng nút "Tạo ca thi mới".</p>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Data rows -->
+          <tr th:each="caThi, iterStat : ${caThis}"
+              th:id="'row-ca-thi-' + ${caThi.ma}">
+
+            <!-- Cột 1: Thông tin ca thi -->
+            <td>
+              <div class="cell-ten-ca-thi" th:text="${caThi.tenCaThi}">Tên ca thi</div>
+              <div class="cell-id-ca-thi">
+                ID: <span th:text="'SESSION-' + ${#numbers.formatInteger(caThi.ma, 5)}">SESSION-00001</span>
+              </div>
+            </td>
+
+            <!-- Cột 2: Đề thi / Khoa -->
+            <td>
+              <div class="cell-de-thi"
+                   th:text="${caThi.deThi != null ? caThi.deThi.tenDeThi : 'N/A'}">Tên đề thi</div>
+              <div class="cell-khoa"
+                   th:text="${caThi.khoa != null ? 'Khoa ' + caThi.khoa.ten : 'N/A'}">Tên khoa</div>
+            </td>
+
+            <!-- Cột 3: Thời gian -->
+            <td>
+              <div class="cell-gio"
+                   th:text="${caThi.thoiGianBatDau != null ?
+                     #temporals.format(caThi.thoiGianBatDau.atZone(T(java.time.ZoneId).of('Asia/Ho_Chi_Minh')), 'HH:mm')
+                     + ' - ' +
+                     #temporals.format(caThi.thoiGianKetThuc.atZone(T(java.time.ZoneId).of('Asia/Ho_Chi_Minh')), 'HH:mm')
+                     : 'N/A'}">08:00 - 10:00</div>
+              <div class="cell-ngay"
+                   th:text="${caThi.thoiGianBatDau != null ?
+                     #temporals.format(caThi.thoiGianBatDau.atZone(T(java.time.ZoneId).of('Asia/Ho_Chi_Minh')), 'dd/MM/yyyy')
+                     : ''}">15/05/2024</div>
+            </td>
+
+            <!-- Cột 4: Phòng / SV -->
+            <td>
+              <div class="cell-phong"
+                   th:text="${caThi.diaDiem != null ? caThi.diaDiem : 'Chưa xác định'}">Phòng Máy 302</div>
+              <div class="cell-sv">
+                <span th:text="${demDangKy[caThi.ma] ?: 0}">0</span>
+                <span th:if="${caThi.soLuongToiDa != null}"
+                      th:text="' / ' + ${caThi.soLuongToiDa} + ' sinh viên'"> / 50 sinh viên</span>
+                <span th:unless="${caThi.soLuongToiDa != null}"> sinh viên</span>
+              </div>
+            </td>
+
+            <!-- Cột 5: Trạng thái -->
+            <td>
+              <!-- DANG_DIEN_RA -->
+              <span th:if="${caThi.trangThai != null and caThi.trangThai.name() == 'DANG_DIEN_RA'}"
+                    class="badge badge-ongoing"
+                    th:id="'badge-' + ${caThi.ma}">
+                <span class="badge-dot"></span>Đang thi
+              </span>
+              <!-- CHO_DANG_KY -->
+              <span th:if="${caThi.trangThai != null and caThi.trangThai.name() == 'CHO_DANG_KY'}"
+                    class="badge badge-upcoming"
+                    th:id="'badge-' + ${caThi.ma}">
+                Sắp diễn ra
+              </span>
+              <!-- DA_KET_THUC -->
+              <span th:if="${caThi.trangThai != null and caThi.trangThai.name() == 'DA_KET_THUC'}"
+                    class="badge badge-ended"
+                    th:id="'badge-' + ${caThi.ma}">
+                Đã kết thúc
+              </span>
+              <!-- DA_HUY -->
+              <span th:if="${caThi.trangThai != null and caThi.trangThai.name() == 'DA_HUY'}"
+                    class="badge badge-cancelled"
+                    th:id="'badge-' + ${caThi.ma}">
+                Đã huỷ
+              </span>
+              <!-- NULL / Unknown -->
+              <span th:if="${caThi.trangThai == null}"
+                    class="badge badge-ended"
+                    th:id="'badge-' + ${caThi.ma}">
+                Không xác định
+              </span>
+            </td>
+
+            <!-- Cột 6: Thao tác -->
+            <td class="td-actions">
+              <div class="actions-menu" th:id="'menu-' + ${caThi.ma}">
+                <button class="btn-actions"
+                        th:aria-label="'Thao tác với ' + ${caThi.tenCaThi}"
+                        th:onclick="'toggleMenu(' + ${caThi.ma} + ')'"
+                        type="button">
+                  <svg width="16" height="4" viewBox="0 0 16 4" fill="none">
+                    <circle cx="2" cy="2" r="1.5" fill="#94A3B8"/>
+                    <circle cx="8" cy="2" r="1.5" fill="#94A3B8"/>
+                    <circle cx="14" cy="2" r="1.5" fill="#94A3B8"/>
+                  </svg>
+                </button>
+                <div class="actions-dropdown" th:id="'dropdown-' + ${caThi.ma}" role="menu">
+                  <a th:href="@{/admin/ca-thi/{ma}(ma=${caThi.ma})}"
+                     th:id="'action-xem-' + ${caThi.ma}"
+                     role="menuitem">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z" stroke="#334155" stroke-width="1.5"/>
+                      <circle cx="8" cy="8" r="2" stroke="#334155" stroke-width="1.5"/>
+                    </svg>
+                    Xem chi tiết
+                  </a>
+                  <a th:href="@{/admin/ca-thi/{ma}/chinh-sua(ma=${caThi.ma})}"
+                     th:id="'action-sua-' + ${caThi.ma}"
+                     role="menuitem">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M11.586 2.414a2 2 0 1 1 2.828 2.828L5.828 13.828 2 14l.172-3.828 9.414-9.758z" stroke="#334155" stroke-width="1.5" stroke-linejoin="round"/>
+                    </svg>
+                    Chỉnh sửa
+                  </a>
+                  <form th:action="@{/admin/ca-thi/{ma}/xoa(ma=${caThi.ma})}" method="post"
+                        th:id="'form-xoa-' + ${caThi.ma}"
+                        onsubmit="return confirm('Bạn có chắc chắn muốn xoá ca thi này không?')">
+                    <button type="submit"
+                            class="action-delete"
+                            th:id="'action-xoa-' + ${caThi.ma}"
+                            role="menuitem">
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <polyline points="2 4 14 4" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M5.333 4V2.667h5.334V4M6.667 7.333v4M9.333 7.333v4M3.333 4l.667 9.333A1.333 1.333 0 0 0 5.333 14.667h5.334a1.333 1.333 0 0 0 1.333-1.334L12.667 4" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                      Xoá ca thi
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+
+      <!-- === Pagination === -->
+      <div class="table-footer" th:unless="${#lists.isEmpty(caThis)}">
+        <p class="pagination-info">
+          Hiển thị
+          <strong th:text="${fromIndex}">1</strong> -
+          <strong th:text="${toIndex}">10</strong>
+          trên tổng số
+          <strong th:text="${totalElements}">0</strong>
+          ca thi
+        </p>
+
+        <nav class="pagination" aria-label="Phân trang">
+          <!-- Nút Trước -->
+          <a id="btn-trang-truoc"
+             th:href="@{/admin/ca-thi(page=${currentPage - 1},trangThai=${trangThaiFilter},maKhoa=${maKhoaFilter})}"
+             th:classappend="${currentPage == 0} ? 'disabled' : ''"
+             class="page-btn page-btn-nav"
+             aria-label="Trang trước">
+            <svg width="7" height="12" viewBox="0 0 7 12" fill="none">
+              <path d="M6 1L1 6l5 5" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+
+          <!-- Nút số trang -->
+          <th:block th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                    th:if="${totalPages > 0}">
+            <!-- Hiển thị trang gần currentPage -->
+            <a th:if="${i == 0 or i == totalPages - 1 or (i >= currentPage - 2 and i <= currentPage + 2)}"
+               th:href="@{/admin/ca-thi(page=${i},trangThai=${trangThaiFilter},maKhoa=${maKhoaFilter})}"
+               th:text="${i + 1}"
+               th:classappend="${i == currentPage} ? 'current' : ''"
+               th:id="'btn-trang-' + ${i + 1}"
+               class="page-btn page-btn-num"
+               th:aria-current="${i == currentPage} ? 'page' : null">1</a>
+            <!-- Dấu ... -->
+            <span th:if="${(i == 1 and currentPage > 3) or (i == totalPages - 2 and currentPage < totalPages - 4)}"
+                  class="page-btn"
+                  aria-hidden="true">…</span>
+          </th:block>
+
+          <!-- Nút Sau -->
+          <a id="btn-trang-sau"
+             th:href="@{/admin/ca-thi(page=${currentPage + 1},trangThai=${trangThaiFilter},maKhoa=${maKhoaFilter})}"
+             th:classappend="${currentPage >= totalPages - 1} ? 'disabled' : ''"
+             class="page-btn page-btn-nav"
+             aria-label="Trang tiếp theo">
+            <svg width="7" height="12" viewBox="0 0 7 12" fill="none">
+              <path d="M1 1l5 5-5 5" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        </nav>
+      </div>
+
+    </div>
+    <!-- / table-card -->
+
+  </main>
+  <!-- / MAIN CONTENT -->
+
+  </div>
+</div>
+<!-- / admin-shell -->
+
+<!-- ══════════ SCRIPTS ══════════ -->
+<script>
+  /* Toggle dropdown thao tác */
+  function toggleMenu(ma) {
+    var menu = document.getElementById('menu-' + ma);
+    var isOpen = menu.classList.contains('open');
+    // Đóng tất cả các menu khác
+    document.querySelectorAll('.actions-menu.open').forEach(function(m) {
+      m.classList.remove('open');
+    });
+    if (!isOpen) menu.classList.add('open');
+  }
+
+  /* Đóng menu khi click ra ngoài */
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.actions-menu')) {
+      document.querySelectorAll('.actions-menu.open').forEach(function(m) {
+        m.classList.remove('open');
+      });
+    }
+  });
+
+  /* Lọc theo khoa – điều hướng URL */
+  function filterByKhoa(maKhoa) {
+    var url = new URL(window.location.href);
+    url.searchParams.set('page', '0');
+    if (maKhoa) {
+      url.searchParams.set('maKhoa', maKhoa);
+    } else {
+      url.searchParams.delete('maKhoa');
+    }
+    window.location.href = url.toString();
+  }
+
+  /* Placeholder bộ lọc nâng cao */
+  function toggleAdvancedFilter() {
+    var btn = document.getElementById('btn-bo-loc-nang-cao');
+    var expanded = btn.getAttribute('aria-expanded') === 'true';
+    btn.setAttribute('aria-expanded', (!expanded).toString());
+    // TODO: Hiển thị/ẩn form bộ lọc nâng cao
+  }
+</script>
+
+</body>
+</html>

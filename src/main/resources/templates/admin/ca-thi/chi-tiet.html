@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="${caThi.tenCaThi} + ' – UniExam'">Chi tiết Ca Thi – UniExam</title>
+  <link rel="stylesheet" th:href="@{/css/admin/ca-thi.css}"/>
+  <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+</head>
+<body>
+
+<div class="admin-shell">
+  <aside th:replace="~{fragments/admin-sidebar :: sidebar (activeNav='ca-thi')}"></aside>
+  <div class="admin-main">
+  <main class="main-content">
+
+    <!-- Flash Messages -->
+    <div th:if="${successMessage}" class="alert alert-success" role="alert">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="8" stroke="#15803D" stroke-width="1.5"/><path d="M5.5 9l2.5 2.5 4.5-5" stroke="#15803D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span th:text="${successMessage}"></span>
+    </div>
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="page-title-group">
+        <nav class="breadcrumb" aria-label="Đường dẫn">
+          <a href="/admin/ca-thi">Ca Thi</a>
+          <span class="breadcrumb-sep">›</span>
+          <span th:text="${caThi.tenCaThi}">Chi tiết</span>
+        </nav>
+        <h2 class="page-title" th:text="${caThi.tenCaThi}">Tên ca thi</h2>
+        <p class="page-subtitle">
+          <span th:text="'SESSION-' + ${#numbers.formatInteger(caThi.ma, 5)}"
+                style="font-family: monospace; color: #94A3B8;"></span>
+          &nbsp;·&nbsp;
+          <!-- Badge trạng thái -->
+          <span th:if="${caThi.trangThai != null and caThi.trangThai.name() == 'DANG_DIEN_RA'}"   class="badge badge-ongoing"><span class="badge-dot"></span>Đang thi</span>
+          <span th:if="${caThi.trangThai != null and caThi.trangThai.name() == 'CHO_DANG_KY'}"    class="badge badge-upcoming">Sắp diễn ra</span>
+          <span th:if="${caThi.trangThai != null and caThi.trangThai.name() == 'DA_KET_THUC'}"    class="badge badge-ended">Đã kết thúc</span>
+          <span th:if="${caThi.trangThai != null and caThi.trangThai.name() == 'DA_HUY'}"         class="badge badge-cancelled">Đã huỷ</span>
+          <span th:if="${caThi.trangThai == null}"                                                class="badge badge-ended">Không xác định</span>
+        </p>
+      </div>
+      <div class="detail-header-actions">
+        <!-- Kích hoạt (chỉ hiển thị khi CHO_DANG_KY) -->
+        <form th:if="${caThi.trangThai.name() == 'CHO_DANG_KY'}"
+              th:action="@{/admin/ca-thi/{ma}/kich-hoat(ma=${caThi.ma})}" method="post" style="display:inline">
+          <button type="submit" class="btn-primary"
+                  onclick="return confirm('Kích hoạt ca thi? Sinh viên trong sảnh chờ sẽ tự động vào phòng thi.')"
+                  style="background:#16A34A;border-color:#16A34A">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <polygon points="4,2 14,8 4,14" fill="white"/>
+            </svg>
+            Kích hoạt
+          </button>
+        </form>
+        <!-- Kết thúc (chỉ hiển thị khi DANG_DIEN_RA) -->
+        <form th:if="${caThi.trangThai.name() == 'DANG_DIEN_RA'}"
+              th:action="@{/admin/ca-thi/{ma}/ket-thuc(ma=${caThi.ma})}" method="post" style="display:inline">
+          <button type="submit" class="btn-primary"
+                  onclick="return confirm('Kết thúc ca thi ngay bây giờ?')"
+                  style="background:#DC2626;border-color:#DC2626">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="3" y="3" width="10" height="10" rx="2" fill="white"/>
+            </svg>
+            Kết thúc
+          </button>
+        </form>
+        <a th:href="@{/admin/ca-thi/{ma}/thao-tac(ma=${caThi.ma})}" class="btn-primary">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="white" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Thao tác ca thi
+        </a>
+        <a th:href="@{/admin/ca-thi/{ma}/chinh-sua(ma=${caThi.ma})}" class="btn-secondary">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M11.586 2.414a2 2 0 1 1 2.828 2.828L5.828 13.828 2 14l.172-3.828 9.414-9.758z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          Chỉnh sửa
+        </a>
+        <form th:action="@{/admin/ca-thi/{ma}/xoa(ma=${caThi.ma})}" method="post"
+              onsubmit="return confirm('Bạn có chắc chắn muốn xóa ca thi này?\nHành động này không thể hoàn tác.')">
+          <button type="submit" class="btn-danger">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><polyline points="2 4 14 4" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M5.333 4V2.667h5.334V4M6.667 7.333v4M9.333 7.333v4M3.333 4l.667 9.333A1.333 1.333 0 0 0 5.333 14.667h5.334a1.333 1.333 0 0 0 1.333-1.334L12.667 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Xoá
+          </button>
+        </form>
+        <a href="/admin/ca-thi" class="btn-back" style="margin-left: 4px;">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 4L6 8l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Danh sách
+        </a>
+      </div>
+    </div>
+
+    <!-- ── Stats Row ── -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-card-value" th:text="${soDangKy}">0</div>
+        <div class="stat-card-label">Sinh viên đã đăng ký</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-value"
+             th:text="${caThi.soLuongToiDa != null ? caThi.soLuongToiDa : '∞'}">∞</div>
+        <div class="stat-card-label">Chỗ tối đa</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-value" th:text="${soBaiThi}">0</div>
+        <div class="stat-card-label">Bài thi đã nộp</div>
+      </div>
+    </div>
+
+    <!-- ── Thông tin ca thi ── -->
+    <div class="detail-card">
+      <div class="detail-card-header">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="1.5" y="3" width="15" height="12" rx="2" stroke="#64748B" stroke-width="1.5"/><line x1="5" y1="8" x2="13" y2="8" stroke="#64748B" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="11" x2="10" y2="11" stroke="#64748B" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <div class="detail-card-title">Thông tin ca thi</div>
+      </div>
+      <div class="detail-card-body">
+        <div class="detail-grid">
+
+          <!-- Mã ca thi -->
+          <div class="detail-item">
+            <div class="detail-label">Mã ca thi</div>
+            <div class="detail-value"
+                 th:text="'SESSION-' + ${#numbers.formatInteger(caThi.ma, 5)}"
+                 style="font-family: monospace;"></div>
+          </div>
+
+          <!-- Trạng thái -->
+          <div class="detail-item">
+            <div class="detail-label">Trạng thái</div>
+            <div class="detail-value">
+              <span th:if="${caThi.trangThai != null and caThi.trangThai.name() == 'DANG_DIEN_RA'}"  class="badge badge-ongoing"><span class="badge-dot"></span>Đang thi</span>
+              <span th:if="${caThi.trangThai != null and caThi.trangThai.name() == 'CHO_DANG_KY'}"   class="badge badge-upcoming">Sắp diễn ra</span>
+              <span th:if="${caThi.trangThai != null and caThi.trangThai.name() == 'DA_KET_THUC'}"   class="badge badge-ended">Đã kết thúc</span>
+              <span th:if="${caThi.trangThai != null and caThi.trangThai.name() == 'DA_HUY'}"        class="badge badge-cancelled">Đã huỷ</span>
+              <span th:if="${caThi.trangThai == null}"                                               class="detail-value muted">Không xác định</span>
+            </div>
+          </div>
+
+          <!-- Đề thi -->
+          <div class="detail-item">
+            <div class="detail-label">Đề thi</div>
+            <div class="detail-value"
+                 th:text="${caThi.deThi != null ? caThi.deThi.tenDeThi : '—'}"></div>
+          </div>
+
+          <!-- Môn học -->
+          <div class="detail-item">
+            <div class="detail-label">Môn học</div>
+            <div class="detail-value"
+                 th:text="${caThi.deThi != null and caThi.deThi.monHoc != null ? caThi.deThi.monHoc.ten : '—'}"></div>
+          </div>
+
+          <!-- Khoa -->
+          <div class="detail-item">
+            <div class="detail-label">Khoa tổ chức</div>
+            <div class="detail-value"
+                 th:text="${caThi.khoa != null ? caThi.khoa.ten : '—'}"></div>
+          </div>
+
+          <!-- Địa điểm -->
+          <div class="detail-item">
+            <div class="detail-label">Địa điểm / Phòng thi</div>
+            <div class="detail-value"
+                 th:text="${caThi.diaDiem != null and !#strings.isEmpty(caThi.diaDiem) ? caThi.diaDiem : '—'}"></div>
+          </div>
+
+          <!-- Thời gian bắt đầu -->
+          <div class="detail-item">
+            <div class="detail-label">Thời gian bắt đầu</div>
+            <div class="detail-value"
+                 th:text="${caThi.thoiGianBatDau != null ?
+                   #temporals.format(caThi.thoiGianBatDau.atZone(T(java.time.ZoneId).of('Asia/Ho_Chi_Minh')), 'HH:mm – dd/MM/yyyy')
+                   : '—'}"></div>
+          </div>
+
+          <!-- Thời gian kết thúc -->
+          <div class="detail-item">
+            <div class="detail-label">Thời gian kết thúc</div>
+            <div class="detail-value"
+                 th:text="${caThi.thoiGianKetThuc != null ?
+                   #temporals.format(caThi.thoiGianKetThuc.atZone(T(java.time.ZoneId).of('Asia/Ho_Chi_Minh')), 'HH:mm – dd/MM/yyyy')
+                   : '—'}"></div>
+          </div>
+
+          <!-- Thời lượng đề thi -->
+          <div class="detail-item">
+            <div class="detail-label">Thời lượng làm bài</div>
+            <div class="detail-value"
+                 th:text="${caThi.deThi != null and caThi.deThi.thoiLuongPhut != null
+                           ? caThi.deThi.thoiLuongPhut + ' phút' : '—'}"></div>
+          </div>
+
+          <!-- Điểm đậu -->
+          <div class="detail-item">
+            <div class="detail-label">Điểm đậu</div>
+            <div class="detail-value"
+                 th:text="${caThi.deThi != null and caThi.deThi.diemDat != null
+                           ? caThi.deThi.diemDat + ' / ' + caThi.deThi.tongDiem : '—'}"></div>
+          </div>
+
+          <!-- Tạo lúc -->
+          <div class="detail-item">
+            <div class="detail-label">Tạo lúc</div>
+            <div class="detail-value"
+                 th:text="${caThi.taoLuc != null ?
+                   #temporals.format(caThi.taoLuc.atZone(T(java.time.ZoneId).of('Asia/Ho_Chi_Minh')), 'HH:mm dd/MM/yyyy')
+                   : '—'}"></div>
+          </div>
+
+          <!-- Cập nhật lúc -->
+          <div class="detail-item">
+            <div class="detail-label">Cập nhật lúc</div>
+            <div class="detail-value"
+                 th:text="${caThi.capNhatLuc != null ?
+                   #temporals.format(caThi.capNhatLuc.atZone(T(java.time.ZoneId).of('Asia/Ho_Chi_Minh')), 'HH:mm dd/MM/yyyy')
+                   : '—'}"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </main>
+  </div>
+</div>
+
+</body>
+</html>

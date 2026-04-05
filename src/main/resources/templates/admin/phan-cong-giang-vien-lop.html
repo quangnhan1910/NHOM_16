@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phân công giảng viên &amp; lớp - Quản trị</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" th:href="@{/css/admin/ca-thi.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <style>
+        /* Phân công — cùng khung Ca thi: main-content + table-card + data-table */
+        main.main-content.phan-cong-page {
+            gap: 16px;
+            padding: 20px 28px 28px;
+        }
+        .phan-cong-header-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .pc-back {
+            color: #1C74E9;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .pc-back:hover { text-decoration: underline; color: #155DCA; }
+        main.main-content.phan-cong-page .page-header {
+            align-items: flex-start;
+        }
+        @media (max-width: 900px) {
+            main.main-content.phan-cong-page .page-header {
+                flex-direction: column;
+                gap: 16px;
+            }
+            .phan-cong-header-actions {
+                width: 100%;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+        .btn-del {
+            padding: 6px 12px; border-radius: 8px; border: 1px solid #FECACA;
+            background: #FEF2F2; color: #B91C1C; font-size: 13px; cursor: pointer;
+        }
+        .btn-del:hover { background: #FEE2E2; }
+        .btn-edit {
+            padding: 6px 12px; border-radius: 8px; border: 1px solid #BFDBFE;
+            background: #EFF6FF; color: #1D4ED8; font-size: 13px; cursor: pointer;
+        }
+        .btn-edit:hover { background: #DBEAFE; }
+        .pc-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+        .pc-empty { text-align: center; padding: 32px 24px; color: #64748B; font-size: 14px; }
+        .pc-modal-bg {
+            display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45);
+            z-index: 1000; align-items: center; justify-content: center;
+        }
+        .pc-modal-bg.open { display: flex; }
+        .pc-modal {
+            background: #fff; border-radius: 14px; width: 100%; max-width: 560px;
+            max-height: 90vh; overflow-y: auto;
+            padding: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,.25);
+        }
+        .pc-modal h2 { margin: 0 0 8px; font-size: 18px; color: #0F172A; }
+        .pc-modal p.sub { margin: 0 0 16px; font-size: 13px; color: #64748B; }
+        .pc-modal-hint {
+            font-size: 12px; color: #475569; line-height: 1.55; background: #F8FAFC;
+            border: 1px solid #E2E8F0; border-radius: 10px; padding: 12px 14px; margin-bottom: 18px;
+        }
+        .pc-modal-hint strong { color: #0F172A; }
+        .pc-modal-hint code { font-size: 11px; background: #EEF2FF; padding: 1px 4px; border-radius: 4px; }
+        .pc-field { margin-bottom: 16px; }
+        .pc-field label { display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 6px; }
+        .pc-field select, .pc-field input[type="text"], .pc-field input[type="date"], .pc-field input[type="time"] {
+            width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #E2E8F0;
+            font-size: 14px; background: #fff; box-sizing: border-box;
+        }
+        select.pc-select-multi { min-height: 140px; }
+        .pc-lich-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px;
+        }
+        @media (max-width: 520px) { .pc-lich-grid { grid-template-columns: 1fr; } }
+        .pc-modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
+        .pc-modal-actions .btn-primary { font-size: 14px; font-weight: 600; padding: 10px 18px; }
+        .btn-ghost {
+            padding: 10px 16px; border-radius: 10px; border: 1px solid #E2E8F0;
+            background: #fff; font-size: 14px; cursor: pointer; color: #475569;
+        }
+        .pc-toast {
+            position: fixed; bottom: 24px; right: 24px; padding: 14px 20px; border-radius: 10px;
+            font-size: 14px; z-index: 1100; display: none; max-width: 360px;
+        }
+        .pc-toast.err { display: block; background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
+        .pc-toast.ok { display: block; background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; }
+    </style>
+</head>
+<body>
+<div class="admin-shell">
+    <aside th:replace="~{fragments/admin-sidebar :: sidebar (activeNav='phan-cong')}"></aside>
+    <div class="admin-main">
+    <main class="main-content phan-cong-page">
+        <div class="page-header">
+            <div class="page-title-group">
+                <h2 class="page-title">Phân công giảng viên &amp; lớp (chuyên ngành)</h2>
+            </div>
+            <div class="phan-cong-header-actions">
+                <a class="pc-back" th:href="@{/admin/quan-ly-mon-hoc}">← Quay lại danh sách môn học</a>
+                <button type="button" class="btn-primary" id="btnMoThem">
+                    <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" width="16" height="16" aria-hidden="true">
+                        <line x1="8" y1="2" x2="8" y2="14" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                        <line x1="2" y1="8" x2="14" y2="8" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Thêm phân công
+                </button>
+            </div>
+        </div>
+
+        <div class="table-card pc-table-wrap">
+            <table class="data-table pc-table" aria-label="Danh sách phân công">
+                <thead>
+                <tr>
+                    <th>Mã</th>
+                    <th>Giảng viên</th>
+                    <th>Môn học</th>
+                    <th>Mã môn</th>
+                    <th>Lớp / Chuyên ngành</th>
+                    <th>Sinh viên (tuỳ chọn)</th>
+                    <th>Thao tác</th>
+                </tr>
+                </thead>
+                <tbody id="tbodyPhanCong">
+                <tr><td colspan="7" class="pc-empty">Đang tải…</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+    </div>
+</div>
+
+<div class="pc-modal-bg" id="modalThem" aria-hidden="true">
+    <div class="pc-modal" role="dialog">
+        <h2 id="modalPhanCongTitle">Thêm phân công</h2>
+        <p class="sub">Điền các trường bên dưới. Sinh viên tuỳ chọn — chọn nhiều bằng Ctrl (Windows) hoặc Cmd (Mac).</p>
+        <div class="pc-modal-hint">
+            <p style="margin:0 0 10px;"><strong>Tóm tắt:</strong> Phân công <strong>giảng viên — môn — chuyên ngành</strong>; có thể gắn <strong>nhiều sinh viên</strong> (không bắt buộc, Ctrl/Cmd + click khi chọn danh sách). Hướng dẫn chi tiết, lịch giảng dạy và đồng bộ <code>ChiTietKhoaHocService</code> — xem các mục bên dưới.</p>
+            <p style="margin:0 0 10px;"><strong>Phân công &amp; đồng bộ:</strong> Gán giảng viên dạy môn, có thể giới hạn theo chuyên ngành (nhóm lớp). Sau khi lưu, giảng viên đăng nhập đúng tài khoản sẽ thấy môn trong <em>Khóa học của tôi</em>.</p>
+            <p style="margin:0 0 10px;"><strong>Hồ sơ giảng viên:</strong> Cần bảng <code>giang_vien</code> (liên kết <code>ma_nguoi_dung</code> + <code>ma_khoa</code>). Nếu tài khoản có vai trò GIANG_VIEN mà chưa có hồ sơ, hệ thống có thể tự tạo (khoa mặc định + mã nhân viên nội bộ). Chỉnh khoa/mã NV tại <strong>Quản lý người dùng</strong>.</p>
+            <p style="margin:0 0 10px;"><strong>Sửa phân công:</strong> Giữ nguyên <code>ma</code> phân công — trang <code>/lecturer/chitietkhoahoc?maGiangVienMonHoc=…</code> dùng cùng mã; <code>ChiTietKhoaHocService</code> gộp <strong>lịch nhập tay</strong> (tuỳ chọn) với lịch từ <strong>ca thi</strong> của môn.</p>
+            <p style="margin:0;"><strong>Lịch nhập tay (tuỳ chọn):</strong> Các ô bên dưới không bắt buộc. Trên trang chi tiết khóa học, một dòng lịch thủ công (nếu có) hiển thị <em>trước</em> các dòng từ ca thi.</p>
+        </div>
+        <p style="margin:0 0 10px; font-size:13px; font-weight:600; color:#334155;">Lịch trình &amp; tiến độ — nhập tay (không bắt buộc)</p>
+        <div class="pc-lich-grid">
+            <div class="pc-field">
+                <label for="inpLichBuoi">Ca</label>
+                <input type="text" id="inpLichBuoi" maxlength="64" placeholder="Ví dụ: 1 hoặc Ca 1">
+            </div>
+            <div class="pc-field">
+                <label for="inpLichNgay">Ngày</label>
+                <input type="date" id="inpLichNgay">
+            </div>
+            <div class="pc-field">
+                <label for="inpLichTietBatDau">Tiết bắt đầu</label>
+                <input type="text" id="inpLichTietBatDau" inputmode="numeric" maxlength="8" placeholder="Nhập số tiết">
+            </div>
+            <div class="pc-field">
+                <label for="inpLichTietKetThuc">Tiết kết thúc</label>
+                <input type="text" id="inpLichTietKetThuc" inputmode="numeric" maxlength="8" placeholder="Nhập số tiết">
+            </div>
+            <div class="pc-field" style="grid-column: 1 / -1;">
+                <label for="inpLichPhong">Phòng</label>
+                <input type="text" id="inpLichPhong" maxlength="128" placeholder="Ví dụ: A3-201">
+            </div>
+            <div class="pc-field" style="grid-column: 1 / -1;">
+                <label for="inpLichNoiDung">Nội dung</label>
+                <input type="text" id="inpLichNoiDung" maxlength="512" placeholder="Nội dung buổi học">
+            </div>
+            <div class="pc-field" style="grid-column: 1 / -1;">
+                <label for="selLichTrangThai">Trạng thái</label>
+                <select id="selLichTrangThai">
+                    <option value="">— Không chọn —</option>
+                    <option value="CHUA_DAY">Chưa dạy</option>
+                    <option value="SAI_TOI">Sắp tới</option>
+                    <option value="DA_DAY">Đã dạy</option>
+                </select>
+            </div>
+        </div>
+        <div class="pc-field">
+            <label for="selGiangVien">Giảng viên</label>
+            <select id="selGiangVien"></select>
+        </div>
+        <div class="pc-field">
+            <label for="selMonHoc">Môn học</label>
+            <select id="selMonHoc"></select>
+        </div>
+        <div class="pc-field">
+            <label for="selChuyenNganh">Chuyên ngành (lớp) — tuỳ chọn</label>
+            <select id="selChuyenNganh">
+                <option value="">— Không chọn (áp dụng chung) —</option>
+            </select>
+        </div>
+        <div class="pc-field">
+            <label for="selSinhVien">Sinh viên — tuỳ chọn (chọn nhiều)</label>
+            <select id="selSinhVien" class="pc-select-multi" multiple size="8" aria-label="Danh sách sinh viên phân công"></select>
+            <p style="margin:6px 0 0;font-size:12px;color:#64748B;">Để bỏ hết: bỏ chọn tất cả (click từng dòng đã chọn hoặc Alt+click).</p>
+        </div>
+        <div class="pc-modal-actions">
+            <button type="button" class="btn-ghost" id="btnHuyModal">Huỷ</button>
+            <button type="button" class="btn-primary" id="btnLuuPhanCong">Lưu</button>
+        </div>
+    </div>
+</div>
+<div id="toast" class="pc-toast" role="status"></div>
+
+<script>
+(function () {
+    var API = '/api/phan-cong-giang-day';
+    var tbody = document.getElementById('tbodyPhanCong');
+    var modal = document.getElementById('modalThem');
+    var toast = document.getElementById('toast');
+    var editingPhanCongMa = null;
+    var rowByMa = {};
+
+    function showToast(msg, ok) {
+        toast.textContent = msg;
+        toast.className = 'pc-toast ' + (ok ? 'ok' : 'err');
+        clearTimeout(showToast.t);
+        showToast.t = setTimeout(function () { toast.className = 'pc-toast'; toast.textContent = ''; }, 4500);
+    }
+
+    function loadTable() {
+        fetch(API).then(function (r) { return r.json(); }).then(function (res) {
+            if (!res.success) {
+                tbody.innerHTML = '<tr><td colspan="7" class="pc-empty">' + (res.message || 'Lỗi tải dữ liệu') + '</td></tr>';
+                return;
+            }
+            var rows = res.data || [];
+            rowByMa = {};
+            rows.forEach(function (r) { rowByMa[r.ma] = r; });
+            if (!rows.length) {
+                tbody.innerHTML = '<tr><td colspan="7" class="pc-empty">Chưa có phân công nào.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = rows.map(function (row) {
+                var lop = row.tenChuyenNganh ? escapeHtml(row.tenChuyenNganh) : '<span style="color:#94A3B8">—</span>';
+                var txtSv = '<span style="color:#94A3B8">—</span>';
+                if (row.sinhViens && row.sinhViens.length) {
+                    txtSv = row.sinhViens.map(function (s) {
+                        return escapeHtml((s.tenSinhVien || '') + (s.mssv ? ' (' + s.mssv + ')' : ''));
+                    }).join(', ');
+                } else if (row.tenSinhVien || row.mssv) {
+                    txtSv = escapeHtml((row.tenSinhVien || '') + (row.mssv ? ' (' + row.mssv + ')' : ''));
+                }
+                return '<tr data-id="' + row.ma + '">' +
+                    '<td>' + row.ma + '</td>' +
+                    '<td>' + escapeHtml(row.tenGiangVien || '') + '</td>' +
+                    '<td>' + escapeHtml(row.tenMonHoc || '') + '</td>' +
+                    '<td>' + escapeHtml(row.maDinhDanhMon || '') + '</td>' +
+                    '<td>' + lop + '</td>' +
+                    '<td>' + txtSv + '</td>' +
+                    '<td class="pc-actions">' +
+                    '<button type="button" class="btn-edit" data-edit="' + row.ma + '">Sửa</button>' +
+                    '<button type="button" class="btn-del" data-del="' + row.ma + '">Xóa</button></td></tr>';
+            }).join('');
+            tbody.querySelectorAll('[data-edit]').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var id = parseInt(btn.getAttribute('data-edit'), 10);
+                    openPhanCongModal(rowByMa[id]);
+                });
+            });
+            tbody.querySelectorAll('[data-del]').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var id = parseInt(btn.getAttribute('data-del'), 10);
+                    if (!confirm('Xóa phân công #' + id + '?')) return;
+                    fetch(API + '/' + id, { method: 'DELETE' }).then(function (r) { return r.json(); }).then(function (res) {
+                        if (!res.success) { showToast(res.message || 'Lỗi xóa', false); return; }
+                        showToast('Đã xóa.', true);
+                        loadTable();
+                    }).catch(function () { showToast('Lỗi mạng.', false); });
+                });
+            });
+        }).catch(function () {
+            tbody.innerHTML = '<tr><td colspan="7" class="pc-empty">Không kết nối được máy chủ.</td></tr>';
+        });
+    }
+
+    function escapeHtml(s) {
+        if (!s) return '';
+        var d = document.createElement('div');
+        d.textContent = s;
+        return d.innerHTML;
+    }
+
+    function fillSelect(sel, items, labelFn, valKey) {
+        sel.innerHTML = items.map(function (it) {
+            return '<option value="' + it[valKey] + '">' + escapeHtml(labelFn(it)) + '</option>';
+        }).join('');
+    }
+
+    function setLichForm(row) {
+        document.getElementById('inpLichBuoi').value = (row && row.lichBuoi) ? row.lichBuoi : '';
+        document.getElementById('inpLichNgay').value = (row && row.lichNgay) ? row.lichNgay : '';
+        document.getElementById('inpLichTietBatDau').value = (row && row.lichTietBatDau) ? String(row.lichTietBatDau) : '';
+        document.getElementById('inpLichTietKetThuc').value = (row && row.lichTietKetThuc) ? String(row.lichTietKetThuc) : '';
+        document.getElementById('inpLichPhong').value = (row && row.lichPhong) ? row.lichPhong : '';
+        document.getElementById('inpLichNoiDung').value = (row && row.lichNoiDung) ? row.lichNoiDung : '';
+        document.getElementById('selLichTrangThai').value = (row && row.lichTrangThai) ? row.lichTrangThai : '';
+    }
+
+    function openPhanCongModal(editRow) {
+        editingPhanCongMa = editRow && editRow.ma != null ? editRow.ma : null;
+        document.getElementById('modalPhanCongTitle').textContent = editingPhanCongMa != null ? 'Sửa phân công' : 'Thêm phân công';
+        Promise.all([
+            fetch(API + '/giang-vien').then(function (r) { return r.json(); }),
+            fetch('/api/mon-hoc/tat-ca').then(function (r) { return r.json(); }),
+            fetch('/api/chuyen-nganh/tat-ca').then(function (r) { return r.json(); }),
+            fetch(API + '/sinh-vien').then(function (r) { return r.json(); })
+        ]).then(function (arr) {
+            var g = arr[0], m = arr[1], c = arr[2], s = arr[3];
+            if (!g.success || !m.success || !c.success || !s.success) {
+                showToast('Không tải được danh sách chọn.', false);
+                return;
+            }
+            var gv = g.data || [];
+            var mh = m.data || [];
+            var cn = c.data || [];
+            var svList = s.data || [];
+            if (!gv.length) {
+                showToast('Chưa có hồ sơ giảng viên (bảng giang_vien). Sinh viên (sinh_vien) không dùng để phân công — cần thêm giang_vien cho tài khoản GIANG_VIEN.', false);
+                return;
+            }
+            if (!mh.length) {
+                showToast('Chưa có môn học.', false);
+                return;
+            }
+            var selGv = document.getElementById('selGiangVien');
+            var selMh = document.getElementById('selMonHoc');
+            var selCn = document.getElementById('selChuyenNganh');
+            var selSv = document.getElementById('selSinhVien');
+            fillSelect(selGv, gv, function (it) {
+                var ten = it.hoTen || '';
+                var mn = (it.maNhanVien || '').trim();
+                if (mn && !/^(AUTO_GV|SYSGV_)/i.test(mn)) {
+                    ten += ' — ' + mn;
+                }
+                return ten;
+            }, 'ma');
+            fillSelect(selMh, mh, function (it) {
+                return (it.ten || '') + (it.maDinhDanh ? ' (' + it.maDinhDanh + ')' : '');
+            }, 'ma');
+            selCn.innerHTML = '<option value="">— Không chọn (áp dụng chung) —</option>' +
+                cn.map(function (it) {
+                    return '<option value="' + it.ma + '">' + escapeHtml(it.ten || '') + '</option>';
+                }).join('');
+            selSv.innerHTML = svList.map(function (it) {
+                var lb = (it.hoTen || '') + (it.mssv ? ' (' + it.mssv + ')' : '');
+                return '<option value="' + it.ma + '">' + escapeHtml(lb) + '</option>';
+            }).join('');
+            Array.prototype.forEach.call(selSv.options, function (o) { o.selected = false; });
+            if (editRow) {
+                selGv.value = String(editRow.maGiangVien);
+                selMh.value = String(editRow.maMonHoc);
+                selCn.value = editRow.maChuyenNganh != null ? String(editRow.maChuyenNganh) : '';
+                var picked = {};
+                if (editRow.sinhViens && editRow.sinhViens.length) {
+                    editRow.sinhViens.forEach(function (s) { if (s.ma != null) picked[s.ma] = true; });
+                } else if (editRow.maSinhVien != null) {
+                    picked[editRow.maSinhVien] = true;
+                }
+                Array.prototype.forEach.call(selSv.options, function (o) {
+                    if (picked[parseInt(o.value, 10)]) o.selected = true;
+                });
+                setLichForm(editRow);
+            } else {
+                selGv.selectedIndex = 0;
+                selMh.selectedIndex = 0;
+                selCn.value = '';
+                setLichForm(null);
+            }
+            modal.classList.add('open');
+            modal.setAttribute('aria-hidden', 'false');
+        }).catch(function () { showToast('Lỗi tải form.', false); });
+    }
+
+    function closeModal() {
+        editingPhanCongMa = null;
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+    }
+
+    document.getElementById('btnMoThem').addEventListener('click', function () { openPhanCongModal(null); });
+    document.getElementById('btnHuyModal').addEventListener('click', closeModal);
+    modal.addEventListener('click', function (e) {
+        if (e.target === modal) closeModal();
+    });
+
+    document.getElementById('btnLuuPhanCong').addEventListener('click', function () {
+        var maGiangVien = parseInt(document.getElementById('selGiangVien').value, 10);
+        var maMonHoc = parseInt(document.getElementById('selMonHoc').value, 10);
+        var cnVal = document.getElementById('selChuyenNganh').value;
+        var selSv = document.getElementById('selSinhVien');
+        var maSinhViens = Array.prototype.slice.call(selSv.selectedOptions)
+            .map(function (o) { return parseInt(o.value, 10); })
+            .filter(function (x) { return !isNaN(x); });
+        var body = {
+            maGiangVien: maGiangVien,
+            maMonHoc: maMonHoc,
+            maSinhViens: maSinhViens,
+            lichBuoi: document.getElementById('inpLichBuoi').value.trim(),
+            lichNgay: document.getElementById('inpLichNgay').value.trim(),
+            lichTietBatDau: document.getElementById('inpLichTietBatDau').value.trim(),
+            lichTietKetThuc: document.getElementById('inpLichTietKetThuc').value.trim(),
+            lichPhong: document.getElementById('inpLichPhong').value.trim(),
+            lichNoiDung: document.getElementById('inpLichNoiDung').value.trim(),
+            lichTrangThai: document.getElementById('selLichTrangThai').value.trim()
+        };
+        if (cnVal) body.maChuyenNganh = parseInt(cnVal, 10);
+        var url = API;
+        var method = 'POST';
+        if (editingPhanCongMa != null) {
+            url = API + '/' + editingPhanCongMa;
+            method = 'PUT';
+        }
+        fetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        }).then(function (r) { return r.json(); }).then(function (res) {
+            if (!res.success) {
+                showToast(res.message || 'Không lưu được.', false);
+                return;
+            }
+            showToast(res.message || 'Đã lưu.', true);
+            closeModal();
+            loadTable();
+        }).catch(function () { showToast('Lỗi mạng.', false); });
+    });
+
+    loadTable();
+})();
+</script>
+</body>
+</html>

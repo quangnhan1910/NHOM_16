@@ -1,0 +1,540 @@
+/* ========================================
+   Chi tiết khóa học - Lecturer Course Detail
+   ======================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #F8FAFC;
+    color: #0F172B;
+}
+
+/* Main Content */
+.main-content {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    width: 1278px;
+    min-height: 729.6px;
+}
+
+/* Header */
+.header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 32px;
+    width: 1278.4px;
+    height: 72px;
+    background: #FFFFFF;
+    border-bottom: 0.8px solid #E2E8F0;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+.back-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: #8EC5FF;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    transition: color 0.2s;
+}
+
+.back-button:hover {
+    color: #60A5FA;
+}
+
+.header-center {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-center h2 {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 32px;
+    color: #0F172B;
+}
+
+.course-code {
+    display: inline-block;
+    padding: 4px 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 0.8px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #FFFFFF;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    padding: 0 16px 0 40px;
+    width: 320px;
+    height: 40px;
+    background: #F1F5F9;
+    border-radius: 10px;
+    position: relative;
+}
+
+.search-box svg {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.search-box input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    color: #314158;
+    outline: none;
+}
+
+.search-box input::placeholder {
+    color: rgba(49, 65, 88, 0.5);
+}
+
+/* Course Info Banner */
+.course-banner {
+    width: 1212.8px;
+    height: 143.99px;
+    background: #1E293B;
+    margin: 32px 32px 0;
+    border-radius: 14px;
+    padding: 24px;
+    position: relative;
+}
+
+.course-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.course-title {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 32px;
+    color: #FFFFFF;
+}
+
+.course-code {
+    padding: 4px 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 0.8px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #FFFFFF;
+}
+
+.course-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.meta-item {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    color: #CAD5E2;
+}
+
+.meta-dot {
+    width: 4px;
+    height: 4px;
+    background: #62748E;
+    border-radius: 50%;
+}
+
+/* Tab Container */
+.tab-container {
+    display: flex;
+    width: 1212.8px;
+    height: 50.4px;
+    margin: 0 32px;
+    background: rgba(248, 250, 252, 0.5);
+    border-bottom: 0.8px solid #E2E8F0;
+}
+
+.tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 24px;
+    height: 49.6px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    color: #62748E;
+    cursor: pointer;
+    border-bottom: 1.6px solid transparent;
+    transition: all 0.2s;
+}
+
+.tab:hover {
+    color: #314158;
+}
+
+.tab.active {
+    color: #1447E6;
+    border-bottom-color: #155DFC;
+}
+
+.tab svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Schedule Section */
+.schedule-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 24px;
+    width: 1212.8px;
+    background: #FFFFFF;
+    margin: 0 32px 32px;
+    border-radius: 14px;
+    border: 0.8px solid #E2E8F0;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 28px;
+    color: #0F172B;
+    margin-bottom: 16px;
+}
+
+/* Table Container */
+.table-container {
+    width: 100%;
+    border: 0.8px solid #E2E8F0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Table Header */
+.schedule-table thead {
+    background: #F8FAFC;
+}
+
+.schedule-table th {
+    padding: 16px;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 20px;
+    color: #45556C;
+    border-bottom: 0.8px solid #E2E8F0;
+}
+
+.schedule-table th:nth-child(1) { width: 96px; }
+.schedule-table th:nth-child(2) { width: 128px; }
+.schedule-table th:nth-child(3) { width: 160px; }
+.schedule-table th:nth-child(4) { width: 128px; }
+.schedule-table th:nth-child(5) { width: 508px; }
+.schedule-table th:nth-child(6) { width: 128px; text-align: center; }
+
+/* Table Body */
+.schedule-table tbody tr {
+    border-bottom: 0.8px solid #F1F5F9;
+    transition: background 0.2s;
+}
+
+.schedule-table tbody tr:hover {
+    background: #F8FAFC;
+}
+
+.schedule-table td {
+    padding: 19px 16px;
+    font-size: 14px;
+    line-height: 20px;
+    color: #314158;
+}
+
+.schedule-table td:nth-child(1) {
+    font-weight: 500;
+    color: #314158;
+}
+
+.schedule-table td:nth-child(2) {
+    color: #45556C;
+}
+
+.schedule-table td:nth-child(3) {
+    color: #45556C;
+}
+
+.schedule-table td:nth-child(4) {
+    font-weight: 500;
+    color: #1D293D;
+}
+
+.schedule-table td:nth-child(5) {
+    color: #0F172B;
+}
+
+.schedule-table td:nth-child(6) {
+    text-align: center;
+}
+
+/* Status Badge */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+    gap: 6px;
+}
+
+.status-badge::before {
+    content: '';
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+/* Status Done */
+.status-done {
+    background: #F0FDF4;
+    border: 0.8px solid #B9F8CF;
+    color: #008236;
+}
+
+.status-done::before {
+    background: #008236;
+}
+
+/* Status Upcoming */
+.status-upcoming {
+    background: #EFF6FF;
+    border: 0.8px solid #BEDBFF;
+    color: #1447E6;
+}
+
+.status-upcoming::before {
+    background: #1447E6;
+}
+
+/* Status Pending */
+.status-pending {
+    background: #FFFBEB;
+    border: 0.8px solid #FDE68A;
+    color: #B45309;
+}
+
+.status-pending::before {
+    background: #B45309;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #62748E;
+}
+
+/* ========================================
+   TAB CONTENT
+   ======================================== */
+.tab-content {
+    display: none;
+    padding: 24px 32px;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.empty-cell {
+    text-align: center;
+    padding: 40px !important;
+    color: #62748E;
+}
+
+/* ========================================
+   STUDENT SECTION
+   ======================================== */
+.student-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.student-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.student-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.student-search {
+    width: 256px;
+    height: 36px;
+    background: #FFFFFF;
+    border: 0.8px solid #CAD5E2;
+}
+
+.btn-export {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    height: 36px;
+    background: #FFFFFF;
+    border: 0.8px solid #CAD5E2;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #314158;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-export:hover {
+    background: #F8FAFC;
+    border-color: #314158;
+}
+
+.btn-export svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Student Table */
+.student-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 0.8px solid #E2E8F0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.student-table thead {
+    background: #F8FAFC;
+}
+
+.student-table th {
+    padding: 16px;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 20px;
+    color: #45556C;
+    border-bottom: 0.8px solid #E2E8F0;
+}
+
+.student-table th:first-child {
+    text-align: center;
+}
+
+.student-table tbody tr {
+    border-bottom: 0.8px solid #F1F5F9;
+    transition: background 0.2s;
+}
+
+.student-table tbody tr:hover {
+    background: #F8FAFC;
+}
+
+.student-table td {
+    padding: 18px 16px;
+    font-size: 14px;
+    line-height: 20px;
+    color: #314158;
+}
+
+.student-table td.text-center {
+    text-align: center;
+    color: #62748E;
+}
+
+.student-table td.mssv {
+    font-weight: 500;
+    color: #314158;
+}
+
+.student-table td.hoten {
+    font-weight: 600;
+    color: #0F172B;
+}
+
+/* Tinh trang Badge */
+.tinhtrang-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px;
+    gap: 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 16px;
+    min-width: 91px;
+}
+
+.tinhtrang-badge.status-du {
+    background: #DCFCE7;
+    color: #008236;
+}
+
+.tinhtrang-badge.status-canh-bao {
+    background: #FFEDD4;
+    color: #CA3500;
+}
+
+.tinhtrang-badge.status-cam {
+    background: #FFE2E2;
+    color: #C10007;
+}
+
+.tinhtrang-badge svg {
+    width: 12px;
+    height: 12px;
+}

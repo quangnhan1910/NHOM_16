@@ -1,0 +1,377 @@
+/* Base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #F6F7F8;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.header {
+    background: #FFFFFF;
+    border-bottom: 1px solid #E2E8F0;
+    height: 64px;
+    width: 100%;
+}
+
+.header-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 32px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-icon {
+    width: 38px;
+    height: 34px;
+    background: transparent;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.logo-icon-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.logo-text {
+    font-size: 20px;
+    font-weight: 700;
+    color: #0F172A;
+    letter-spacing: -0.5px;
+}
+
+.logo-staff {
+    font-weight: 500;
+    color: #1C74E9;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.status-link {
+    font-size: 14px;
+    font-weight: 500;
+    color: #475569;
+    text-decoration: none;
+}
+
+.support-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: #1C74E9;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 51.75px 16px;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 448px;
+}
+
+.login-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    box-shadow: 0px 20px 25px -5px rgba(0, 0, 0, 0.1), 0px 8px 10px -6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.login-card-header {
+    padding: 32px 32px 48px;
+}
+
+.login-title-section {
+    margin-bottom: 32px;
+}
+
+.login-title {
+    font-size: 30px;
+    font-weight: 900;
+    color: #0F172A;
+    margin-bottom: 8px;
+    line-height: 36px;
+}
+
+.login-subtitle {
+    font-size: 16px;
+    color: #64748B;
+    line-height: 24px;
+}
+
+/* Form */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.forgot-link {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1C74E9;
+    text-decoration: none;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 12px;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.form-input {
+    width: 100%;
+    padding: 14px 12px 14px 40px;
+    font-size: 16px;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input:focus {
+    border-color: #1C74E9;
+    box-shadow: 0 0 0 3px rgba(28, 116, 233, 0.1);
+}
+
+.form-input::placeholder {
+    color: #94A3B8;
+}
+
+.form-input[type="password"] {
+    padding-right: 48px;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 13px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Remember Me */
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.checkbox {
+    width: 16px;
+    height: 16px;
+    border: 1px solid #CBD5E1;
+    border-radius: 4px;
+    cursor: pointer;
+    accent-color: #1C74E9;
+}
+
+.remember-label {
+    font-size: 14px;
+    color: #475569;
+    cursor: pointer;
+}
+
+/* Error Message */
+.error-message {
+    padding: 12px 16px;
+    background: #FEF2F2;
+    border: 1px solid #FECACA;
+    border-radius: 8px;
+    color: #DC2626;
+    font-size: 14px;
+}
+
+.success-message {
+    padding: 12px 16px;
+    background: #F0FDF4;
+    border: 1px solid #BBF7D0;
+    border-radius: 8px;
+    color: #16A34A;
+    font-size: 14px;
+}
+
+/* Submit Button */
+.submit-btn {
+    width: 100%;
+    padding: 14px 16px;
+    background: #1C74E9;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #FFFFFF;
+    cursor: pointer;
+    transition: background-color 0.2s, box-shadow 0.2s;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.submit-btn:hover {
+    background: #1565C0;
+    box-shadow: 0px 4px 6px rgba(28, 116, 233, 0.3);
+}
+
+.submit-btn:active {
+    transform: translateY(1px);
+}
+
+/* Login Card Footer */
+.login-card-footer {
+    padding: 24px;
+    background: #F8FAFC;
+    border-top: 1px solid #E2E8F0;
+}
+
+.notice-content {
+    display: flex;
+    gap: 12px;
+}
+
+.notice-icon {
+    flex-shrink: 0;
+}
+
+.notice-text {
+    font-size: 12px;
+    color: #64748B;
+    line-height: 20px;
+}
+
+/* Footer */
+.footer {
+    padding: 32px 16px;
+    background: transparent;
+}
+
+.footer-container {
+    max-width: 1248px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.footer-divider {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    width: 100%;
+    opacity: 0.6;
+}
+
+.divider-line {
+    flex: 1;
+    height: 1px;
+    background: #CBD5E1;
+}
+
+.footer-heading {
+    font-size: 12px;
+    font-weight: 700;
+    color: #64748B;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.footer-text {
+    font-size: 14px;
+    color: #64748B;
+    text-align: center;
+    line-height: 20px;
+}
+
+.footer-text strong {
+    color: #334155;
+    font-weight: 500;
+}
+
+.footer-links {
+    display: flex;
+    gap: 16px;
+}
+
+.footer-links a {
+    font-size: 12px;
+    font-weight: 500;
+    color: #94A3B8;
+    text-decoration: underline;
+}
+
+.footer-links a:hover {
+    color: #64748B;
+}

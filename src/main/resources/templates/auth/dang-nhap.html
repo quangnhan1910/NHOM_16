@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập - Hệ thống Thi trắc nghiệm</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+</head>
+<body>
+    <!-- Header Navigation -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <img class="logo-icon-img" th:src="@{/images/brand/uniexam-logo.png}" src="/images/brand/uniexam-logo.png" width="38" height="34" alt=""/>
+                </div>
+                <h1 class="logo-text">UniExam <span class="logo-staff">Staff</span></h1>
+            </div>
+            <div class="header-actions">
+                <a href="#" class="status-link">Trạng thái hệ thống</a>
+                <a href="#" class="support-btn">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="6" cy="6" r="5.5" stroke="white" stroke-width="1.5"/>
+                        <path d="M6 3.5V6.5M6 8.5V9" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    Hỗ trợ
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-card-header">
+                    <div class="login-title-section">
+                        <h2 class="login-title">Cổng thông tin Cán bộ</h2>
+                        <p class="login-subtitle">Truy cập an toàn dành cho Quản trị viên và Giảng viên.</p>
+                    </div>
+                    
+                    <form class="login-form" id="loginForm" th:action="@{/login}" method="post">
+                        <!-- Username Field -->
+                        <div class="form-field">
+                            <label class="form-label" for="email">Email</label>
+                            <div class="input-wrapper">
+                                <span class="input-icon">
+                                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="7" cy="4" r="2.5" stroke="#94A3B8" stroke-width="1.5"/>
+                                        <path d="M2 12C2 10.3431 3.34315 9 5 9H9C10.6569 9 12 10.3431 12 12" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round"/>
+                                    </svg>
+                                </span>
+                                <input type="text" 
+                                       name="email" 
+                                       id="email"
+                                       class="form-input" 
+                                       placeholder="Email" 
+                                       required>
+                            </div>
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="form-field">
+                            <div class="label-row">
+                                <label class="form-label">Mật khẩu</label>
+                                <a href="#" class="forgot-link">Quên mật khẩu?</a>
+                            </div>
+                            <div class="input-wrapper">
+                                <span class="input-icon">
+                                    <svg width="14" height="18" viewBox="0 0 14 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <rect x="2" y="7" width="10" height="9" rx="2" stroke="#94A3B8" stroke-width="1.5"/>
+                                        <path d="M4 7V4C4 2.34315 5.34315 1 7 1C8.65685 1 10 2.34315 10 4V7" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round"/>
+                                    </svg>
+                                </span>
+                                <input type="password" 
+                                       name="matKhau" 
+                                       id="password"
+                                       class="form-input" 
+                                       placeholder="••••••••" 
+                                       required>
+                                <button type="button" class="toggle-password" id="togglePassword">
+                                    <svg width="22" height="15" viewBox="0 0 22 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M11 3C7 3 3.5 6 2 9C3.5 12 7 15 11 15C15 15 18.5 12 20 9C18.5 6 15 3 11 3Z" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <circle cx="11" cy="9" r="2" stroke="#94A3B8" stroke-width="1.5"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Remember Me -->
+                        <div class="remember-me">
+                            <input type="checkbox" 
+                                   name="duyTriDangNhap" 
+                                   id="rememberMe" 
+                                   class="checkbox">
+                            <label for="rememberMe" class="remember-label">Duy trì đăng nhập trong 24 giờ</label>
+                        </div>
+
+                        <!-- Error Message -->
+                        <div th:if="${loiDangNhap}" class="error-message" th:text="${loiDangNhap}"></div>
+
+                        <!-- Logout Message -->
+                        <div th:if="${thongBaoDangXuat}" class="success-message" th:text="${thongBaoDangXuat}"></div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="submit-btn">
+                            Đăng nhập vào Hệ thống
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Banner/Notice Area -->
+                <div class="login-card-footer">
+                    <div class="notice-content">
+                        <div class="notice-icon">
+                            <svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M8 2C4.5 2 1.5 4.5 0 8C1.5 11.5 4.5 14 8 14C11.5 14 14.5 11.5 16 8C14.5 4.5 11.5 2 8 2Z" fill="#1C74E9"/>
+                                <path d="M8 6V9M8 11V12" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <p class="notice-text">Đây là hệ thống máy tính nội bộ được bảo mật. Mọi hành vi truy cập trái phép đều bị nghiêm cấm và xử lý theo quy định của nhà trường.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-divider">
+                <span class="divider-line"></span>
+                <span class="footer-heading">PHÒNG CÔNG NGHỆ THÔNG TIN</span>
+                <span class="divider-line"></span>
+            </div>
+            <p class="footer-text">© 2026 Hệ thống Thi trắc nghiệm Đại học. Quản lý bởi Phòng Công nghệ thông tin. Để được hỗ trợ kỹ thuật, vui lòng liên hệ bộ phận hỗ trợ qua số nội bộ <strong>4000</strong> hoặc email <strong>it-support@university.edu</strong>.</p>
+            <div class="footer-links">
+                <a href="#">Chính sách bảo mật</a>
+                <a href="#">Hướng dẫn cho cán bộ</a>
+                <a href="#">Tiêu chuẩn bảo mật</a>
+            </div>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/login.js}"></script>
+</body>
+</html>
