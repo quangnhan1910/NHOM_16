@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Cơ cấu Tổ chức - Hệ thống Thi trắc nghiệm</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <style>
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .breadcrumb-item { font-size: 14px; font-weight: 500; }
+        .breadcrumb-item.inactive { color: #64748B; }
+        .breadcrumb-item.active { color: #1C74E9; font-weight: 600; }
+        .breadcrumb-separator { color: #94A3B8; font-size: 14px; }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+        .page-title { font-size: 30px; font-weight: 800; color: #0F172A; margin-bottom: 8px; letter-spacing: -0.75px; }
+        .page-description { font-size: 16px; color: #64748B; }
+        .btn-primary {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 10px 20px; background: #1C74E9; color: white;
+            border: none; border-radius: 8px; font-size: 14px; font-weight: 700;
+            cursor: pointer; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+            transition: background 0.2s;
+        }
+        .btn-primary:hover { background: #1D4ED8; }
+        .btn-primary svg { width: 10.5px; height: 10.5px; }
+        .filter-tabs {
+            display: flex; gap: 32px; border-bottom: 1px solid #E2E8F0;
+            margin-bottom: 24px;
+        }
+        .filter-tab {
+            padding-bottom: 18px; font-size: 14px; font-weight: 500; color: #64748B;
+            cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s;
+        }
+        .filter-tab:hover { color: #1C74E9; }
+        .filter-tab.active { color: #1C74E9; font-weight: 700; border-bottom-color: #1C74E9; }
+        .tree-card {
+            background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px;
+            overflow: hidden; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); margin-bottom: 24px;
+        }
+        .tree-card-header {
+            background: #F8FAFC; border-bottom: 1px solid #E2E8F0;
+            padding: 16px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .tree-card-title { font-size: 12px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.6px; }
+        .tree-actions { display: flex; align-items: center; gap: 8px; }
+        .tree-action-btn { font-size: 12px; font-weight: 600; color: #1C74E9; background: none; border: none; cursor: pointer; padding: 4px; }
+        .tree-action-btn:hover { text-decoration: underline; }
+        .tree-action-divider { color: #CBD5E1; font-size: 16px; }
+        .tree-action-btn.secondary { color: #64748B; }
+        .tree-view { padding: 8px; }
+        .tree-row {
+            display: flex; align-items: center; gap: 12px; padding: 12px;
+            border-radius: 8px; cursor: pointer; transition: background 0.2s;
+        }
+        .tree-row:hover { background: #F8FAFC; }
+        .tree-row:hover .tree-row-actions { opacity: 1; }
+        .tree-expand-icon { width: 12px; height: 7.4px; flex-shrink: 0; }
+        .tree-type-icon { width: 20px; height: 20px; flex-shrink: 0; }
+        .tree-type-icon.small { width: 18px; height: 18px; }
+        .tree-type-icon.smaller { width: 15px; height: 17px; }
+        .tree-info { flex: 1; display: flex; align-items: center; justify-content: space-between; min-width: 0; }
+        .tree-name { font-size: 16px; font-weight: 600; color: #0F172A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .tree-name.medium { font-size: 16px; font-weight: 600; color: #1E293B; }
+        .tree-name.small { font-size: 14px; font-weight: 500; color: #334155; }
+        .tree-code { display: inline-flex; padding: 1.5px 8px; background: #F1F5F9; border-radius: 4px; font-size: 12px; font-weight: 600; color: #475569; text-transform: uppercase; letter-spacing: 0.3px; margin-left: 8px; white-space: nowrap; }
+        .tree-code.small { font-size: 10px; font-weight: 500; color: #64748B; padding: 2px 8px; }
+        .tree-location { font-size: 12px; color: #94A3B8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .tree-row-actions { display: flex; align-items: center; gap: 6px; opacity: 0; transition: opacity 0.2s; flex-shrink: 0; }
+        .tree-row:hover .tree-row-actions, .tree-child-row:hover .tree-row-actions, .tree-level3:hover .tree-row-actions { opacity: 1; }
+        .tree-action-icon { padding: 6px; border-radius: 4px; cursor: pointer; transition: background 0.2s; }
+        .tree-action-icon:hover { background: #F1F5F9; }
+        .tree-action-icon svg { width: 13.5px; height: 13.5px; }
+        .tree-action-icon.md svg { width: 15px; height: 15px; }
+        .tree-action-icon.sm svg { width: 12px; height: 12px; }
+        .tree-children { margin-left: 17px; padding-left: 17px; border-left: 1px solid #E2E8F0; display: flex; flex-direction: column; gap: 4px; }
+        .tree-child-row { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 8px; cursor: pointer; transition: background 0.2s; }
+        .tree-child-row:hover { background: #F8FAFC; }
+        .tree-child-row:hover .tree-row-actions { opacity: 1; }
+        .tree-child-expand { width: 12px; height: 7.4px; flex-shrink: 0; }
+        .tree-child-expand.collapsed { width: 12px; height: 12px; }
+        .tree-child-info { flex: 1; display: flex; align-items: center; justify-content: space-between; min-width: 0; }
+        .tree-level3 { display: flex; align-items: center; justify-content: space-between; padding: 8px; border-radius: 8px; }
+        .tree-level3:hover { background: #F8FAFC; }
+        .tree-level3-left { display: flex; align-items: center; gap: 12px; }
+        .tree-level3-type { font-size: 10px; font-weight: 500; color: #94A3B8; text-transform: uppercase; }
+        .tree-level3:hover .tree-row-actions { opacity: 1; }
+        .tree-level3 .tree-row-actions { opacity: 1; }
+        .editor-panel {
+            background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px;
+            overflow: hidden; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+            scroll-margin-top: 100px;
+        }
+        .editor-panel-header {
+            background: rgba(28, 116, 233, 0.05); border-bottom: 1px solid #E2E8F0;
+            padding: 16px 24px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .editor-panel-title { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 700; color: #1C74E9; }
+        .editor-panel-title svg { width: 18px; height: 16px; }
+        .editor-panel-close { background: none; border: none; cursor: pointer; padding: 4px; border-radius: 4px; transition: background 0.2s; }
+        .editor-panel-close:hover { background: #F1F5F9; }
+        .editor-panel-close svg { width: 14px; height: 14px; }
+        .editor-form { padding: 24px; display: flex; flex-direction: column; gap: 20px; }
+        .form-section { display: block; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group.full-width { grid-column: 1 / -1; }
+        .form-label { font-size: 14px; font-weight: 700; color: #334155; }
+        .form-label.required::after { content: ' *'; color: #EF4444; }
+        .form-input {
+            padding: 9px 17px; background: #FFFFFF; border: 1px solid #CBD5E1;
+            border-radius: 8px; font-size: 14px; color: #0F172A; outline: none; transition: border-color 0.2s;
+        }
+        .form-input:focus { border-color: #1C74E9; }
+        .form-input::placeholder { color: #6B7280; }
+        .form-input:disabled { background: #F8FAFC; color: #64748B; cursor: not-allowed; }
+        .form-select {
+            padding: 9px 17px; background: #FFFFFF; border: 1px solid #CBD5E1;
+            border-radius: 8px; font-size: 14px; color: #0F172A; outline: none;
+            cursor: pointer; appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='21' height='21' viewBox='0 0 21 21' fill='none'%3E%3Cpath d='M5.5 8.5L10.5 13.5L15.5 8.5' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 12px center;
+        }
+        .form-select:focus { border-color: #1C74E9; }
+        .form-select:disabled { background: #F8FAFC; color: #64748B; cursor: not-allowed; }
+        /* Batch Khoa list */
+        .batch-list { display: flex; flex-direction: column; gap: 8px; }
+        .batch-item-row { display: flex; align-items: center; gap: 8px; }
+        .batch-item-row .form-input { flex: 1; }
+        .batch-item-row .btn-remove {
+            padding: 6px 10px; background: #FEE2E2; border: none; border-radius: 6px;
+            color: #EF4444; cursor: pointer; font-size: 16px; font-weight: 700; line-height: 1;
+            transition: background 0.2s;
+        }
+        .batch-item-row .btn-remove:hover { background: #FECACA; }
+        .btn-add-batch {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 6px 12px; background: #EFF6FF; border: 1px dashed #1C74E9;
+            border-radius: 6px; color: #1C74E9; font-size: 13px; font-weight: 600;
+            cursor: pointer; transition: background 0.2s; margin-top: 4px;
+        }
+        .btn-add-batch:hover { background: #DBEAFE; }
+        .form-actions { display: flex; justify-content: flex-end; gap: 12px; padding-top: 16px; border-top: 1px solid #F1F5F9; }
+        .btn-secondary {
+            padding: 8px 20px; background: #FFFFFF; border: 1px solid #E2E8F0;
+            border-radius: 8px; font-size: 14px; font-weight: 600; color: #475569;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .btn-secondary:hover { background: #F8FAFC; }
+        .btn-secondary.primary { background: #1C74E9; border-color: #1C74E9; color: white; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); }
+        .btn-secondary.primary:hover { background: #1D4ED8; }
+        .org-content { max-width: 1152px; width: 100%; margin: 0 auto; }
+        .org-wrapper { display: flex; flex-direction: column; gap: 24px; }
+        .toast { position: fixed; top: 24px; right: 24px; padding: 12px 20px; border-radius: 8px; font-weight: 600; z-index: 2000; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-size: 14px; }
+        .toast.success { background: #10B981; color: white; }
+        .toast.error { background: #EF4444; color: white; }
+        .form-error { font-size: 12px; color: #EF4444; display: none; }
+        .form-group.has-error .form-input,
+        .form-group.has-error .form-select { border-color: #EF4444; }
+        .form-group.has-error .form-error { display: block; }
+        .empty-tree { padding: 48px; text-align: center; color: #64748B; font-size: 14px; }
+        .tree-loading { padding: 24px; text-align: center; color: #64748B; }
+        .header-left .search-input-wrapper { position: relative; z-index: 30; }
+        .search-suggestions {
+            display: none;
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: calc(100% + 6px);
+            max-height: 320px;
+            overflow-y: auto;
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.12), 0 4px 10px -4px rgba(0,0,0,0.08);
+        }
+        .search-suggest-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            cursor: pointer;
+            border-bottom: 1px solid #F1F5F9;
+            transition: background 0.15s;
+        }
+        .search-suggest-item:last-child { border-bottom: none; }
+        .search-suggest-item:hover { background: #F8FAFC; }
+        .search-suggest-type {
+            flex-shrink: 0;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #64748B;
+            background: #F1F5F9;
+            padding: 4px 8px;
+            border-radius: 4px;
+            min-width: 88px;
+            text-align: center;
+        }
+        .search-suggest-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #0F172A;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .search-suggest-empty {
+            padding: 14px;
+            font-size: 13px;
+            color: #94A3B8;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-shell">
+        <aside th:replace="~{fragments/admin-sidebar :: sidebar (activeNav='co-cau')}"></aside>
+        <div class="admin-main">
+    <div class="admin-wrapper">
+        <header class="admin-header">
+            <div class="header-left">
+                <div class="search-input-wrapper">
+                    <svg class="search-icon" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="7" cy="7" r="5" stroke="#94A3B8" stroke-width="1.5"/>
+                        <path d="M11 11L16 16" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Tìm kiếm trường, khoa, ngành..." autocomplete="off">
+                    <div id="searchSuggestions" class="search-suggestions" role="listbox" aria-label="Gợi ý tìm kiếm"></div>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="header-icon-btn">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 2.5C7.5 2.5 5.5 4.5 5.5 7.5C5.5 9.5 6.5 11.25 8 12.5V15.5L10 17.5L12 15.5V12.5C13.5 11.25 14.5 9.5 14.5 7.5C14.5 4.5 12.5 2.5 10 2.5Z" stroke="#64748B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M7.5 17.5H12.5" stroke="#64748B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="notification-dot"></span>
+                </button>
+                <button class="header-icon-btn">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="10" cy="6" r="3" stroke="#64748B" stroke-width="1.5"/>
+                        <path d="M3 17C3 14.5 5.5 13 10 13C14.5 13 17 14.5 17 17" stroke="#64748B" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+        <main class="admin-content">
+            <div class="org-content">
+                <div class="breadcrumb">
+                    <span class="breadcrumb-item inactive">Cấu hình</span>
+                    <span class="breadcrumb-separator">/</span>
+                    <span class="breadcrumb-item active">Cơ cấu tổ chức</span>
+                </div>
+                <div class="org-wrapper">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">Quản lý Cơ cấu Tổ chức</h1>
+                            <p class="page-description">Thiết lập và phân cấp hệ thống Trường, Khoa, Ngành và Chuyên ngành.</p>
+                        </div>
+                        <button type="button" class="btn-primary" id="btnThemTruong">
+                            <svg viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5 1V9M1 5H9" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                            Thêm trường mới
+                        </button>
+                    </div>
+
+                    <div class="filter-tabs">
+                        <div class="filter-tab active" data-tab="all">Tất cả</div>
+                        <div class="filter-tab" data-tab="TRUONG">Trường</div>
+                        <div class="filter-tab" data-tab="KHOA">Khoa</div>
+                        <div class="filter-tab" data-tab="NGANH">Ngành &amp; Chuyên ngành</div>
+                    </div>
+
+                    <div class="tree-card">
+                        <div class="tree-card-header">
+                            <span class="tree-card-title">Cấu trúc phân cấp</span>
+                            <div class="tree-actions">
+                                <button type="button" class="tree-action-btn" id="btnExpandAll">Mở rộng tất cả</button>
+                                <span class="tree-action-divider">|</span>
+                                <button type="button" class="tree-action-btn secondary" id="btnCollapseAll">Thu gọn</button>
+                            </div>
+                        </div>
+                        <div class="tree-view" id="treeView">
+                            <div class="tree-loading">Đang tải dữ liệu...</div>
+                        </div>
+                    </div>
+
+                    <!-- Editor Panel (ẩn mặc định; chỉ hiện khi Thêm/Sửa/Chi tiết) -->
+                    <div class="editor-panel" id="editorPanel" style="display: none;">
+                        <div class="editor-panel-header">
+                            <div class="editor-panel-title">
+                                <svg viewBox="0 0 18 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M14 1H4C3.44772 1 3 1.44772 3 2V14C3 14.5523 3.44772 15 4 15H14C14.5523 15 15 14.5523 15 14V2C15 1.44772 14.5523 1 14 1Z" stroke="#1C74E9" stroke-width="1.5"/>
+                                    <path d="M6 5H12M6 8H12M6 11H9" stroke="#1C74E9" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                                <span id="editorPanelTitle">Thêm trường mới</span>
+                            </div>
+                            <button type="button" class="editor-panel-close" id="btnCloseEditor">
+                                <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M1 1L13 13M13 1L1 13" stroke="#64748B" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <form id="formDonVi" class="editor-form" novalidate>
+
+                            <!-- ===================== FORM TRUONG (Thêm/Sửa) ===================== -->
+                            <div id="formTruong" class="form-section">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label required" for="fTruong_ten">Tên trường</label>
+                                        <input type="text" class="form-input" id="fTruong_ten" name="tenTruong" placeholder="vd: Đại học Bách Khoa Hà Nội">
+                                        <span class="form-error">Tên trường không được để trống</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label required" for="fTruong_capBac">Cấp bậc</label>
+                                        <select class="form-select" id="fTruong_capBac" name="capBacTruong">
+                                            <option value="">-- Chọn cấp bậc --</option>
+                                            <option value="DAI_HOC">Đại học</option>
+                                            <option value="CAO_DANG">Cao đẳng</option>
+                                            <option value="TRUNG_CAP">Trung cấp</option>
+                                        </select>
+                                        <span class="form-error">Cấp bậc không được để trống</span>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label required" for="fTruong_maDinhDanh">Mã định danh</label>
+                                        <input type="text" class="form-input" id="fTruong_maDinhDanh" name="maDinhDanhTruong" placeholder="vd: HUST">
+                                        <span class="form-error">Mã định danh không được để trống</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="fTruong_diaChi">Địa chỉ</label>
+                                        <input type="text" class="form-input" id="fTruong_diaChi" name="diaChiTruong" placeholder="vd: Hai Bà Trưng, Hà Nội">
+                                    </div>
+                                </div>
+                                <!-- Danh sách Khoa (chỉ hiển thị khi THÊM trường mới) -->
+                                <div class="form-group full-width" id="fTruong_khoaList">
+                                    <label class="form-label">Danh sách Khoa (thêm cùng lúc)</label>
+                                    <div class="batch-list" id="fTruong_khoaBatchList">
+                                        <div class="batch-item-row">
+                                            <input type="text" class="form-input khoa-name" placeholder="vd: Khoa Công nghệ Thông tin">
+                                            <button type="button" class="btn-remove" onclick="removeBatchItem(this)">×</button>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn-add-batch" onclick="addKhoaBatch()">
+                                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1V11M1 6H11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                                        Thêm khoa
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- ===================== FORM KHOA (Sửa đơn lẻ) ===================== -->
+                            <div id="formKhoa" class="form-section" style="display:none">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label required" for="fKhoa_ten">Tên khoa</label>
+                                        <input type="text" class="form-input" id="fKhoa_ten" name="tenKhoa" placeholder="vd: Khoa Công nghệ Thông tin">
+                                        <span class="form-error">Tên khoa không được để trống</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label required" for="fKhoa_maTruong">Thuộc trường</label>
+                                        <select class="form-select" id="fKhoa_maTruong" name="maTruongKhoa">
+                                            <option value="">-- Chọn trường --</option>
+                                        </select>
+                                        <span class="form-error">Vui lòng chọn trường</span>
+                                    </div>
+                                </div>
+                                <!-- Danh sách Ngành (chỉ hiển thị khi THÊM khoa mới) -->
+                                <div class="form-group full-width" id="fKhoa_nganhList">
+                                    <label class="form-label">Danh sách Ngành (thêm cùng lúc)</label>
+                                    <div class="batch-list" id="fKhoa_nganhBatchList">
+                                        <div class="batch-item-row">
+                                            <input type="text" class="form-input nganh-name" placeholder="vd: Khoa học Máy tính">
+                                            <button type="button" class="btn-remove" onclick="removeBatchItem(this)">×</button>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn-add-batch" onclick="addNganhBatch()">
+                                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1V11M1 6H11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                                        Thêm ngành
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- ===================== FORM NGANH (Sửa đơn lẻ) ===================== -->
+                            <div id="formNganh" class="form-section" style="display:none">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label required" for="fNganh_ten">Tên ngành</label>
+                                        <input type="text" class="form-input" id="fNganh_ten" name="tenNganh" placeholder="vd: Khoa học Máy tính">
+                                        <span class="form-error">Tên ngành không được để trống</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label required" for="fNganh_maKhoa">Thuộc khoa</label>
+                                        <select class="form-select" id="fNganh_maKhoa" name="maKhoaNganh">
+                                            <option value="">-- Chọn khoa --</option>
+                                        </select>
+                                        <span class="form-error">Vui lòng chọn khoa</span>
+                                    </div>
+                                </div>
+                                <!-- Danh sách Chuyên ngành (chỉ hiển thị khi THÊM ngành mới) -->
+                                <div class="form-group full-width" id="fNganh_cnList">
+                                    <label class="form-label">Danh sách Chuyên ngành (thêm cùng lúc)</label>
+                                    <div class="batch-list" id="fNganh_cnBatchList">
+                                        <div class="batch-item-row">
+                                            <input type="text" class="form-input cn-name" placeholder="vd: Trí tuệ Nhân tạo">
+                                            <button type="button" class="btn-remove" onclick="removeBatchItem(this)">×</button>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn-add-batch" onclick="addCnBatch()">
+                                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1V11M1 6H11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                                        Thêm chuyên ngành
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- ===================== FORM CHUYEN NGANH (Sửa đơn lẻ) ===================== -->
+                            <div id="formChuyenNganh" class="form-section" style="display:none">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label required" for="fCN_ten">Tên chuyên ngành</label>
+                                        <input type="text" class="form-input" id="fCN_ten" name="tenCN" placeholder="vd: Trí tuệ Nhân tạo">
+                                        <span class="form-error">Tên chuyên ngành không được để trống</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label required" for="fCN_maNganh">Thuộc ngành</label>
+                                        <select class="form-select" id="fCN_maNganh" name="maNganhCN">
+                                            <option value="">-- Chọn ngành --</option>
+                                        </select>
+                                        <span class="form-error">Vui lòng chọn ngành</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <input type="hidden" id="f_level" value="TRUONG">
+                            <input type="hidden" id="f_editId" value="">
+                            <input type="hidden" id="f_editMode" value="add">
+
+                            <div class="form-actions">
+                                <button type="button" class="btn-secondary" id="btnCancelEdit">Hủy bỏ</button>
+                                <button type="submit" class="btn-secondary primary" id="btnSaveEdit">Lưu</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+        </div>
+    </div>
+    <script th:src="@{/js/co-cau-to-chuc.js}"></script>
+</body>
+</html>
