@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cài đặt Admin - Hệ thống Thi trắc nghiệm</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/cai-dat-admin.css}">
+</head>
+<body>
+    <div class="admin-shell">
+        <aside th:replace="~{fragments/admin-sidebar :: sidebar (activeNav='cai-dat')}"></aside>
+        <div class="admin-main">
+    <div class="settings-wrapper">
+        <main class="settings-content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">Cài Đặt Tài Khoản</h1>
+                <p class="page-desc">Quản lý thông tin cá nhân và bảo mật tài khoản của bạn</p>
+            </div>
+            
+            <!-- Personal Info Card -->
+            <div class="settings-card">
+                <div class="card-header">
+                    <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="10" cy="6" r="3" stroke="#155DFC" stroke-width="1.5"/>
+                        <path d="M3 17C3 14.5 5.5 13 10 13C14.5 13 17 14.5 17 17" stroke="#155DFC" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    <span class="card-title">Thông tin cá nhân</span>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <div class="form-input input-icon">
+                        <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="2" y="3" width="14" height="12" rx="2" stroke="#64748B" stroke-width="1.5"/>
+                            <path d="M2 6L9 10.5L16 6" stroke="#64748B" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                        <span class="input-text" id="hienThiEmail">--</span>
+                        <!-- [GIAI ĐOẠN 2] Load từ session/user info -->
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Vai trò hiện tại</label>
+                    <div class="role-badge">
+                        <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 2L2 5L9 8L16 5L9 2Z" stroke="#193CB8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2 13L9 16L16 13" stroke="#193CB8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2 8L9 11L16 8" stroke="#193CB8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span class="role-text" id="hienThiVaiTro">--</span>
+                        <!-- [GIAI ĐOẠN 2] Load vai_tro từ session -->
+                    </div>
+                    <p class="role-desc">Bạn có toàn quyền truy cập hệ thống.</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Mật khẩu</label>
+                    <div class="form-input input-icon">
+                        <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="3" y="7" width="12" height="9" rx="2" stroke="#64748B" stroke-width="1.5"/>
+                            <path d="M6 7V5C6 3.34315 7.34315 2 9 2C10.6569 2 12 3.34315 12 5V7" stroke="#64748B" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                        <span class="input-text" style="color:#94A3B8;">••••••••</span>
+                        <div class="input-action">
+                            <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2 9C2 9 4.5 4 9 4C13.5 4 16 9 16 9C16 9 13.5 14 9 14C4.5 14 2 9 2 9Z" stroke="#64748B" stroke-width="1.5"/>
+                                <circle cx="9" cy="9" r="2.5" stroke="#64748B" stroke-width="1.5"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <!-- [GIAI ĐOẠN 2] Mật khẩu KHÔNG bao giờ hiển thị dạng text. Dùng form đổi mật khẩu bên dưới. -->
+                </div>
+            </div>
+            
+            <!-- Change Password Card -->
+            <div class="settings-card">
+                <div class="card-header">
+                    <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M13.5 7.5H14C15.933 7.5 17.5 9.067 17.5 11V16.5H2.5V11C2.5 9.067 4.067 7.5 6 7.5H6.5" stroke="#155DFC" stroke-width="1.5" stroke-linecap="round"/>
+                        <rect x="5" y="7.5" width="10" height="9" rx="2" stroke="#155DFC" stroke-width="1.5"/>
+                        <circle cx="10" cy="12" r="1.5" fill="#155DFC"/>
+                    </svg>
+                    <span class="card-title">Đổi mật khẩu</span>
+                </div>
+                
+                <p style="font-size: 14px; color: #62748E; margin-bottom: 20px;">
+                    Để bảo vệ tài khoản, vui lòng không chia sẻ mật khẩu cho bất kỳ ai.
+                </p>
+                
+                <form id="changePasswordForm">
+                    <div class="form-row">
+                        <label for="current-password">
+                            Mật khẩu hiện tại <span class="required-mark">*</span>
+                        </label>
+                        <div class="password-field">
+                            <input type="password" id="current-password" class="password-input" placeholder="Nhập mật khẩu đang sử dụng">
+                            <button type="button" class="password-toggle">
+                                <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M2 9C2 9 4.5 4 9 4C13.5 4 16 9 16 9C16 9 13.5 14 9 14C4.5 14 2 9 2 9Z" stroke="#64748B" stroke-width="1.5"/>
+                                    <circle cx="9" cy="9" r="2.5" stroke="#64748B" stroke-width="1.5"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="divider"></div>
+                    
+                    <div class="form-row">
+                        <label for="new-password">
+                            Mật khẩu mới <span class="required-mark">*</span>
+                        </label>
+                        <div class="password-field">
+                            <input type="password" id="new-password" class="password-input" placeholder="Nhập mật khẩu mới">
+                            <button type="button" class="password-toggle">
+                                <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M2 9C2 9 4.5 4 9 4C13.5 4 16 9 16 9C16 9 13.5 14 9 14C4.5 14 2 9 2 9Z" stroke="#64748B" stroke-width="1.5"/>
+                                    <circle cx="9" cy="9" r="2.5" stroke="#64748B" stroke-width="1.5"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <label for="confirm-password">
+                            Xác nhận mật khẩu mới <span class="required-mark">*</span>
+                        </label>
+                        <div class="password-field">
+                            <input type="password" id="confirm-password" class="password-input" placeholder="Nhập lại mật khẩu mới">
+                            <button type="button" class="password-toggle">
+                                <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M2 9C2 9 4.5 4 9 4C13.5 4 16 9 16 9C16 9 13.5 14 9 14C4.5 14 2 9 2 9Z" stroke="#64748B" stroke-width="1.5"/>
+                                    <circle cx="9" cy="9" r="2.5" stroke="#64748B" stroke-width="1.5"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancel">Hủy bỏ</button>
+                        <button type="submit" class="btn-save">
+                            <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M15.5 5L7 13.5L3 9.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Lưu thay đổi
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/cai-dat-admin.js}"></script>
+</body>
+</html>
