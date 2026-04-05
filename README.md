@@ -6,7 +6,7 @@
 
 Mã nguồn chính nằm trong `src/main/java/com/example/server/` với các package sau:
 
-```
+`` ok
 src/main/java/com/example/server/
 ├── ServerApplication.java    # Điểm vào ứng dụng Spring Boot
 ├── config/                   # Cấu hình
