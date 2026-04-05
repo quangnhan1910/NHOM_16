@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giám sát thời gian thực</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/lecturer/lecturer-layout.css}">
+    <link rel="stylesheet" th:href="@{/css/lecturer/giam-sat.css}">
+</head>
+<body>
+    <div class="lecturer-shell">
+        <aside th:replace="~{fragments/lecturer-sidebar :: sidebar (activeNav='giam-sat')}"></aside>
+        <div class="lecturer-main">
+    <div class="main-content">
+        <!-- Header -->
+        <div class="monitor-header">
+            <h2 class="header-title">Giám sát thời gian thực</h2>
+
+            <div class="header-controls">
+                <div class="search-input">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M7 12C9.76142 12 12 9.76142 12 7C12 4.23858 9.76142 2 7 2C4.23858 2 2 4.23858 2 7C2 9.76142 4.23858 12 7 12Z" stroke="#90A1B9" stroke-width="1.333" stroke-linecap="round"/>
+                        <path d="M14 14L10.5 10.5" stroke="#90A1B9" stroke-width="1.333" stroke-linecap="round"/>
+                    </svg>
+                    <input type="text" id="searchExam" placeholder="Tìm kiếm kỳ thi..." oninput="searchExam()">
+                </div>
+
+                <a th:href="@{/de-thi/them-moi}" class="btn-tao-ky-thi" role="button">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.333" stroke-linecap="round"/>
+                    </svg>
+                    Tạo kỳ thi mới
+                </a>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="monitor-body">
+            <!-- Card: Danh sach ca thi dang dien ra -->
+            <div class="exam-list-card">
+                <div class="card-header">
+                    <div class="card-header-left">
+                        <h3 class="card-title">Danh sách Ca thi đang diễn ra</h3>
+                        <div class="live-badge">
+                            <div class="dot"></div>
+                            <span>LIVE</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-hint">
+                    Vui lòng chọn một môn học đang được tổ chức thi để xem chi tiết
+                </div>
+
+                <div class="card-body">
+                    <table class="monitor-table">
+                        <thead>
+                            <tr>
+                                <th>Tên môn thi</th>
+                                <th>Ca thi / Thời gian</th>
+                                <th>Phòng máy</th>
+                                <th style="text-align:center">Đã vào</th>
+                                <th style="text-align:center">Đang thi</th>
+                                <th style="text-align:right">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="examTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        var REFRESH_INTERVAL_MS = 10000;
+        var timerId = null;
+
+        async function loadExamList() {
+            try {
+                var response = await fetch('/api/giam-sat/tong-hop');
+                if (!response.ok) return;
+
+                var data = await response.json();
+                renderExamList(data.danhSachCaThi);
+            } catch (error) {
+                console.error('Lỗi load danh sách ca thi:', error);
+            }
+        }
+
+        function renderExamList(danhSach) {
+            var tbody = document.getElementById('examTableBody');
+
+            if (!danhSach || danhSach.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <svg class="empty-icon" viewBox="0 0 48 48" fill="none">
+                                    <rect x="6" y="10" width="36" height="32" rx="4" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M14 20h20M14 28h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                                <p class="empty-title">Không có ca thi nào đang diễn ra</p>
+                                <p class="empty-desc">Danh sách sẽ được cập nhật khi có ca thi bắt đầu</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = danhSach.map(function(item) {
+                var thoiGianDisplay = item.thoiGianHienThi || '';
+                var phongDisplay = item.phongMay || item.diaDiem || '—';
+                var statusDisplay = getStatusDisplay(item.trangThai);
+                var statusClass = getStatusClass(item.trangThai);
+
+                return `
+                    <tr>
+                        <td>
+                            <div class="cell-ten-mon">${item.tenCaThi || ''}</div>
+                            <div class="cell-sub">${item.tenMonHoc || ''} · ${item.maDinhDanhMonHoc || ''} · ${item.soTinChi || 0} TC</div>
+                        </td>
+                        <td class="cell-thoi-gian">${thoiGianDisplay}</td>
+                        <td class="cell-phong">${phongDisplay}</td>
+                        <td class="cell-progress">
+                            <span class="progress-numbers">${item.soDaVao || 0}</span>
+                            <span class="progress-sub">/${item.tongSoSinhVien || 0} SV</span>
+                        </td>
+                        <td class="cell-progress">
+                            <span class="trangthai-badge ${statusClass}">${statusDisplay}</span>
+                        </td>
+                        <td>
+                            <a href="/lecturer/giam-sat-thi/chi-tiet?maCaThi=${item.maCaThi}" class="btn-giam-sat">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.333"/>
+                                    <path d="M1 8s2.667-5.333 7-5.333 7 5.333 7 5.333-2.667 5.333-7 5.333S1 8 1 8z" stroke="currentColor" stroke-width="1.333" stroke-linejoin="round"/>
+                                </svg>
+                                Vào giám sát
+                            </a>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function getStatusDisplay(trangThai) {
+            if (!trangThai) return '—';
+            switch (trangThai) {
+                case 'DANG_DIEN_RA': return 'Đang thi';
+                case 'DA_NOP': return 'Đã nộp';
+                case 'DA_KET_THUC': return 'Kết thúc';
+                default: return trangThai;
+            }
+        }
+
+        function getStatusClass(trangThai) {
+            if (!trangThai) return '';
+            switch (trangThai) {
+                case 'DANG_DIEN_RA': return 'dang-thi';
+                case 'DA_NOP': return 'da-nop';
+                case 'DA_KET_THUC': return 'cho-nop';
+                default: return '';
+            }
+        }
+
+        function searchExam() {
+            var searchTerm = document.getElementById('searchExam').value.toLowerCase();
+            var rows = document.querySelectorAll('#examTableBody tr');
+            rows.forEach(function(row) {
+                var text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+
+        function startAutoRefresh() {
+            if (timerId) clearInterval(timerId);
+            timerId = setInterval(loadExamList, REFRESH_INTERVAL_MS);
+        }
+
+        loadExamList();
+        startAutoRefresh();
+    </script>
+</body>
+</html>
