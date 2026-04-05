@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Hệ thống Thi trắc nghiệm</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+    <div class="admin-shell">
+        <aside th:replace="~{fragments/admin-sidebar :: sidebar (activeNav='dashboard')}"></aside>
+        <div class="admin-main">
+    <div class="admin-wrapper">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="header-left">
+                <div class="search-input-wrapper">
+                    <svg class="search-icon" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="7" cy="7" r="5" stroke="#94A3B8" stroke-width="1.5"/>
+                        <path d="M11 11L16 16" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    <input type="text" class="search-input" placeholder="Tìm kiếm sinh viên, kỳ thi hoặc nhật ký...">
+                </div>
+            </div>
+            
+            <div class="header-right">
+                <!-- Notification Bell -->
+                <button class="header-icon-btn">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 2.5C7.5 2.5 5.5 4.5 5.5 7.5C5.5 9.5 6.5 11.25 8 12.5V15.5L10 17.5L12 15.5V12.5C13.5 11.25 14.5 9.5 14.5 7.5C14.5 4.5 12.5 2.5 10 2.5Z" stroke="#64748B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M7.5 17.5H12.5" stroke="#64748B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="notification-dot"></span>
+                </button>
+                
+                <!-- User Profile Icon -->
+                <button class="header-icon-btn">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="10" cy="6" r="3" stroke="#64748B" stroke-width="1.5"/>
+                        <path d="M3 17C3 14.5 5.5 13 10 13C14.5 13 17 14.5 17 17" stroke="#64748B" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </button>
+                
+                <div class="header-divider"></div>
+                
+                <!-- Server Status -->
+                <div class="server-status">
+                    <span class="server-status-label">Trạng Thái Server:</span>
+                    <div class="server-status-badge">
+                        <span class="server-status-dot"></span>
+                        <span class="server-status-text">ỔN ĐỊNH</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="admin-content">
+            <!-- Greeting Section -->
+            <section class="greeting-section">
+                <h1>Bảng Điều Khiển Hệ Thống</h1>
+                <p>Tổng quan về Hệ thống Thi trên máy tính của Đại học</p>
+            </section>
+
+            <div th:if="${successMessage}" role="alert"
+                 style="margin: 0 0 16px; padding: 12px 16px; border-radius: 8px; background: #DCFCE7; color: #15803D; border: 1px solid #BBF7D0;">
+                <span th:text="${successMessage}">Thành công</span>
+            </div>
+            <div th:if="${warningMessage}" role="alert"
+                 style="margin: 0 0 16px; padding: 12px 16px; border-radius: 8px; background: #FEF3C7; color: #B45309; border: 1px solid #FDE68A;">
+                <span th:text="${warningMessage}">Cảnh báo</span>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <!-- Total Departments -->
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <span class="stat-icon-wrap stat-icon-wrap--khoa" aria-hidden="true">
+                            <img class="stat-icon-img stat-icon-img--khoa" th:src="@{/images/icons/tong-khoa.png}" src="/images/icons/tong-khoa.png" width="20" height="20" alt=""/>
+                        </span>
+                        <span th:if="${coKhoaMoi}" class="stat-change positive"
+                              th:text="'+' + ${#numbers.formatInteger(khoaMoi30Ngay, 0, 'POINT')} + ' (30 ngày)'">+0</span>
+                        <span th:unless="${coKhoaMoi}" class="stat-change" style="color:#94A3B8;font-weight:500;">—</span>
+                    </div>
+                    <div class="stat-card-label">Tổng Khoa</div>
+                    <div class="stat-card-value" th:text="${tongKhoaFmt}">0</div>
+                </div>
+                
+                <!-- Total Students -->
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <span class="stat-icon-wrap stat-icon-wrap--sinh-vien" aria-hidden="true">
+                            <svg viewBox="0 0 24 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="7.25" cy="3.75" r="2.25" fill="#9333EA"/>
+                                <path d="M3.25 11.25c0-1.75 1.65-3 4-3s4 1.25 4 3" fill="#9333EA"/>
+                                <circle cx="16.75" cy="3.75" r="2.25" fill="#9333EA"/>
+                                <path d="M12.75 11.25c0-1.75 1.65-3 4-3s4 1.25 4 3" fill="#9333EA"/>
+                            </svg>
+                        </span>
+                        <span th:if="${coSinhVienMoi}" class="stat-change positive"
+                              th:text="'+' + ${#numbers.formatInteger(sinhVienMoi30Ngay, 0, 'POINT')} + ' TK (30 ngày)'">+0</span>
+                        <span th:unless="${coSinhVienMoi}" class="stat-change" style="color:#94A3B8;font-weight:500;">—</span>
+                    </div>
+                    <div class="stat-card-label">Tổng Sinh Viên</div>
+                    <div class="stat-card-value" th:text="${tongSinhVienFmt}">0</div>
+                </div>
+                
+                <!-- Total Questions -->
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <span class="stat-icon-wrap stat-icon-wrap--cau-hoi" aria-hidden="true">
+                            <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="3.25" y="2.5" width="10.5" height="13" rx="1.5" stroke="#D97706" stroke-width="1.2"/>
+                                <path d="M5.75 6.25h5.5M5.75 8.75h5.5M5.75 11.25h3.5" stroke="#D97706" stroke-width="1.1" stroke-linecap="round"/>
+                                <rect x="11" y="11" width="5" height="5" rx="1" fill="#D97706"/>
+                                <path d="M13.5 12.25v2.5M12.25 13.5h2.5" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                        <span th:if="${coCauHoiMoi}" class="stat-change warning"
+                              th:text="'+' + ${#numbers.formatInteger(cauHoiMoi30Ngay, 0, 'POINT')} + ' (30 ngày)'">+0</span>
+                        <span th:unless="${coCauHoiMoi}" class="stat-change" style="color:#94A3B8;font-weight:500;">—</span>
+                    </div>
+                    <div class="stat-card-label">Tổng Câu Hỏi</div>
+                    <div class="stat-card-value" th:text="${tongCauHoiFmt}">0</div>
+                </div>
+                
+                <!-- Active Exams -->
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <span class="stat-icon-wrap stat-icon-wrap--ky-thi" aria-hidden="true">
+                            <svg viewBox="0 0 18 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="2.5" y="5" width="13" height="14" rx="1.75" stroke="#DC2626" stroke-width="1.25"/>
+                                <path d="M2.5 9h13" stroke="#DC2626" stroke-width="1.25"/>
+                                <path d="M6 3.25V6M12 3.25V6" stroke="#DC2626" stroke-width="1.25" stroke-linecap="round"/>
+                                <rect x="5.25" y="11.25" width="3.5" height="3.5" rx="0.75" fill="#DC2626"/>
+                                <rect x="10.25" y="11.25" width="3.5" height="3.5" rx="0.75" fill="#DC2626" fill-opacity="0.45"/>
+                            </svg>
+                        </span>
+                        <span class="stat-change negative">Đang diễn ra</span>
+                    </div>
+                    <div class="stat-card-label">Ca Thi Đang Hoạt Động</div>
+                    <div class="stat-card-value" th:text="${caDangDienRaFmt}">0</div>
+                </div>
+            </div>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- System Log Table -->
+                <div class="log-table-card">
+                    <div class="log-table-header">
+                        <div class="log-table-title">
+                            <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="2" y="3" width="14" height="12" rx="2" stroke="#0F172A" stroke-width="1.5"/>
+                                <path d="M5 7H13M5 11H10" stroke="#0F172A" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                            Nhật Ký Hệ Thống
+                        </div>
+                        <a class="view-all-link" th:href="@{/admin/nhat-ky-he-thong}">Xem Tất Cả</a>
+                    </div>
+                    <table class="log-table">
+                        <thead>
+                            <tr>
+                                <th>Thời Gian</th>
+                                <th>Người Dùng</th>
+                                <th>Hành Động</th>
+                                <th>Địa Chỉ IP</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${!coNhatKy}">
+                                <td colspan="4" style="color:#64748B;padding:1.25rem;">Chưa có nhật ký hệ thống.</td>
+                            </tr>
+                            <tr th:each="row : ${nhatKyGanDay}">
+                                <td th:text="${row.thoiGian}">—</td>
+                                <td><span class="user-name" th:text="${row.nguoiDung}">—</span></td>
+                                <td>
+                                    <div class="log-action">
+                                        <span class="log-action-badge" th:classappend="${row.badgeLoai}"
+                                              th:text="${row.hanhDongText}">—</span>
+                                        <span class="log-action-detail" th:text="${row.chiTiet}">—</span>
+                                    </div>
+                                </td>
+                                <td><span class="log-ip" th:text="${row.diaChiIp}">—</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Aside Column -->
+                <div class="aside-column">
+                    <!-- System Health Widget -->
+                    <div class="health-widget">
+                        <div class="health-widget-title">
+                            <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="9" cy="9" r="7" stroke="#0F172A" stroke-width="1.5"/>
+                                <path d="M9 5V9L12 11" stroke="#0F172A" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                            Sức Khỏe Hệ Thống
+                        </div>
+                        
+                        <!-- Central Server -->
+                        <div class="health-item">
+                            <div class="health-item-header">
+                                <div class="health-item-label">
+                                    <svg viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <rect x="1" y="3" width="9" height="6" rx="1" stroke="#64748B" stroke-width="1.2"/>
+                                        <path d="M4 1H7V3H4V1Z" stroke="#64748B" stroke-width="1.2"/>
+                                    </svg>
+                                    Máy Chủ Trung Tâm
+                                </div>
+                                <span class="health-item-status online">Trực tuyến</span>
+                            </div>
+                            <div class="health-progress">
+                                <div class="health-progress-bar green" th:style="|width: ${sucKhoeMayChuPhanTram}%|"></div>
+                            </div>
+                            <div class="health-item-footer">
+                                <span th:text="${sucKhoeMayChuFooter1}">—</span>
+                                <span th:text="${sucKhoeMayChuFooter2}">—</span>
+                            </div>
+                        </div>
+                        
+                        <!-- LAN Connection -->
+                        <div class="health-item">
+                            <div class="health-item-header">
+                                <div class="health-item-label">
+                                    <svg viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <rect x="1" y="1" width="4" height="4" rx="0.5" stroke="#64748B" stroke-width="1.2"/>
+                                        <rect x="6" y="1" width="4" height="4" rx="0.5" stroke="#64748B" stroke-width="1.2"/>
+                                        <rect x="1" y="6" width="4" height="4" rx="0.5" stroke="#64748B" stroke-width="1.2"/>
+                                        <rect x="6" y="6" width="4" height="4" rx="0.5" stroke="#64748B" stroke-width="1.2"/>
+                                    </svg>
+                                    Lịch ca thi (tổng quan)
+                                </div>
+                                <span class="health-item-status active">Theo dữ liệu</span>
+                            </div>
+                            <div class="health-progress">
+                                <div class="health-progress-bar blue" th:style="|width: ${sucKhoeLanPhanTram}%|"></div>
+                            </div>
+                            <div class="health-item-footer">
+                                <span th:text="${sucKhoeLanFooter}">—</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Active Rooms -->
+                        <div class="health-divider">
+                            <div class="active-rooms-title">Ca thi đang diễn ra</div>
+
+                            <div th:if="${!coPhongThi}" class="active-room-item">
+                                <div class="active-room-info">
+                                    <span class="room-status-dot green"></span>
+                                    <span class="room-name" style="color:#64748B;">Không có ca nào đang diễn ra</span>
+                                </div>
+                                <span class="room-capacity">—</span>
+                            </div>
+
+                            <div th:each="phong : ${phongThiHoatDong}" class="active-room-item">
+                                <div class="active-room-info">
+                                    <span class="room-status-dot" th:classappend="${phong.dotLoai}"></span>
+                                    <span class="room-name" th:text="${phong.tenHienThi}">—</span>
+                                </div>
+                                <span class="room-capacity" th:text="${phong.dongPhai}">—</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions - Emergency -->
+                    <div class="quick-actions">
+                        <div class="quick-actions-title">Ngừng Khẩn Cấp Hệ Thống</div>
+                        <div class="quick-actions-desc">
+                            Ngay lập tức kết thúc tất cả các ca thi đang ở trạng thái &quot;Đang diễn ra&quot;
+                            trong hệ thống (chuyển sang đã kết thúc). Thao tác được ghi nhật ký.
+                        </div>
+                        <form th:action="@{/admin/khan-cap/ket-thuc-ca-dang-dien-ra}" method="post"
+                              onsubmit="return confirm('Bạn chắc chắn muốn kết thúc khẩn cấp mọi ca thi đang diễn ra?');">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            <button type="submit" class="quick-actions-btn">Kích Hoạt Giao Thức Khẩn Cấp</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+        </div>
+    </div>
+</body>
+</html>
