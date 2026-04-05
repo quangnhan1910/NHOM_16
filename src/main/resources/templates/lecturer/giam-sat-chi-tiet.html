@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết giám sát ca thi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/lecturer/lecturer-layout.css}">
+    <link rel="stylesheet" th:href="@{/css/lecturer/giam-sat.css}">
+</head>
+<body>
+    <div class="lecturer-shell">
+        <aside th:replace="~{fragments/lecturer-sidebar :: sidebar (activeNav='giam-sat')}"></aside>
+        <div class="lecturer-main">
+    <div class="main-content" th:attr="data-ma-ca-thi=${maCaThi}">
+        <!-- Detail Header -->
+        <div class="detail-header">
+            <a href="/lecturer/giam-sat-thi" class="detail-back-btn">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.333" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Quay lại
+            </a>
+
+            <div class="detail-info">
+                <h2 class="detail-exam-name" id="examName">Đang tải...</h2>
+                <p class="detail-meta" id="examMeta"></p>
+            </div>
+
+            <div class="detail-stats">
+                <div class="stat-item">
+                    <span class="stat-value" id="statTong">0</span>
+                    <span class="stat-label">Tổng SV</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-value" id="statDaVao">0</span>
+                    <span class="stat-label">Đã vào</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-value" id="statDangLam">0</span>
+                    <span class="stat-label">Đang làm</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-value" id="statDaNop">0</span>
+                    <span class="stat-label">Đã nộp</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="monitor-body">
+            <div class="exam-list-card">
+                <div class="card-header">
+                    <div class="card-header-left">
+                        <h3 class="card-title">Danh sách sinh viên</h3>
+                        <div class="live-badge">
+                            <div class="dot"></div>
+                            <span>LIVE</span>
+                        </div>
+                    </div>
+                    <div class="search-input" style="width: 256px; height: 36px;">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M7 12C9.76142 12 12 9.76142 12 7C12 4.23858 9.76142 2 7 2C4.23858 2 2 4.23858 2 7C2 9.76142 4.23858 12 7 12Z" stroke="#90A1B9" stroke-width="1.333" stroke-linecap="round"/>
+                            <path d="M14 14L10.5 10.5" stroke="#90A1B9" stroke-width="1.333" stroke-linecap="round"/>
+                        </svg>
+                        <input type="text" id="searchStudentDetail" placeholder="Tìm MSSV, Tên..." oninput="searchStudentDetail()" style="font-size: 13px;">
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <table class="monitor-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 48px; text-align:center">STT</th>
+                                <th style="width: 120px">MSSV</th>
+                                <th style="width: 220px">Họ và Tên</th>
+                                <th style="width: 140px">Lớp SH</th>
+                                <th style="width: 160px">Thời gian vào</th>
+                                <th style="width: 120px; text-align:center">Tiến độ</th>
+                                <th style="width: 120px; text-align:center">Trạng thái</th>
+                                <th style="width: 140px; text-align:center">Giám sát</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentDetailBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        var maCaThi = document.querySelector('.main-content').dataset.maCaThi;
+        var REFRESH_INTERVAL_MS = 5000;
+        var timerId = null;
+
+        async function loadChiTiet() {
+            try {
+                var response = await fetch('/api/giam-sat/chi-tiet?maCaThi=' + maCaThi);
+                if (!response.ok) return;
+
+                var data = await response.json();
+                renderHeader(data);
+                renderStudentList(data.danhSachSinhVien);
+            } catch (error) {
+                console.error('Lỗi load chi tiết ca thi:', error);
+            }
+        }
+
+        function renderHeader(data) {
+            document.getElementById('examName').textContent = data.tenCaThi || '—';
+            var meta = [
+                data.tenMonHoc,
+                data.maDinhDanhMonHoc,
+                (data.soTinChi || 0) + ' TC',
+                data.thoiGianHienThi || '',
+                data.phongMay || data.diaDiem || ''
+            ].filter(Boolean).join(' · ');
+            document.getElementById('examMeta').textContent = meta;
+
+            document.getElementById('statTong').textContent = data.tongSoSinhVien || 0;
+            document.getElementById('statDaVao').textContent = data.soDaVao || 0;
+            document.getElementById('statDangLam').textContent = data.soDangLam || 0;
+            document.getElementById('statDaNop').textContent = data.soDaNop || 0;
+        }
+
+        function renderStudentList(danhSach) {
+            var tbody = document.getElementById('studentDetailBody');
+
+            if (!danhSach || danhSach.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8">
+                            <div class="empty-state">
+                                <p class="empty-title">Chưa có sinh viên nào</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = danhSach.map(function(sv, index) {
+                var statusBadge = getSvStatusBadge(sv.trangThai);
+                var tienDo = '';
+                if (sv.tongCauHoi > 0) {
+                    tienDo = sv.soCauDaTraLoi + '/' + sv.tongCauHoi;
+                }
+                var gioVao = sv.batDauLuc ? formatDateTime(sv.batDauLuc) : '—';
+                var theoDoiCell = '';
+                if (sv.maBaiThi != null) {
+                    theoDoiCell = '<a class="btn-theo-doi-sv" href="/lecturer/giam-sat-thi/theo-doi-bai?maCaThi=' + encodeURIComponent(maCaThi) + '&maBaiThi=' + encodeURIComponent(sv.maBaiThi) + '">Vào bài</a>';
+                } else {
+                    theoDoiCell = '<span class="btn-theo-doi-sv btn-theo-doi-sv--disabled" title="Sinh viên chưa bắt đầu làm bài trên hệ thống">—</span>';
+                }
+
+                return `
+                    <tr>
+                        <td style="text-align:center; color: #62748E;">${index + 1}</td>
+                        <td style="font-weight: 500;">${sv.maSinhVienStr || '—'}</td>
+                        <td style="font-weight: 600; color: #0F172B;">${sv.hoVaTen || '—'}</td>
+                        <td>${sv.lopSinhHoat || '—'}</td>
+                        <td style="color: #45556C;">${gioVao}</td>
+                        <td style="text-align:center; font-weight: 600;">${tienDo}</td>
+                        <td style="text-align:center;">${statusBadge}</td>
+                        <td style="text-align:center;">${theoDoiCell}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function getSvStatusBadge(trangThai) {
+            if (!trangThai) return '<span class="trangthai-badge cho-nop">—</span>';
+            switch (trangThai) {
+                case 'CHUA_VAO':
+                    return '<span class="trangthai-badge cho-nop">Chưa vào</span>';
+                case 'DANG_LAM':
+                    return '<span class="trangthai-badge dang-thi">Đang thi</span>';
+                case 'DA_NOP':
+                    return '<span class="trangthai-badge da-nop">Đã nộp</span>';
+                case 'DA_CHAM':
+                    return '<span class="trangthai-badge cho-nop">Đã chấm</span>';
+                default:
+                    return '<span class="trangthai-badge cho-nop">' + trangThai + '</span>';
+            }
+        }
+
+        function formatDateTime(ldt) {
+            if (!ldt) return '—';
+            var d = new Date(ldt);
+            var dd = String(d.getDate()).padStart(2, '0');
+            var mm = String(d.getMonth() + 1).padStart(2, '0');
+            var yy = d.getFullYear();
+            var hh = String(d.getHours()).padStart(2, '0');
+            var mi = String(d.getMinutes()).padStart(2, '0');
+            return dd + '/' + mm + '/' + yy + ' ' + hh + ':' + mi;
+        }
+
+        function searchStudentDetail() {
+            var term = document.getElementById('searchStudentDetail').value.toLowerCase();
+            var rows = document.querySelectorAll('#studentDetailBody tr');
+            rows.forEach(function(row) {
+                var text = row.textContent.toLowerCase();
+                row.style.display = text.includes(term) ? '' : 'none';
+            });
+        }
+
+        function startAutoRefresh() {
+            if (timerId) clearInterval(timerId);
+            timerId = setInterval(loadChiTiet, REFRESH_INTERVAL_MS);
+        }
+
+        loadChiTiet();
+        startAutoRefresh();
+    </script>
+</body>
+</html>
