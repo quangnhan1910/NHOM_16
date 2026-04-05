@@ -1,0 +1,412 @@
+/*
+ * Layout shell + sidebar giảng viên (theo Figma node 532:2198 — Exam Manager).
+ * Không dùng Tailwind; tái sử dụng pattern thu gọn giống admin-shell.
+ */
+
+.lecturer-shell {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    align-items: stretch;
+    background: #f6f7f8;
+    box-sizing: border-box;
+    /* Sidebar position:fixed — chừa chỗ cột trái để nội dung không tràn */
+    padding-left: 280px;
+    transition: padding-left 0.2s ease;
+}
+
+.lecturer-shell.sidebar-collapsed {
+    padding-left: 76px;
+}
+
+.lecturer-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 200;
+    width: 280px;
+    height: 100vh;
+    max-height: 100vh;
+    background: #ffffff;
+    border-right: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: width 0.2s ease;
+}
+
+.lecturer-shell.sidebar-collapsed .lecturer-sidebar {
+    width: 76px;
+}
+
+.lecturer-sidebar-toggle {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #64748b;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.lecturer-sidebar-toggle:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+.lecturer-sidebar-toggle svg {
+    transition: transform 0.2s ease;
+}
+
+.lecturer-shell.sidebar-collapsed .lecturer-sidebar-toggle svg {
+    transform: scaleX(-1);
+}
+
+.lecturer-sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 16px 20px 12px;
+    flex-shrink: 0;
+}
+
+.lecturer-sidebar-brand-main {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    flex: 1;
+}
+
+.lecturer-shell.sidebar-collapsed .lecturer-sidebar-brand {
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 10px;
+    gap: 10px;
+}
+
+.lecturer-shell.sidebar-collapsed .lecturer-sidebar-brand-main {
+    flex-direction: column;
+    flex: none;
+    gap: 0;
+}
+
+.lecturer-shell.sidebar-collapsed .lecturer-sidebar-titles {
+    display: none;
+}
+
+.lecturer-sidebar-logo {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.lecturer-sidebar-logo-img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    display: block;
+    border-radius: 8px;
+}
+
+.lecturer-nav-icon-img {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    display: block;
+    flex-shrink: 0;
+}
+
+.lecturer-sidebar-titles {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    min-width: 0;
+}
+
+.lecturer-sidebar-title {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 20px;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+    color: #1a355b;
+}
+
+.lecturer-sidebar-subtitle {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    color: #64748b;
+}
+
+.lecturer-sidebar-nav {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.lecturer-shell.sidebar-collapsed .lecturer-nav-link {
+    justify-content: center;
+    padding: 10px;
+    gap: 0;
+}
+
+.lecturer-shell.sidebar-collapsed .lecturer-nav-link > span:not(.lecturer-nav-icon) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.lecturer-nav-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    color: #475569;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.lecturer-nav-link:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+.lecturer-nav-link.is-active {
+    background: #1e293b;
+    color: #ffffff;
+}
+
+.lecturer-nav-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    color: inherit;
+}
+
+.lecturer-nav-icon svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+
+.lecturer-nav-link:not(.is-active) .lecturer-nav-icon {
+    color: #475569;
+}
+
+.lecturer-nav-link.is-active .lecturer-nav-icon {
+    color: #ffffff;
+}
+
+.lecturer-sidebar-footer {
+    flex-shrink: 0;
+    border-top: 1px solid #e2e8f0;
+    padding: 16px 16px 16px 16px;
+    position: relative;
+}
+
+.lecturer-sidebar-user {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-right: 40px;
+}
+
+.lecturer-shell.sidebar-collapsed .lecturer-sidebar-user {
+    justify-content: center;
+    padding: 8px 4px 8px 4px;
+}
+
+.lecturer-shell.sidebar-collapsed .lecturer-sidebar-user-text {
+    display: none;
+}
+
+.lecturer-sidebar-user-text {
+    min-width: 0;
+    flex: 1;
+}
+
+.lecturer-sidebar-user-name {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    color: #0f172a;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.lecturer-sidebar-user-email {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    color: #64748b;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.lecturer-sidebar-logout-form {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0;
+}
+
+.lecturer-shell.sidebar-collapsed .lecturer-sidebar-logout-form {
+    position: static;
+    transform: none;
+    margin-top: 8px;
+}
+
+.lecturer-sidebar-logout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #dc2626;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.lecturer-sidebar-logout:hover {
+    background: #fef2f2;
+}
+
+.lecturer-main {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Nội dung trang con (app-container / main-content) co giãn trong cột phải */
+.lecturer-main > .app-container,
+.lecturer-main > .main-content {
+    flex: 1;
+    min-height: 0;
+    min-width: 0;
+    width: 100%;
+}
+
+.lecturer-main > .app-container {
+    min-height: 100vh;
+}
+
+/* Ngân hàng câu hỏi (nhq-layout) trong shell giảng viên — tương tự admin-main */
+.lecturer-main > .nhq-layout {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.lecturer-main > .nhq-layout > .header {
+    flex-shrink: 0;
+}
+
+.lecturer-main > .nhq-layout > .main-content {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+/* Nút quay về khu vực giảng viên trên trang học thuật dùng chung */
+.lecturer-hub-back {
+    padding: 16px 32px 0;
+    flex-shrink: 0;
+}
+
+.lecturer-hub-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #475569;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.lecturer-hub-back-link:hover {
+    color: #1c74e9;
+}
+
+.lecturer-hub-back-icon {
+    font-size: 16px;
+    line-height: 1;
+}
+
+/* Trang giảng viên cũ đặt width cố định (1024/1278px) — trong shell dùng full cột */
+.lecturer-main .main-content {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.lecturer-main .monitor-header,
+.lecturer-main .page-header,
+.lecturer-main .header {
+    width: 100% !important;
+    max-width: none !important;
+    box-sizing: border-box;
+}
+
+/* Bảng điều khiển: main-content bên trong app-container là cột, không hàng + sidebar cũ */
+.lecturer-main .app-container > .main-content {
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+
+/* Trang chỉnh sửa đề thi: khối bọc sidebar + editor */
+.lecturer-main > .de-thi-sua-wrap {
+    flex: 1;
+    min-height: 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
